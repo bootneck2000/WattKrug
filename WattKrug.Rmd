@@ -78,16 +78,10 @@ library(tabulizerjars)
 
 ````{r read in content, include=FALSE}
 #table original
-#drive_download("~/Watters and Kruger rebuttal/Watters #sensitivities/hr_derived_s_original.csv",
-#               overwrite=TRUE)
 d.org = read_csv("hr_derived_s_original.csv",col_types="dddfd")
 #table 37a
-#drive_download("~/Watters and Kruger rebuttal/Watters sensitivities/hr_derived_s_37.csv",
-#               overwrite=TRUE)
 d37a = read_csv("hr_derived_s_37.csv",col_types="dddfd")
 #table 37b
-#drive_download("~/Watters and Kruger rebuttal/Watters #sensitivities/hr_derived_s_37b.csv",
-#               overwrite=TRUE)
 d37b = read_csv("hr_derived_s_37b.csv",col_types="dddfd")
 #table 38
 #drive_download("~/Watters and Kruger rebuttal/Watters sensitivities/hr_derived_s_38.csv",
