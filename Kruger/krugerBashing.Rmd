@@ -1,0 +1,222 @@
+---
+title: "Kruger Bashing"
+author: "Martin & the Bashers"
+date: "Draft: `r format(Sys.time(), '%Y-%m-%d')`"
+output: 
+  html_document:
+    code_folding: hide
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning=F, message=F,
+                      cache=T, update.cache=T)
+knitr::opts_knit$set(root.dir="C:/Users/a5406/Documents/Manuscripts/LowtherPenguinBashing2")
+library(tidyverse)
+```
+## Introduction
+We have identified some general issues and potential problems with this paper, and I have done some initial data extractions and tried to re-create the analyses as explained in the paper. Here's a summary of what has been done, and my view of the main issues. 
+
+## Data & subsetting
+I downloaded the penguin dataset from MAPPPD, and attempted to subset by region similarly to what's represented on the maps in Fig. 1:
+
+```{r readMAPPPD}
+peng <- read.csv('./Kruger/AllData_V_3.0.csv', header=T)
+names(peng) <- gsub('_epsg_4326', '', names(peng))
+names(peng) <- gsub('_', '.', names(peng), fixed=T)
+
+## Subset according to kruger et al.:
+peng <- peng %>% filter((common.name=='chinstrap penguin' | common.name=='gentoo penguin'), as.numeric(year)>=1980, as.numeric(year)<=2017,
+                        latitude>(-66), longitude>-66, longitude<(-54))
+
+peng$date <- as.POSIXct(strptime(paste(peng$year, peng$month, peng$day), '%Y%m%d'), tz='UTC')
+peng$count <- as.numeric(peng$count)
+
+str(peng)
+```
+
+This gives a dataset that's not exactly the same as the one referred to in the paper. They claim that this contains data from 197 chinstrap and 78 gentoo colonies, while my downloaded file represents `r by(peng, peng$common.name, function(y) length(unique(y$site.name)))[[1]]` chinstrap and `r by(peng, peng$common.name, function(y) length(unique(y$site.name)))[[2]]` gentoo penguin colonies.  
+
+```{r dataSubsetting}
+peng.n <- peng %>% 
+  group_by(site.name) %>% 
+  count() %>% filter(n>1)
+
+peng <- right_join(peng, peng.n, by='site.name') 
+
+peng <- peng %>% filter(count.type=='nests', 
+         (month=='11' | month=='12'))
+  
+```
+
+After filtering to include only breding pairs (nests) and only surveys in November & December, these numers are reduced to `r by(peng, peng$common.name, function(y) length(unique(y$site.name)))[[1]]` chinstrap and `r by(peng, peng$common.name, function(y) length(unique(y$site.name)))[[2]]` gentoo penguin colonies.
+
+There is also a data file contained in one of the supplementary documents:
+
+```{r readKruger}
+krug <- tabulizer::extract_tables('./Kruger/13280_2020_1386_MOESM1_ESM.pdf', pages=c(4:13))
+krug[[1]] <- krug[[1]][-c(1:2),]
+krug[[1]] <- t(apply(krug[[1]], 1, function(x) unlist(strsplit(x, ' '))))
+krug <- as.data.frame(do.call('rbind', krug))
+names(krug) <- c('common.name', 'site.name', 'Longitude', 'Latitude', 'year', 'catch', 'SAM', 'count', 'lambda') 
+for(i in 3:length(krug)) krug[,i] <- as.numeric(krug[,i])
+str(krug)
+```
+
+Comparing the two datasets yields:
+
+```{r dataCompare}
+compMat <- cbind(as.vector(by(peng, peng$common.name, function(y) length(unique(y$site.name)))),
+                 as.vector(by(krug, krug$common.name, function(y) length(unique(y$site.name)))))
+dimnames(compMat) <- list(Species=c('Chinstrap', 'Gentoo'),
+                          Dataset=c('My download', 'Kruger supplementary'))
+
+pander::pander(compMat, caption='Number of colonies in final data subsets from my download and the Kruger et al. supplementary.', justify='center')
+``` 
+
+- <span style="background-color: #FFFF00">**Problem 1: There's clearly some discrepancies in amounts of data here that we may need to approach the authors about.**</span> 
+
+## Creating response variable
+Kruger et al calculate a colony-level population growth rate:
+$$\lambda_{std}=((n_b/n_a)/years_{b-a}-1$$
+where $n$ is the number of breeding pairs counted in November or December of a given year, $b$ and the number of breeding pairs counted in the closest previous year $a$ when a survey was carried out, divided by the interval between these years (i.e. $b-a$).
+
+This is already included in the data from the supplementary material (in variable `lambda`). 
+
+- <span style="background-color: #FFFF00">**Problem 2: How representative is this rate value for a specific year, in the cases where it has been calcluated as a linear change over a period of several years between surveys?**</span> 
+
+```{r gapYears, include=F}
+
+# as.vector(by(peng, peng$site.name, function(x) {
+#   yr.diff <- diff(x$season.starting)
+#   n.per <- length(yr.diff)
+#   n.gap <- length(which(yr.diff>1))
+#   mean.diff <- mean(yr.diff[which(yr.diff>1)])
+# ##  c(n.per, n.gap, mean.diff)
+#   mean.diff
+# }))
+# 
+# pengGaps <- peng %>% 
+#   group_by(site.name) %>% 
+#   summarise(
+  
+```
+
+After going through the trouble of creating this rate, they simply turn this into a binary variable, where positive values are recoded as 0, and negative values as 1. This is not included in the supplementary data, so I've done it myself.
+
+```{r binSTD}
+krug$binLambda <- -sign(krug$lambda)
+krug$binLambda[which(krug$binLambda<0)] <- 0
+```
+
+## Krill fishery data
+Kruger et al. use C1 fisheries data from the CCAMLR secretariat. While they initially summarise these data within distinct time periods, reflecting different stages of the penguin annual cycle, these are only used for illustrative purposes (Fig 3). In their statistical analyses, they only use the annually accumulated catches. 
+
+- <span style="background-color: #FFFF00">**Problem 3: Is it appropriate to use annually accumulated catch as an explanatory variable to explain number of breeding pairs observed in Nov-Dec?**</span> 
+
+
+Moreover, only catches occurring within 30 km of each colony are considered. In their supplementary data, there are many colonies that have only zero catches within 30km throughout the entire 38-year time series:
+
+```{r noCatches}
+noCatch <- inner_join(krug %>% group_by(common.name) %>% summarise(len=length(unique(site.name))),krug %>% filter(catch>0) %>% group_by(common.name) %>% summarise(len=length(unique(site.name))), by='common.name')
+names(noCatch) <- c('Species', 'All colonies', 'Colonies with non-zero catches')
+pander::pander(noCatch, caption='Number of distinct colonies in  Kruger et al. supplementary, and those with at least one non-zero catch', justify='center')
+```
+
+- <span style="background-color: #FFFF00">**Problem 4: In the case of gentoos, half of the sites never have positive catch rates within 30 km, while for chinstraps the situation is not so bad. How does this eplain the model fits and conclusions of Kruger et al.?**</span> 
+
+Can we suggest a more appropriate approach for summarizing catch rates? For instance, use all catches but weight by some function of inverse distance from colony when calculating accumulated catches?
+
+
+## Climate data
+Essentially, Kruger et al. only use the SAM (Southern Annular Mode) index in their model, while ignoring other more regional-scale covariates, with the justification that there is a strong correlation  between SAM and regional environmental covariates, <u>up to a lag of 3 months</u>. 
+
+SAM is usually defined as the difference in the zonal mean sea level pressure at 40°S (mid-latitudes) and 65°S (Antarctica). 
+
+***Positive SAM:*** *Westerly wind belt that drives the Antarctic Circumpolar Current intensifies and contracts towards Antarctica, causing <u>increased upwelling of warm Circumpolar Deep Water</u> onto the continental shelf, leading to <u>increased ice melt</u>, but also <u>increased primary productivity</u> due to iron enrichment in surface waters.* 
+
+***Negative SAM:*** *Westerly wind belt weakens and moves northwards, <u>decreasing CDW upwelling</u> onto the Antarctic continental shelf, <u>reducing ice melt and primary productivity.</u>*
+
+## Model data compatibility
+Essentially, the model used by Kruger et al. tests the effects of annually accumulated catches within 30km of a colony, and SAM during the <u>non-breeding period</u>. The argument for the latter is the strong correlation between SAM and regional climate variables up to the 3-month lag. 
+
+- <span style="background-color: #FFFF00">**Problem 5: If no other climate variables are included in the model, does their argument really make sense? Why exclude SAM during the breeding period?**</span> 
+
+Since annually accumulated fisheries catches are used, perhaps it is sensible to use SAM over the same time period prior to breeding, but it doesn't seem to make sense to exclude SAM during the breeding period itself. 
+
+The main problem of the input data are the temporal and spatial mismatch between the response and both covariates: 
+
+- Change in breeding counts is measured between survey years, but often with gaps of 1 or more intervening years. 
+- Catches are accumulated over entire years (but <u>not</u> over multiple years in the cases where surveys have gaps).
+- Only catches within 30km of colonies are considered.
+- SAM values for all periods of the year <u>except the breeding period</u> are used. Again, these are not summarised across years in the case of multi-year gaps between penguin surveys.
+
+According to Kruger et al. they fit a binomial Generalised Linear Mixed Effects Model (GLMME) using the `lmerTest` package, with random intercept for colony. 
+
+- <span style="background-color: #FFFF00">**Problem 6. According to the documentation ,this package only appears to have the capacity to fit a simple LMME, which does not allow for a binomial response**</span> 
+
+Including `family=binomial` throws an error that the `family` argument doesn't exist for that function. The only option in the `lmerTest` package is to fit the models with the standard `lmer` function:
+
+```{r fitLMME, class.source = 'fold-show', warning=T}
+library(lmerTest)
+krugLMERchin <- lmer(binLambda~catch*SAM + (1|site.name), data=krug %>% filter(common.name=='Chinstrap'))
+krugLMERgent <- lmer(binLambda~catch*SAM + (1|site.name), data=krug %>% filter(common.name=='Gentoo'))
+```
+
+While the models converge, they also warn that the distribution of predictors are on very different scales. This is most likely due to the zero-inflated and non-gaussian catches, and rescaling those alleviates the problem:
+
+```{r fitLMMElogC, class.source = 'fold-hide', warning=T}
+krugLMERchinL <- lmer(binLambda~log(catch+1)*SAM + (1|site.name), data=krug %>% filter(common.name=='Chinstrap'))
+krugLMERgentL <- lmer(binLambda~log(catch+1)*SAM + (1|site.name), data=krug %>% filter(common.name=='Gentoo'))
+```
+
+Summaries of these models deviate from those reported by Kruger et al., both for chinstraps: 
+```{r showLMMEchin, warning=T}
+anova(krugLMERchin)
+anova(krugLMERchinL)
+```
+
+and for gentoos:
+```{r showLMMEgent, warning=T}
+anova(krugLMERgent)
+anova(krugLMERgentL)
+```
+
+It is not clear to what extent these deviations are the result of small differences in data input (inconsistencies between what is reported in Kruger et al. and what is actually in the supplementary data file), or by differences in model specification. 
+
+The more appropriate way to fit these models would be to use the `glmer` function in the `lme4` package:
+
+```{r fitGLMME, class.source = 'fold-show', warning=T}
+krugGLMERchin <- glmer(binLambda~catch*SAM + (1|site.name), data=krug %>% filter(common.name=='Chinstrap'), family=binomial)
+krugGLMERgent <- glmer(binLambda~catch*SAM + (1|site.name), data=krug %>% filter(common.name=='Gentoo'), family=binomial)
+summary(krugGLMERchinL)
+summary(krugGLMERgentL)
+```
+
+```{r fitGLMMElog, class.source = 'fold-show', warning=T}
+krug$logCatch <- log(krug$catch +1)
+krugGLMERchinL <- glmer(binLambda~logCatch*SAM + (1|site.name), data=krug %>% filter(common.name=='Chinstrap'), family=binomial)
+krugGLMERgentL <- glmer(binLambda~logCatch*SAM + (1|site.name), data=krug %>% filter(common.name=='Gentoo'), family=binomial)
+
+summary(krugGLMERchinL)
+summary(krugGLMERgentL)
+```
+
+While these models fit, they result in quite different outputs. Also, models for chinstraps throw up a warning indicating that models may be singular, i.e. that parameters are on the boundary of the feasible parameter space, and variances of one or more linear combinations of effects are (close to) zero.
+
+```{r figures-side, fig.show="hold", out.width="50%"}
+sjPlot::plot_model(krugGLMERchin, type='int', title='Chinstrap')
+sjPlot::plot_model(krugGLMERgent, type='int', title='Gentoo')
+```
+
+Alternative approach for fitted GLMER models?
+
+
+## Questions/suggestions
+
+1. How do we resolve the issues with apparent differences in datasets?
+    - Contact Kruger et al. to ask for their actual dataset.
+2. Can we propose appropriate strategies for dealing with the spatio-temporal mismatch between data that go into the models?
+    - Omitting years immediately following a multi-year gap?
+    - Relaxing the 30km limit for fisheries data, by spatially weighting catches within some relevat larger region? 
+    - Fitting explicit temporal trend (state-space?) models rather than simple mixed effects models? 
+3. Other suggestions?
