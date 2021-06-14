@@ -1,2 +1,2 @@
 # WattKrug
-Watters and Kruger review paper
+Watters and Kruger review paper.  Will form the basis of a peer-reviewed article later this year / beginning of next
