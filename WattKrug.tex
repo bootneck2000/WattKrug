@@ -34,6 +34,46 @@
 \IfFileExists{microtype.sty}{\usepackage{microtype}}{}
 \usepackage[margin=3cm]{geometry}
 \bibliographystyle{elsarticle-harv}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
 \usepackage{longtable}
 \ifxetex
   \usepackage[setpagesize=false, % page size defined by xetex
@@ -832,6 +872,835 @@ Gentoo\strut
 \includegraphics[width=0.8\linewidth]{./Watters EMM figures/summer catch/Year by year catch} \caption{C1 Catch and Effort data for 2010 - 2018, for all catches during the period of the austral summer relating to Adélie and Chinstrap penguins in Subarea 48.1 (i.e. up to $10^{th}$ March).  The telemetry data presented in Hinke et al. 2017 for Chinstrap penguins at both Cape Shireff and Copacabana and the gSSMU used in the Watters et al. 2020 paper are superimposed to highlight the extreme variability in actual catch, relative to the scale of LHR used to reflect interactions with penguins.  Our reanalysis re-scaled LHR to the SSMU level, though we contend that for the purposes of matching predator data at appropriate spatial scales even this is too coarse a resolution.}\label{fig:Supplementary Figure 1}
 \end{figure}
 \elandscape
+\newpage
+\scriptsize
+
+\begin{Shaded}
+\begin{Highlighting}[numbers=left,,]
+\CommentTok{####DATA PREP AND MODEL CODE (IMPUTATION OF BIOMASS = TRUE)----}
+\CommentTok{#original paper here:}
+\NormalTok{https}\OperatorTok{:}\ErrorTok{//}\NormalTok{doi.org}\OperatorTok{/}\FloatTok{10.1038}\OperatorTok{/}\NormalTok{s41598}\DecValTok{-020-59223-9}
+\CommentTok{#requirements - raw Supplementary Files from original Watters et al. (2020) publication available here:}
+\NormalTok{https}\OperatorTok{:}\ErrorTok{//}\NormalTok{www.nature.com}\OperatorTok{/}\NormalTok{articles}\OperatorTok{/}\NormalTok{s41598}\DecValTok{-020-59223-9}\CommentTok{#Sec8}
+\CommentTok{#SCRIPT MODIFICATIONS:}
+\CommentTok{#L. 222 - 226.  These changes modify the Acoustic biomass estimates by the ratio of SSMU / gSSMU}
+\CommentTok{#L. 250.  Alter March to either Summer or Winter.  Currently set to Winter.}
+\CommentTok{#L. 251 - 254.  Modify the gSSMU configurations to reflect only SSMU}
+\CommentTok{#L. 280, 282 & 286.  Set CHPE and ADPE in WINTER to NA - removing from model / migration out of area}
+\CommentTok{#L. 661.  Incorrect parameter set selection for "Worst Case" Fig 2 / "Selected Cases" plot.}
+\KeywordTok{library}\NormalTok{(tidyverse)}
+\NormalTok{make.localhr.data<-}\ControlFlowTok{function}\NormalTok{(}\DataTypeTok{trim=}\DecValTok{1}\NormalTok{,}\DataTypeTok{plot.winter=}\OtherTok{FALSE}\NormalTok{)\{}
+  \CommentTok{# fledge weight (fwt)}
+  \CommentTok{# bigger indicates better summer}
+\NormalTok{  fwt<-}\KeywordTok{read.csv}\NormalTok{(}\StringTok{"fweight.csv"}\NormalTok{,}\DataTypeTok{header=}\OtherTok{TRUE}\NormalTok{,}\DataTypeTok{stringsAsFactors =} \OtherTok{FALSE}\NormalTok{)}
+\NormalTok{  fwt<-}\KeywordTok{tapply}\NormalTok{(fwt}\OperatorTok{$}\NormalTok{WT,}\KeywordTok{list}\NormalTok{(fwt}\OperatorTok{$}\NormalTok{YEAR,fwt}\OperatorTok{$}\NormalTok{PROJECT,fwt}\OperatorTok{$}\NormalTok{SPECIES),mean)}
+\NormalTok{  fwt<-}\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{YEAR=}\KeywordTok{rep}\NormalTok{(}\KeywordTok{dimnames}\NormalTok{(fwt)[[}\DecValTok{1}\NormalTok{]],}\KeywordTok{dim}\NormalTok{(fwt)[}\DecValTok{2}\NormalTok{]}\OperatorTok{*}\KeywordTok{dim}\NormalTok{(fwt)[}\DecValTok{3}\NormalTok{]),}
+                  \DataTypeTok{PROJECT=}\KeywordTok{rep}\NormalTok{(}\KeywordTok{rep}\NormalTok{(}\KeywordTok{dimnames}\NormalTok{(fwt)[[}\DecValTok{2}\NormalTok{]],}\DataTypeTok{each=}\KeywordTok{dim}\NormalTok{(fwt)[}\DecValTok{1}\NormalTok{]),}\KeywordTok{dim}\NormalTok{(fwt)[}\DecValTok{3}\NormalTok{]),}
+                  \DataTypeTok{SPECIES=}\KeywordTok{rep}\NormalTok{(}\KeywordTok{dimnames}\NormalTok{(fwt)[[}\DecValTok{3}\NormalTok{]],}\DataTypeTok{each=}\KeywordTok{dim}\NormalTok{(fwt)[}\DecValTok{1}\NormalTok{]}\OperatorTok{*}\KeywordTok{dim}\NormalTok{(fwt)[}\DecValTok{2}\NormalTok{]),}
+                  \DataTypeTok{fwt=}\KeywordTok{c}\NormalTok{(fwt),}\DataTypeTok{stringsAsFactors =} \OtherTok{FALSE}\NormalTok{)}
+\NormalTok{  fwt}\OperatorTok{$}\NormalTok{matchme<-}\KeywordTok{paste}\NormalTok{(fwt}\OperatorTok{$}\NormalTok{PROJECT,fwt}\OperatorTok{$}\NormalTok{SPECIES,}\DataTypeTok{sep=}\StringTok{"|"}\NormalTok{)}
+\NormalTok{  tt<-}\KeywordTok{tapply}\NormalTok{(fwt}\OperatorTok{$}\NormalTok{fwt,}\KeywordTok{list}\NormalTok{(fwt}\OperatorTok{$}\NormalTok{matchme),mean,}\DataTypeTok{na.rm=}\OtherTok{TRUE}\NormalTok{)}
+\NormalTok{  ttt<-}\KeywordTok{tapply}\NormalTok{(fwt}\OperatorTok{$}\NormalTok{fwt,}\KeywordTok{list}\NormalTok{(fwt}\OperatorTok{$}\NormalTok{matchme),sd,}\DataTypeTok{na.rm=}\OtherTok{TRUE}\NormalTok{)}
+\NormalTok{  mean.fwt<-tt[}\KeywordTok{match}\NormalTok{(fwt}\OperatorTok{$}\NormalTok{matchme,}\KeywordTok{names}\NormalTok{(tt))]}
+\NormalTok{  sd.fwt<-ttt[}\KeywordTok{match}\NormalTok{(fwt}\OperatorTok{$}\NormalTok{matchme,}\KeywordTok{names}\NormalTok{(ttt))]}
+\NormalTok{  fwt}\OperatorTok{$}\NormalTok{std.mean.fwt<-(fwt}\OperatorTok{$}\NormalTok{fwt}\OperatorTok{-}\NormalTok{mean.fwt)}\OperatorTok{/}\NormalTok{sd.fwt}
+\NormalTok{  fwt<-fwt[,}\OperatorTok{-}\KeywordTok{c}\NormalTok{(}\DecValTok{4}\OperatorTok{:}\DecValTok{5}\NormalTok{)]}
+  \CommentTok{#omits<-(fwt$SPECIES=="ADPE"&fwt$PROJECT=="CS")|(fwt$SPECIES=="CHPE"&fwt$PROJECT=="COPA")}
+  \CommentTok{#fwt<-fwt[!omits,]}
+  \KeywordTok{names}\NormalTok{(fwt)[}\DecValTok{4}\NormalTok{]<-}\StringTok{"index"}
+\NormalTok{  fwt}\OperatorTok{$}\NormalTok{param=}\KeywordTok{rep}\NormalTok{(}\StringTok{"FWT"}\NormalTok{,}\KeywordTok{dim}\NormalTok{(fwt)[}\DecValTok{1}\NormalTok{])}
+\NormalTok{  fwt}\OperatorTok{$}\NormalTok{season=}\KeywordTok{rep}\NormalTok{(}\StringTok{"S"}\NormalTok{,}\KeywordTok{dim}\NormalTok{(fwt)[}\DecValTok{1}\NormalTok{])}
+  \CommentTok{# make stuff reference the correct "calendar year" for matching up with krill survey and catch data}
+  \CommentTok{# summer indices are relevant to the second year in the split-season designation}
+\NormalTok{  fwt}\OperatorTok{$}\NormalTok{cal.yr<-}\KeywordTok{as.numeric}\NormalTok{(}\KeywordTok{substr}\NormalTok{(fwt}\OperatorTok{$}\NormalTok{YEAR,}\DecValTok{1}\NormalTok{,}\DecValTok{4}\NormalTok{))}\OperatorTok{+}\DecValTok{1}
+  \CommentTok{#print(str(fwt))}
+  \CommentTok{#}
+  \CommentTok{# post-hatch success (phs) (numbers of chicks creched/numbers of chicks hatched)}
+  \CommentTok{# bigger indicates better summer}
+\NormalTok{  phs<-}\KeywordTok{read.csv}\NormalTok{(}\StringTok{"success.csv"}\NormalTok{,}\DataTypeTok{header=}\OtherTok{TRUE}\NormalTok{,}\DataTypeTok{stringsAsFactors =} \OtherTok{FALSE}\NormalTok{)}
+\NormalTok{  phs}\OperatorTok{$}\NormalTok{phs<-phs}\OperatorTok{$}\NormalTok{N_CRECHE}\OperatorTok{/}\NormalTok{phs}\OperatorTok{$}\NormalTok{N_CHICKS}
+\NormalTok{  phs}\OperatorTok{$}\NormalTok{phs<-}\KeywordTok{log}\NormalTok{(phs}\OperatorTok{$}\NormalTok{phs}\OperatorTok{/}\NormalTok{(}\DecValTok{1}\OperatorTok{-}\NormalTok{phs}\OperatorTok{$}\NormalTok{phs))}
+\NormalTok{  phs}\OperatorTok{$}\NormalTok{matchme<-}\KeywordTok{paste}\NormalTok{(phs}\OperatorTok{$}\NormalTok{PROJECT,phs}\OperatorTok{$}\NormalTok{SPECIES,}\DataTypeTok{sep=}\StringTok{"|"}\NormalTok{)}
+\NormalTok{  tt<-}\KeywordTok{tapply}\NormalTok{(phs}\OperatorTok{$}\NormalTok{phs,}\KeywordTok{list}\NormalTok{(phs}\OperatorTok{$}\NormalTok{matchme),mean,}\DataTypeTok{na.rm=}\OtherTok{TRUE}\NormalTok{)}
+\NormalTok{  ttt<-}\KeywordTok{tapply}\NormalTok{(phs}\OperatorTok{$}\NormalTok{phs,}\KeywordTok{list}\NormalTok{(phs}\OperatorTok{$}\NormalTok{matchme),sd,}\DataTypeTok{na.rm=}\OtherTok{TRUE}\NormalTok{)}
+\NormalTok{  mean.phs<-tt[}\KeywordTok{match}\NormalTok{(phs}\OperatorTok{$}\NormalTok{matchme,}\KeywordTok{names}\NormalTok{(tt))]}
+\NormalTok{  sd.phs<-ttt[}\KeywordTok{match}\NormalTok{(phs}\OperatorTok{$}\NormalTok{matchme,}\KeywordTok{names}\NormalTok{(ttt))]}
+\NormalTok{  phs}\OperatorTok{$}\NormalTok{std.logit.phs<-(phs}\OperatorTok{$}\NormalTok{phs}\OperatorTok{-}\NormalTok{mean.phs)}\OperatorTok{/}\NormalTok{sd.phs}
+\NormalTok{  phs<-phs[,}\OperatorTok{-}\KeywordTok{c}\NormalTok{(}\DecValTok{4}\OperatorTok{:}\DecValTok{9}\NormalTok{)]}
+  \KeywordTok{names}\NormalTok{(phs)[}\DecValTok{4}\NormalTok{]<-}\StringTok{"index"}
+\NormalTok{  phs}\OperatorTok{$}\NormalTok{param=}\KeywordTok{rep}\NormalTok{(}\StringTok{"PHS"}\NormalTok{,}\KeywordTok{dim}\NormalTok{(phs)[}\DecValTok{1}\NormalTok{])}
+\NormalTok{  phs}\OperatorTok{$}\NormalTok{season=}\KeywordTok{rep}\NormalTok{(}\StringTok{"S"}\NormalTok{,}\KeywordTok{dim}\NormalTok{(phs)[}\DecValTok{1}\NormalTok{])}
+  \CommentTok{# summer indices are relevant to the second year in the split-season designation}
+\NormalTok{  phs}\OperatorTok{$}\NormalTok{cal.yr<-}\KeywordTok{as.numeric}\NormalTok{(}\KeywordTok{substr}\NormalTok{(phs}\OperatorTok{$}\NormalTok{YEAR,}\DecValTok{1}\NormalTok{,}\DecValTok{4}\NormalTok{))}\OperatorTok{+}\DecValTok{1}
+  \CommentTok{#print(str(phs))}
+  \CommentTok{#}
+  \CommentTok{# trip duration (td)}
+  \CommentTok{# smaller indicates better summer (thus need to switch direction of index)}
+\NormalTok{  td<-}\KeywordTok{read.csv}\NormalTok{(}\StringTok{"tripduration.csv"}\NormalTok{,}\DataTypeTok{header=}\OtherTok{TRUE}\NormalTok{,}\DataTypeTok{stringsAsFactors =} \OtherTok{FALSE}\NormalTok{)}
+\NormalTok{  td<-td[,}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\OperatorTok{:}\DecValTok{3}\NormalTok{,}\DecValTok{8}\NormalTok{)]}
+  \CommentTok{# next line is to make trip duration point in same direction as fwt and phs (max td is 59.95 for all trips)}
+  \CommentTok{# call this "revtd" for "reversed" trip duration}
+\NormalTok{  td[,}\DecValTok{4}\NormalTok{]<-}\DecValTok{60}\OperatorTok{-}\NormalTok{td[,}\DecValTok{4}\NormalTok{]}
+  \KeywordTok{names}\NormalTok{(td)[}\DecValTok{4}\NormalTok{]<-}\StringTok{"revtd"}
+\NormalTok{  td<-}\KeywordTok{tapply}\NormalTok{(td}\OperatorTok{$}\NormalTok{revtd,}\KeywordTok{list}\NormalTok{(td}\OperatorTok{$}\NormalTok{YEAR,td}\OperatorTok{$}\NormalTok{PROJECT,td}\OperatorTok{$}\NormalTok{SPECIES),mean)}
+\NormalTok{  td<-}\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{YEAR=}\KeywordTok{rep}\NormalTok{(}\KeywordTok{dimnames}\NormalTok{(td)[[}\DecValTok{1}\NormalTok{]],}\KeywordTok{dim}\NormalTok{(td)[}\DecValTok{2}\NormalTok{]}\OperatorTok{*}\KeywordTok{dim}\NormalTok{(td)[}\DecValTok{3}\NormalTok{]),}
+                  \DataTypeTok{PROJECT=}\KeywordTok{rep}\NormalTok{(}\KeywordTok{rep}\NormalTok{(}\KeywordTok{dimnames}\NormalTok{(td)[[}\DecValTok{2}\NormalTok{]],}\DataTypeTok{each=}\KeywordTok{dim}\NormalTok{(td)[}\DecValTok{1}\NormalTok{]),}\KeywordTok{dim}\NormalTok{(td)[}\DecValTok{3}\NormalTok{]),}
+                  \DataTypeTok{SPECIES=}\KeywordTok{rep}\NormalTok{(}\KeywordTok{dimnames}\NormalTok{(td)[[}\DecValTok{3}\NormalTok{]],}\DataTypeTok{each=}\KeywordTok{dim}\NormalTok{(td)[}\DecValTok{1}\NormalTok{]}\OperatorTok{*}\KeywordTok{dim}\NormalTok{(td)[}\DecValTok{2}\NormalTok{]),}
+                  \DataTypeTok{revtd=}\KeywordTok{c}\NormalTok{(td),}\DataTypeTok{stringsAsFactors =} \OtherTok{FALSE}\NormalTok{)}
+\NormalTok{  td}\OperatorTok{$}\NormalTok{matchme<-}\KeywordTok{paste}\NormalTok{(td}\OperatorTok{$}\NormalTok{PROJECT,td}\OperatorTok{$}\NormalTok{SPECIES,}\DataTypeTok{sep=}\StringTok{"|"}\NormalTok{)}
+\NormalTok{  tt<-}\KeywordTok{tapply}\NormalTok{(td}\OperatorTok{$}\NormalTok{revtd,}\KeywordTok{list}\NormalTok{(td}\OperatorTok{$}\NormalTok{matchme),mean,}\DataTypeTok{na.rm=}\OtherTok{TRUE}\NormalTok{)}
+\NormalTok{  ttt<-}\KeywordTok{tapply}\NormalTok{(td}\OperatorTok{$}\NormalTok{revtd,}\KeywordTok{list}\NormalTok{(td}\OperatorTok{$}\NormalTok{matchme),sd,}\DataTypeTok{na.rm=}\OtherTok{TRUE}\NormalTok{)}
+\NormalTok{  mean.revtd<-tt[}\KeywordTok{match}\NormalTok{(td}\OperatorTok{$}\NormalTok{matchme,}\KeywordTok{names}\NormalTok{(tt))]}
+\NormalTok{  sd.revtd<-ttt[}\KeywordTok{match}\NormalTok{(td}\OperatorTok{$}\NormalTok{matchme,}\KeywordTok{names}\NormalTok{(ttt))]}
+\NormalTok{  td}\OperatorTok{$}\NormalTok{std.revtd<-(td}\OperatorTok{$}\NormalTok{revtd}\OperatorTok{-}\NormalTok{mean.revtd)}\OperatorTok{/}\NormalTok{sd.revtd}
+\NormalTok{  td<-td[,}\OperatorTok{-}\KeywordTok{c}\NormalTok{(}\DecValTok{4}\OperatorTok{:}\DecValTok{5}\NormalTok{)]}
+  \KeywordTok{names}\NormalTok{(td)[}\DecValTok{4}\NormalTok{]<-}\StringTok{"index"}
+  \CommentTok{#omits<-(td$SPECIES=="ADPE"&td$PROJECT=="CS")|(td$SPECIES=="CHPE"&td$PROJECT=="COPA")}
+  \CommentTok{#td<-td[!omits,]}
+\NormalTok{  td}\OperatorTok{$}\NormalTok{param=}\KeywordTok{rep}\NormalTok{(}\StringTok{"REVTD"}\NormalTok{,}\KeywordTok{dim}\NormalTok{(td)[}\DecValTok{1}\NormalTok{])}
+\NormalTok{  td}\OperatorTok{$}\NormalTok{season=}\KeywordTok{rep}\NormalTok{(}\StringTok{"S"}\NormalTok{,}\KeywordTok{dim}\NormalTok{(td)[}\DecValTok{1}\NormalTok{])}
+  \CommentTok{# summer indices are relevant to the second year in the split-season designation}
+\NormalTok{  td}\OperatorTok{$}\NormalTok{cal.yr<-}\KeywordTok{as.numeric}\NormalTok{(}\KeywordTok{substr}\NormalTok{(td}\OperatorTok{$}\NormalTok{YEAR,}\DecValTok{1}\NormalTok{,}\DecValTok{4}\NormalTok{))}\OperatorTok{+}\DecValTok{1}
+  \CommentTok{#print(str(td))}
+  \CommentTok{#}
+  \CommentTok{# generate the winter indices}
+  \CommentTok{#}
+  \CommentTok{# adult male mass at E1 lay (mml)}
+  \CommentTok{# bigger indicates better winter}
+\NormalTok{  ade1<-}\KeywordTok{read.csv}\NormalTok{(}\StringTok{"massatlay.csv"}\NormalTok{,}\DataTypeTok{header=}\OtherTok{TRUE}\NormalTok{,}\DataTypeTok{stringsAsFactors =} \OtherTok{FALSE}\NormalTok{)}
+\NormalTok{  mml<-ade1[,}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\OperatorTok{:}\DecValTok{3}\NormalTok{,}\DecValTok{5}\NormalTok{)]}
+\NormalTok{  mml<-}\KeywordTok{tapply}\NormalTok{(mml}\OperatorTok{$}\NormalTok{WT_MALE,}\KeywordTok{list}\NormalTok{(mml}\OperatorTok{$}\NormalTok{YEAR,mml}\OperatorTok{$}\NormalTok{PROJECT,mml}\OperatorTok{$}\NormalTok{SPECIES),mean,}\DataTypeTok{na.rm=}\OtherTok{TRUE}\NormalTok{)}
+\NormalTok{  mml<-}\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{YEAR=}\KeywordTok{rep}\NormalTok{(}\KeywordTok{dimnames}\NormalTok{(mml)[[}\DecValTok{1}\NormalTok{]],}\KeywordTok{dim}\NormalTok{(mml)[}\DecValTok{2}\NormalTok{]}\OperatorTok{*}\KeywordTok{dim}\NormalTok{(mml)[}\DecValTok{3}\NormalTok{]),}
+                 \DataTypeTok{PROJECT=}\KeywordTok{rep}\NormalTok{(}\KeywordTok{rep}\NormalTok{(}\KeywordTok{dimnames}\NormalTok{(mml)[[}\DecValTok{2}\NormalTok{]],}\DataTypeTok{each=}\KeywordTok{dim}\NormalTok{(mml)[}\DecValTok{1}\NormalTok{]),}\KeywordTok{dim}\NormalTok{(mml)[}\DecValTok{3}\NormalTok{]),}
+                 \DataTypeTok{SPECIES=}\KeywordTok{rep}\NormalTok{(}\KeywordTok{dimnames}\NormalTok{(mml)[[}\DecValTok{3}\NormalTok{]],}\DataTypeTok{each=}\KeywordTok{dim}\NormalTok{(mml)[}\DecValTok{1}\NormalTok{]}\OperatorTok{*}\KeywordTok{dim}\NormalTok{(mml)[}\DecValTok{2}\NormalTok{]),}
+                 \DataTypeTok{mml=}\KeywordTok{c}\NormalTok{(mml),}\DataTypeTok{stringsAsFactors =} \OtherTok{FALSE}\NormalTok{)}
+\NormalTok{  mml}\OperatorTok{$}\NormalTok{matchme<-}\KeywordTok{paste}\NormalTok{(mml}\OperatorTok{$}\NormalTok{PROJECT,mml}\OperatorTok{$}\NormalTok{SPECIES,}\DataTypeTok{sep=}\StringTok{"|"}\NormalTok{)}
+\NormalTok{  tt<-}\KeywordTok{tapply}\NormalTok{(mml}\OperatorTok{$}\NormalTok{mml,}\KeywordTok{list}\NormalTok{(mml}\OperatorTok{$}\NormalTok{matchme),mean,}\DataTypeTok{na.rm=}\OtherTok{TRUE}\NormalTok{)}
+\NormalTok{  ttt<-}\KeywordTok{tapply}\NormalTok{(mml}\OperatorTok{$}\NormalTok{mml,}\KeywordTok{list}\NormalTok{(mml}\OperatorTok{$}\NormalTok{matchme),sd,}\DataTypeTok{na.rm=}\OtherTok{TRUE}\NormalTok{)}
+\NormalTok{  mean.mml<-tt[}\KeywordTok{match}\NormalTok{(mml}\OperatorTok{$}\NormalTok{matchme,}\KeywordTok{names}\NormalTok{(tt))]}
+\NormalTok{  sd.mml<-ttt[}\KeywordTok{match}\NormalTok{(mml}\OperatorTok{$}\NormalTok{matchme,}\KeywordTok{names}\NormalTok{(ttt))]}
+\NormalTok{  mml}\OperatorTok{$}\NormalTok{std.mean.mml<-(mml}\OperatorTok{$}\NormalTok{mml}\OperatorTok{-}\NormalTok{mean.mml)}\OperatorTok{/}\NormalTok{sd.mml}
+\NormalTok{  mml<-mml[,}\OperatorTok{-}\KeywordTok{c}\NormalTok{(}\DecValTok{4}\OperatorTok{:}\DecValTok{5}\NormalTok{)]}
+  \KeywordTok{names}\NormalTok{(mml)[}\DecValTok{4}\NormalTok{]<-}\StringTok{"index"}
+  \CommentTok{#omits<-(mml$SPECIES=="ADPE"&mml$PROJECT=="CS")|(mml$SPECIES=="CHPE"&mml$PROJECT=="COPA")}
+  \CommentTok{#mml<-mml[!omits,]}
+\NormalTok{  mml}\OperatorTok{$}\NormalTok{param=}\KeywordTok{rep}\NormalTok{(}\StringTok{"MML"}\NormalTok{,}\KeywordTok{dim}\NormalTok{(mml)[}\DecValTok{1}\NormalTok{])}
+\NormalTok{  mml}\OperatorTok{$}\NormalTok{season=}\KeywordTok{rep}\NormalTok{(}\StringTok{"W"}\NormalTok{,}\KeywordTok{dim}\NormalTok{(mml)[}\DecValTok{1}\NormalTok{])}
+  \CommentTok{# most winter indices (except rec) are relevant to the first year in the split-season designation}
+\NormalTok{  mml}\OperatorTok{$}\NormalTok{cal.yr<-}\KeywordTok{as.numeric}\NormalTok{(}\KeywordTok{substr}\NormalTok{(mml}\OperatorTok{$}\NormalTok{YEAR,}\DecValTok{1}\NormalTok{,}\DecValTok{4}\NormalTok{))}
+  \CommentTok{#print(str(mml))}
+  \CommentTok{#}
+  \CommentTok{#}
+  \CommentTok{# adult female mass at E1 lay (fml)}
+  \CommentTok{# bigger indicates better winter}
+\NormalTok{  fml<-ade1[,}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\OperatorTok{:}\DecValTok{3}\NormalTok{,}\DecValTok{6}\NormalTok{)]}
+\NormalTok{  fml<-}\KeywordTok{tapply}\NormalTok{(fml}\OperatorTok{$}\NormalTok{WT_FEMALE,}\KeywordTok{list}\NormalTok{(fml}\OperatorTok{$}\NormalTok{YEAR,fml}\OperatorTok{$}\NormalTok{PROJECT,fml}\OperatorTok{$}\NormalTok{SPECIES),mean,}\DataTypeTok{na.rm=}\OtherTok{TRUE}\NormalTok{)}
+\NormalTok{  fml<-}\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{YEAR=}\KeywordTok{rep}\NormalTok{(}\KeywordTok{dimnames}\NormalTok{(fml)[[}\DecValTok{1}\NormalTok{]],}\KeywordTok{dim}\NormalTok{(fml)[}\DecValTok{2}\NormalTok{]}\OperatorTok{*}\KeywordTok{dim}\NormalTok{(fml)[}\DecValTok{3}\NormalTok{]),}
+                  \DataTypeTok{PROJECT=}\KeywordTok{rep}\NormalTok{(}\KeywordTok{rep}\NormalTok{(}\KeywordTok{dimnames}\NormalTok{(fml)[[}\DecValTok{2}\NormalTok{]],}\DataTypeTok{each=}\KeywordTok{dim}\NormalTok{(fml)[}\DecValTok{1}\NormalTok{]),}\KeywordTok{dim}\NormalTok{(fml)[}\DecValTok{3}\NormalTok{]),}
+                  \DataTypeTok{SPECIES=}\KeywordTok{rep}\NormalTok{(}\KeywordTok{dimnames}\NormalTok{(fml)[[}\DecValTok{3}\NormalTok{]],}\DataTypeTok{each=}\KeywordTok{dim}\NormalTok{(fml)[}\DecValTok{1}\NormalTok{]}\OperatorTok{*}\KeywordTok{dim}\NormalTok{(fml)[}\DecValTok{2}\NormalTok{]),}
+                  \DataTypeTok{fml=}\KeywordTok{c}\NormalTok{(fml),}\DataTypeTok{stringsAsFactors =} \OtherTok{FALSE}\NormalTok{)}
+\NormalTok{  fml}\OperatorTok{$}\NormalTok{matchme<-}\KeywordTok{paste}\NormalTok{(fml}\OperatorTok{$}\NormalTok{PROJECT,fml}\OperatorTok{$}\NormalTok{SPECIES,}\DataTypeTok{sep=}\StringTok{"|"}\NormalTok{)}
+\NormalTok{  tt<-}\KeywordTok{tapply}\NormalTok{(fml}\OperatorTok{$}\NormalTok{fml,}\KeywordTok{list}\NormalTok{(fml}\OperatorTok{$}\NormalTok{matchme),mean,}\DataTypeTok{na.rm=}\OtherTok{TRUE}\NormalTok{)}
+\NormalTok{  ttt<-}\KeywordTok{tapply}\NormalTok{(fml}\OperatorTok{$}\NormalTok{fml,}\KeywordTok{list}\NormalTok{(fml}\OperatorTok{$}\NormalTok{matchme),sd,}\DataTypeTok{na.rm=}\OtherTok{TRUE}\NormalTok{)}
+\NormalTok{  mean.fml<-tt[}\KeywordTok{match}\NormalTok{(fml}\OperatorTok{$}\NormalTok{matchme,}\KeywordTok{names}\NormalTok{(tt))]}
+\NormalTok{  sd.fml<-ttt[}\KeywordTok{match}\NormalTok{(fml}\OperatorTok{$}\NormalTok{matchme,}\KeywordTok{names}\NormalTok{(ttt))]}
+\NormalTok{  fml}\OperatorTok{$}\NormalTok{std.mean.fml<-(fml}\OperatorTok{$}\NormalTok{fml}\OperatorTok{-}\NormalTok{mean.fml)}\OperatorTok{/}\NormalTok{sd.fml}
+\NormalTok{  fml<-fml[,}\OperatorTok{-}\KeywordTok{c}\NormalTok{(}\DecValTok{4}\OperatorTok{:}\DecValTok{5}\NormalTok{)]}
+  \KeywordTok{names}\NormalTok{(fml)[}\DecValTok{4}\NormalTok{]<-}\StringTok{"index"}
+  \CommentTok{#omits<-(fml$SPECIES=="ADPE"&fml$PROJECT=="CS")|(fml$SPECIES=="CHPE"&fml$PROJECT=="COPA")}
+  \CommentTok{#fml<-fml[!omits,]}
+\NormalTok{  fml}\OperatorTok{$}\NormalTok{param=}\KeywordTok{rep}\NormalTok{(}\StringTok{"FML"}\NormalTok{,}\KeywordTok{dim}\NormalTok{(fml)[}\DecValTok{1}\NormalTok{])}
+\NormalTok{  fml}\OperatorTok{$}\NormalTok{season=}\KeywordTok{rep}\NormalTok{(}\StringTok{"W"}\NormalTok{,}\KeywordTok{dim}\NormalTok{(fml)[}\DecValTok{1}\NormalTok{])}
+  \CommentTok{# most winter indices (except rec) are relevant to the first year in the split-season designation}
+\NormalTok{  fml}\OperatorTok{$}\NormalTok{cal.yr<-}\KeywordTok{as.numeric}\NormalTok{(}\KeywordTok{substr}\NormalTok{(fml}\OperatorTok{$}\NormalTok{YEAR,}\DecValTok{1}\NormalTok{,}\DecValTok{4}\NormalTok{))}
+  \CommentTok{#print(str(fml))}
+  \CommentTok{#}
+  \CommentTok{#}
+  \CommentTok{# avg egg density using both eggs (egg)}
+  \CommentTok{# bigger indicates better winter}
+\NormalTok{  e1e2<-}\KeywordTok{read.csv}\NormalTok{(}\StringTok{"egg.csv"}\NormalTok{,}\DataTypeTok{header=}\OtherTok{TRUE}\NormalTok{,}\DataTypeTok{stringsAsFactors =} \OtherTok{FALSE}\NormalTok{)}
+\NormalTok{  egg<-e1e2[,}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\OperatorTok{:}\DecValTok{3}\NormalTok{)]}
+\NormalTok{  egg}\OperatorTok{$}\NormalTok{egg<-(e1e2[,}\DecValTok{5}\NormalTok{]}\OperatorTok{+}\NormalTok{e1e2[,}\DecValTok{7}\NormalTok{])}\OperatorTok{/}\NormalTok{(e1e2[,}\DecValTok{6}\NormalTok{]}\OperatorTok{+}\NormalTok{e1e2[,}\DecValTok{8}\NormalTok{])}
+\NormalTok{  egg<-}\KeywordTok{tapply}\NormalTok{(egg}\OperatorTok{$}\NormalTok{egg,}\KeywordTok{list}\NormalTok{(egg}\OperatorTok{$}\NormalTok{YEAR,egg}\OperatorTok{$}\NormalTok{PROJECT,egg}\OperatorTok{$}\NormalTok{SPECIES),mean,}\DataTypeTok{na.rm=}\OtherTok{TRUE}\NormalTok{)}
+\NormalTok{  egg<-}\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{YEAR=}\KeywordTok{rep}\NormalTok{(}\KeywordTok{dimnames}\NormalTok{(egg)[[}\DecValTok{1}\NormalTok{]],}\KeywordTok{dim}\NormalTok{(egg)[}\DecValTok{2}\NormalTok{]}\OperatorTok{*}\KeywordTok{dim}\NormalTok{(egg)[}\DecValTok{3}\NormalTok{]),}
+                  \DataTypeTok{PROJECT=}\KeywordTok{rep}\NormalTok{(}\KeywordTok{rep}\NormalTok{(}\KeywordTok{dimnames}\NormalTok{(egg)[[}\DecValTok{2}\NormalTok{]],}\DataTypeTok{each=}\KeywordTok{dim}\NormalTok{(egg)[}\DecValTok{1}\NormalTok{]),}\KeywordTok{dim}\NormalTok{(egg)[}\DecValTok{3}\NormalTok{]),}
+                  \DataTypeTok{SPECIES=}\KeywordTok{rep}\NormalTok{(}\KeywordTok{dimnames}\NormalTok{(egg)[[}\DecValTok{3}\NormalTok{]],}\DataTypeTok{each=}\KeywordTok{dim}\NormalTok{(egg)[}\DecValTok{1}\NormalTok{]}\OperatorTok{*}\KeywordTok{dim}\NormalTok{(egg)[}\DecValTok{2}\NormalTok{]),}
+                  \DataTypeTok{egg=}\KeywordTok{c}\NormalTok{(egg),}\DataTypeTok{stringsAsFactors =} \OtherTok{FALSE}\NormalTok{)}
+\NormalTok{  egg}\OperatorTok{$}\NormalTok{matchme<-}\KeywordTok{paste}\NormalTok{(egg}\OperatorTok{$}\NormalTok{PROJECT,egg}\OperatorTok{$}\NormalTok{SPECIES,}\DataTypeTok{sep=}\StringTok{"|"}\NormalTok{)}
+\NormalTok{  tt<-}\KeywordTok{tapply}\NormalTok{(egg}\OperatorTok{$}\NormalTok{egg,}\KeywordTok{list}\NormalTok{(egg}\OperatorTok{$}\NormalTok{matchme),mean,}\DataTypeTok{na.rm=}\OtherTok{TRUE}\NormalTok{)}
+\NormalTok{  ttt<-}\KeywordTok{tapply}\NormalTok{(egg}\OperatorTok{$}\NormalTok{egg,}\KeywordTok{list}\NormalTok{(egg}\OperatorTok{$}\NormalTok{matchme),sd,}\DataTypeTok{na.rm=}\OtherTok{TRUE}\NormalTok{)}
+\NormalTok{  mean.egg<-tt[}\KeywordTok{match}\NormalTok{(egg}\OperatorTok{$}\NormalTok{matchme,}\KeywordTok{names}\NormalTok{(tt))]}
+\NormalTok{  sd.egg<-ttt[}\KeywordTok{match}\NormalTok{(egg}\OperatorTok{$}\NormalTok{matchme,}\KeywordTok{names}\NormalTok{(ttt))]}
+\NormalTok{  egg}\OperatorTok{$}\NormalTok{std.mean.egg<-(egg}\OperatorTok{$}\NormalTok{egg}\OperatorTok{-}\NormalTok{mean.egg)}\OperatorTok{/}\NormalTok{sd.egg}
+\NormalTok{  egg<-egg[,}\OperatorTok{-}\KeywordTok{c}\NormalTok{(}\DecValTok{4}\OperatorTok{:}\DecValTok{5}\NormalTok{)]}
+  \KeywordTok{names}\NormalTok{(egg)[}\DecValTok{4}\NormalTok{]<-}\StringTok{"index"}
+  \CommentTok{#omits<-(egg$SPECIES=="ADPE"&egg$PROJECT=="CS")|(egg$SPECIES=="CHPE"&egg$PROJECT=="COPA")}
+  \CommentTok{#egg<-egg[!omits,]}
+\NormalTok{  egg}\OperatorTok{$}\NormalTok{param=}\KeywordTok{rep}\NormalTok{(}\StringTok{"EGG"}\NormalTok{,}\KeywordTok{dim}\NormalTok{(egg)[}\DecValTok{1}\NormalTok{])}
+\NormalTok{  egg}\OperatorTok{$}\NormalTok{season=}\KeywordTok{rep}\NormalTok{(}\StringTok{"W"}\NormalTok{,}\KeywordTok{dim}\NormalTok{(egg)[}\DecValTok{1}\NormalTok{])}
+  \CommentTok{# most winter indices (except rec) are relevant to the first year in the split-season designation}
+\NormalTok{  egg}\OperatorTok{$}\NormalTok{cal.yr<-}\KeywordTok{as.numeric}\NormalTok{(}\KeywordTok{substr}\NormalTok{(egg}\OperatorTok{$}\NormalTok{YEAR,}\DecValTok{1}\NormalTok{,}\DecValTok{4}\NormalTok{))}
+  \CommentTok{#print(str(egg))}
+  \CommentTok{#}
+  \CommentTok{#}
+  \CommentTok{# clutch initiation date (cid)}
+  \CommentTok{# earlier indicates better winter}
+\NormalTok{  cid<-}\KeywordTok{read.csv}\NormalTok{(}\StringTok{"cid.csv"}\NormalTok{,}\DataTypeTok{header=}\OtherTok{TRUE}\NormalTok{,}\DataTypeTok{stringsAsFactors =} \OtherTok{FALSE}\NormalTok{)[,}\DecValTok{1}\OperatorTok{:}\DecValTok{4}\NormalTok{]}
+  \CommentTok{# next line is to make CID point in same direction as other }
+  \CommentTok{#indices where bigger indicates better conditions (take diff from Dec 31)}
+  \CommentTok{# call this "revcid" for "reversed" CID}
+\NormalTok{  cid[,}\DecValTok{4}\NormalTok{]<-}\KeywordTok{as.vector}\NormalTok{(}\KeywordTok{as.POSIXlt}\NormalTok{(}\KeywordTok{paste}\NormalTok{(}\KeywordTok{substr}\NormalTok{(cid}\OperatorTok{$}\NormalTok{YEAR,}\DecValTok{1}\NormalTok{,}\DecValTok{4}\NormalTok{),}\StringTok{"-12-31"}\NormalTok{,}\DataTypeTok{sep=}\StringTok{""}\NormalTok{))}\OperatorTok{-}\KeywordTok{strptime}\NormalTok{(cid[,}\DecValTok{4}\NormalTok{],}\StringTok{"%m/%e/%Y"}\NormalTok{))}
+  \KeywordTok{names}\NormalTok{(cid)[}\DecValTok{4}\NormalTok{]<-}\StringTok{"revcid"}
+\NormalTok{  cid}\OperatorTok{$}\NormalTok{matchme<-}\KeywordTok{paste}\NormalTok{(cid}\OperatorTok{$}\NormalTok{PROJECT,cid}\OperatorTok{$}\NormalTok{SPECIES,}\DataTypeTok{sep=}\StringTok{"|"}\NormalTok{)}
+\NormalTok{  tt<-}\KeywordTok{tapply}\NormalTok{(cid}\OperatorTok{$}\NormalTok{revcid,}\KeywordTok{list}\NormalTok{(cid}\OperatorTok{$}\NormalTok{matchme),mean,}\DataTypeTok{na.rm=}\OtherTok{TRUE}\NormalTok{)}
+\NormalTok{  ttt<-}\KeywordTok{tapply}\NormalTok{(cid}\OperatorTok{$}\NormalTok{revcid,}\KeywordTok{list}\NormalTok{(cid}\OperatorTok{$}\NormalTok{matchme),sd,}\DataTypeTok{na.rm=}\OtherTok{TRUE}\NormalTok{)}
+\NormalTok{  mean.cid<-tt[}\KeywordTok{match}\NormalTok{(cid}\OperatorTok{$}\NormalTok{matchme,}\KeywordTok{names}\NormalTok{(tt))]}
+\NormalTok{  sd.cid<-ttt[}\KeywordTok{match}\NormalTok{(cid}\OperatorTok{$}\NormalTok{matchme,}\KeywordTok{names}\NormalTok{(ttt))]}
+\NormalTok{  cid}\OperatorTok{$}\NormalTok{std.revcid<-(cid}\OperatorTok{$}\NormalTok{revcid}\OperatorTok{-}\NormalTok{mean.cid)}\OperatorTok{/}\NormalTok{sd.cid}
+\NormalTok{  cid<-cid[,}\OperatorTok{-}\KeywordTok{c}\NormalTok{(}\DecValTok{4}\OperatorTok{:}\DecValTok{5}\NormalTok{)]}
+  \KeywordTok{names}\NormalTok{(cid)[}\DecValTok{4}\NormalTok{]<-}\StringTok{"index"}
+\NormalTok{  cid}\OperatorTok{$}\NormalTok{param=}\KeywordTok{rep}\NormalTok{(}\StringTok{"REVCID"}\NormalTok{,}\KeywordTok{dim}\NormalTok{(cid)[}\DecValTok{1}\NormalTok{])}
+\NormalTok{  cid}\OperatorTok{$}\NormalTok{season=}\KeywordTok{rep}\NormalTok{(}\StringTok{"W"}\NormalTok{,}\KeywordTok{dim}\NormalTok{(cid)[}\DecValTok{1}\NormalTok{])}
+  \CommentTok{# most winter indices (except rec) are relevant to the first year in the split-season designation}
+\NormalTok{  cid}\OperatorTok{$}\NormalTok{cal.yr<-}\KeywordTok{as.numeric}\NormalTok{(}\KeywordTok{substr}\NormalTok{(cid}\OperatorTok{$}\NormalTok{YEAR,}\DecValTok{1}\NormalTok{,}\DecValTok{4}\NormalTok{))}
+  \CommentTok{# uncomment next line if decide to remove gentoos because of their more plastic breeding phenology}
+  \CommentTok{#cid<-cid[cid$SPECIES!="GEPE",]}
+  \CommentTok{#print(str(cid))}
+  \CommentTok{#}
+  \CommentTok{# cohort recruitment (rec)}
+  \CommentTok{# bigger indicates better winter}
+\NormalTok{  rec<-}\KeywordTok{read.csv}\NormalTok{(}\StringTok{"recruitment.csv"}\NormalTok{,}\DataTypeTok{header=}\OtherTok{TRUE}\NormalTok{,}\DataTypeTok{stringsAsFactors =} \OtherTok{FALSE}\NormalTok{)[,}\DecValTok{1}\OperatorTok{:}\DecValTok{4}\NormalTok{]}
+  \KeywordTok{names}\NormalTok{(rec)[}\DecValTok{4}\NormalTok{]<-}\StringTok{"rec"}
+\NormalTok{  rec}\OperatorTok{$}\NormalTok{rec<-}\KeywordTok{log}\NormalTok{(rec}\OperatorTok{$}\NormalTok{rec}\OperatorTok{/}\NormalTok{(}\DecValTok{1}\OperatorTok{-}\NormalTok{rec}\OperatorTok{$}\NormalTok{rec))}
+\NormalTok{  rec}\OperatorTok{$}\NormalTok{matchme<-}\KeywordTok{paste}\NormalTok{(rec}\OperatorTok{$}\NormalTok{PROJECT,rec}\OperatorTok{$}\NormalTok{SPECIES,}\DataTypeTok{sep=}\StringTok{"|"}\NormalTok{)}
+\NormalTok{  tt<-}\KeywordTok{tapply}\NormalTok{(rec}\OperatorTok{$}\NormalTok{rec,}\KeywordTok{list}\NormalTok{(rec}\OperatorTok{$}\NormalTok{matchme),mean,}\DataTypeTok{na.rm=}\OtherTok{TRUE}\NormalTok{)}
+\NormalTok{  ttt<-}\KeywordTok{tapply}\NormalTok{(rec}\OperatorTok{$}\NormalTok{rec,}\KeywordTok{list}\NormalTok{(rec}\OperatorTok{$}\NormalTok{matchme),sd,}\DataTypeTok{na.rm=}\OtherTok{TRUE}\NormalTok{)}
+\NormalTok{  mean.rec<-tt[}\KeywordTok{match}\NormalTok{(rec}\OperatorTok{$}\NormalTok{matchme,}\KeywordTok{names}\NormalTok{(tt))]}
+\NormalTok{  sd.rec<-ttt[}\KeywordTok{match}\NormalTok{(rec}\OperatorTok{$}\NormalTok{matchme,}\KeywordTok{names}\NormalTok{(ttt))]}
+\NormalTok{  rec}\OperatorTok{$}\NormalTok{std.logit.rec<-(rec}\OperatorTok{$}\NormalTok{rec}\OperatorTok{-}\NormalTok{mean.rec)}\OperatorTok{/}\NormalTok{sd.rec}
+\NormalTok{  rec<-rec[,}\OperatorTok{-}\KeywordTok{c}\NormalTok{(}\DecValTok{4}\OperatorTok{:}\DecValTok{5}\NormalTok{)]}
+  \KeywordTok{names}\NormalTok{(rec)[}\DecValTok{4}\NormalTok{]<-}\StringTok{"index"}
+\NormalTok{  rec}\OperatorTok{$}\NormalTok{param=}\KeywordTok{rep}\NormalTok{(}\StringTok{"REC"}\NormalTok{,}\KeywordTok{dim}\NormalTok{(rec)[}\DecValTok{1}\NormalTok{])}
+\NormalTok{  rec}\OperatorTok{$}\NormalTok{season=}\KeywordTok{rep}\NormalTok{(}\StringTok{"W"}\NormalTok{,}\KeywordTok{dim}\NormalTok{(rec)[}\DecValTok{1}\NormalTok{])}
+  \CommentTok{# recruitment is relevant to the second year in the split-season designation (the winter of first independence)}
+\NormalTok{  rec}\OperatorTok{$}\NormalTok{cal.yr<-}\KeywordTok{as.numeric}\NormalTok{(}\KeywordTok{substr}\NormalTok{(rec}\OperatorTok{$}\NormalTok{YEAR,}\DecValTok{1}\NormalTok{,}\DecValTok{4}\NormalTok{))}\OperatorTok{+}\DecValTok{1}
+  \CommentTok{#print(str(rec))}
+  \CommentTok{#}
+  \CommentTok{# read in the krill survey and fishery data}
+  \CommentTok{#}
+  \CommentTok{# krill survey biomass}
+\NormalTok{  survey<-}\KeywordTok{read.csv}\NormalTok{(}\StringTok{"krillsurveywithJoinville.csv"}\NormalTok{,}\DataTypeTok{header=}\OtherTok{TRUE}\NormalTok{,}\DataTypeTok{stringsAsFactors =} \OtherTok{FALSE}\NormalTok{)}
+  \CommentTok{# use next line if want to filter acoustic data to have minimum number of miles (comment out if not desired)}
+  \CommentTok{# as per CSR, 80 nmi would be about equivalent of 2 tracklines in the Bransfield}
+  \CommentTok{#survey<-survey[survey$nmi.count>=80,]}
+  \CommentTok{# could try changing "biomass" in following line to "mean.density.gm2" or "median.density.gm2" but haven't done that}
+  \CommentTok{# change here}
+\NormalTok{  survey.mod =}\StringTok{ }\KeywordTok{as_tibble}\NormalTok{(survey) }\OperatorTok{%>%}
+\StringTok{    }\KeywordTok{group_split}\NormalTok{(gSSMU)}
+  \CommentTok{# 28.7/(28.7+22) #fraction of nmi area # change here}
+\NormalTok{  survey.mod[[}\DecValTok{1}\NormalTok{]]}\OperatorTok{$}\NormalTok{biomass =}\StringTok{ }\NormalTok{survey.mod[[}\DecValTok{1}\NormalTok{]]}\OperatorTok{$}\NormalTok{biomass }\OperatorTok{*}\StringTok{ }\FloatTok{0.566075} 
+  \CommentTok{# 15.8/(15.8+16.4+36.2)fraction of nmi area # change here }
+\NormalTok{  survey.mod[[}\DecValTok{2}\NormalTok{]]}\OperatorTok{$}\NormalTok{biomass =}\StringTok{ }\NormalTok{survey.mod[[}\DecValTok{2}\NormalTok{]]}\OperatorTok{$}\NormalTok{biomass }\OperatorTok{*}\StringTok{ }\FloatTok{0.230994} 
+  \CommentTok{# 22.0/(28.7+22.0) change here}
+\NormalTok{  survey.mod[[}\DecValTok{3}\NormalTok{]]}\OperatorTok{$}\NormalTok{biomass =}\StringTok{ }\NormalTok{survey.mod[[}\DecValTok{3}\NormalTok{]]}\OperatorTok{$}\NormalTok{biomass }\OperatorTok{*}\StringTok{ }\FloatTok{0.433925} 
+  \CommentTok{# change here}
+\NormalTok{  survey.mod[[}\DecValTok{4}\NormalTok{]]}\OperatorTok{$}\NormalTok{biomass =}\StringTok{ }\NormalTok{survey.mod[[}\DecValTok{4}\NormalTok{]]}\OperatorTok{$}\NormalTok{biomass }\OperatorTok{*}\StringTok{ }\DecValTok{1} 
+  \CommentTok{# change here}
+\NormalTok{  survey =}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\KeywordTok{bind_rows}\NormalTok{(survey.mod[[}\DecValTok{1}\NormalTok{]],survey.mod[[}\DecValTok{2}\NormalTok{]],survey.mod[[}\DecValTok{3}\NormalTok{]],survey.mod[[}\DecValTok{4}\NormalTok{]]))  }
+  
+  \CommentTok{# use next line if want to filter acoustic data to have minimum number of miles (comment out if not desired)}
+  \CommentTok{# as per CSR, 80 nmi would be about equivalent of 2 tracklines in the Bransfield}
+  \CommentTok{#survey<-survey[survey$nmi.count>=80,]}
+  \CommentTok{# could try changing "biomass" in following line to "mean.density.gm2" or "median.density.gm2" but haven't done that}
+\NormalTok{    survey<-}\KeywordTok{tapply}\NormalTok{(survey}\OperatorTok{$}\NormalTok{biomass,}\KeywordTok{list}\NormalTok{(survey}\OperatorTok{$}\NormalTok{Year,survey}\OperatorTok{$}\NormalTok{gSSMU),mean,}\DataTypeTok{na.rm=}\OtherTok{TRUE}\NormalTok{)}
+\NormalTok{  survey<-}\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{cal.yr=}\KeywordTok{rep}\NormalTok{(}\KeywordTok{dimnames}\NormalTok{(survey)[[}\DecValTok{1}\NormalTok{]],}\KeywordTok{dim}\NormalTok{(survey)[}\DecValTok{2}\NormalTok{]),}
+                     \DataTypeTok{gSSMU=}\KeywordTok{rep}\NormalTok{(}\KeywordTok{dimnames}\NormalTok{(survey)[[}\DecValTok{2}\NormalTok{]],}\DataTypeTok{each=}\KeywordTok{dim}\NormalTok{(survey)[}\DecValTok{1}\NormalTok{]),}
+                     \DataTypeTok{survey=}\KeywordTok{c}\NormalTok{(survey),}\DataTypeTok{stringsAsFactors =} \OtherTok{FALSE}\NormalTok{)}
+\NormalTok{  survey}\OperatorTok{$}\NormalTok{season<-}\KeywordTok{ifelse}\NormalTok{(survey}\OperatorTok{$}\NormalTok{cal.yr}\OperatorTok{<}\DecValTok{2012}\NormalTok{,}\StringTok{"S"}\NormalTok{,}\StringTok{"W"}\NormalTok{)}
+  \CommentTok{# use next line if want to remove winter survey data altogether (comment out if not desired)}
+  \CommentTok{#survey<-survey[survey$season=="S",]}
+\NormalTok{  survey}\OperatorTok{$}\NormalTok{matchme<-}\KeywordTok{paste}\NormalTok{(survey}\OperatorTok{$}\NormalTok{cal.yr,survey}\OperatorTok{$}\NormalTok{season,survey}\OperatorTok{$}\NormalTok{gSSMU,}\DataTypeTok{sep=}\StringTok{"|"}\NormalTok{)}
+  \CommentTok{#print(str(survey))}
+  \CommentTok{#}
+  \CommentTok{#}
+  \CommentTok{# krill fishery catches}
+\NormalTok{  fishery<-}\KeywordTok{read.csv}\NormalTok{(}\StringTok{"c1.csv"}\NormalTok{,}\DataTypeTok{header=}\OtherTok{TRUE}\NormalTok{,}\DataTypeTok{stringsAsFactors =} \OtherTok{FALSE}\NormalTok{)}
+  \CommentTok{# change here - current modification for March in Winter permutation}
+\NormalTok{  fishery}\OperatorTok{$}\NormalTok{season<-}\KeywordTok{ifelse}\NormalTok{(}\KeywordTok{is.element}\NormalTok{(fishery}\OperatorTok{$}\NormalTok{Month,}\KeywordTok{c}\NormalTok{(}\DecValTok{10}\OperatorTok{:}\DecValTok{12}\NormalTok{,}\DecValTok{1}\OperatorTok{:}\DecValTok{2}\NormalTok{)),}\StringTok{"S"}\NormalTok{,}\StringTok{"W"}\NormalTok{) }\CommentTok{#1:3 if March in Summer}
+\NormalTok{  gSSMU1<-}\KeywordTok{c}\NormalTok{(}\StringTok{"APBSE"}\NormalTok{) }\CommentTok{# change here}
+\NormalTok{  gSSMU2<-}\KeywordTok{c}\NormalTok{(}\StringTok{"APDPW"}\NormalTok{) }\CommentTok{# change here}
+\NormalTok{  gSSMU3<-}\StringTok{"APBSW"} \CommentTok{# change here}
+\NormalTok{  gSSMU4<-}\KeywordTok{c}\NormalTok{(}\StringTok{"APW"}\NormalTok{,}\StringTok{"APE"}\NormalTok{) }\CommentTok{# change here}
+\NormalTok{  fishery}\OperatorTok{$}\NormalTok{gSSMU<-}\KeywordTok{rep}\NormalTok{(}\OtherTok{NA}\NormalTok{,}\KeywordTok{dim}\NormalTok{(fishery)[}\DecValTok{1}\NormalTok{])}
+\NormalTok{  fishery}\OperatorTok{$}\NormalTok{gSSMU<-}\KeywordTok{ifelse}\NormalTok{(}\KeywordTok{is.element}\NormalTok{(fishery}\OperatorTok{$}\NormalTok{AssignedSSMU,gSSMU1),}\DecValTok{1}\NormalTok{,fishery}\OperatorTok{$}\NormalTok{gSSMU)}
+\NormalTok{  fishery}\OperatorTok{$}\NormalTok{gSSMU<-}\KeywordTok{ifelse}\NormalTok{(}\KeywordTok{is.element}\NormalTok{(fishery}\OperatorTok{$}\NormalTok{AssignedSSMU,gSSMU2),}\DecValTok{2}\NormalTok{,fishery}\OperatorTok{$}\NormalTok{gSSMU)}
+\NormalTok{  fishery}\OperatorTok{$}\NormalTok{gSSMU<-}\KeywordTok{ifelse}\NormalTok{(}\KeywordTok{is.element}\NormalTok{(fishery}\OperatorTok{$}\NormalTok{AssignedSSMU,gSSMU3),}\DecValTok{3}\NormalTok{,fishery}\OperatorTok{$}\NormalTok{gSSMU)}
+\NormalTok{  fishery}\OperatorTok{$}\NormalTok{gSSMU<-}\KeywordTok{ifelse}\NormalTok{(}\KeywordTok{is.element}\NormalTok{(fishery}\OperatorTok{$}\NormalTok{AssignedSSMU,gSSMU4),}\DecValTok{4}\NormalTok{,fishery}\OperatorTok{$}\NormalTok{gSSMU)}
+\NormalTok{  fishery<-fishery[}\OperatorTok{!}\KeywordTok{is.na}\NormalTok{(fishery}\OperatorTok{$}\NormalTok{gSSMU),]}
+\NormalTok{  fishery<-}\KeywordTok{tapply}\NormalTok{(fishery}\OperatorTok{$}\NormalTok{TotalCatch,}\KeywordTok{list}\NormalTok{(fishery}\OperatorTok{$}\NormalTok{CalendarYear,fishery}\OperatorTok{$}\NormalTok{gSSMU,fishery}\OperatorTok{$}\NormalTok{season),sum)}
+\NormalTok{  fishery<-}\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{cal.yr=}\KeywordTok{rep}\NormalTok{(}\KeywordTok{dimnames}\NormalTok{(fishery)[[}\DecValTok{1}\NormalTok{]],}\KeywordTok{dim}\NormalTok{(fishery)[}\DecValTok{2}\NormalTok{]}\OperatorTok{*}\KeywordTok{dim}\NormalTok{(fishery)[}\DecValTok{3}\NormalTok{]),}
+                      \DataTypeTok{gSSMU=}\KeywordTok{rep}\NormalTok{(}\KeywordTok{rep}\NormalTok{(}\KeywordTok{dimnames}\NormalTok{(fishery)[[}\DecValTok{2}\NormalTok{]],}\DataTypeTok{each=}\KeywordTok{dim}\NormalTok{(fishery)[}\DecValTok{1}\NormalTok{]),}\KeywordTok{dim}\NormalTok{(fishery)[}\DecValTok{3}\NormalTok{]),}
+                      \DataTypeTok{season=}\KeywordTok{rep}\NormalTok{(}\KeywordTok{dimnames}\NormalTok{(fishery)[[}\DecValTok{3}\NormalTok{]],}\DataTypeTok{each=}\KeywordTok{dim}\NormalTok{(fishery)[}\DecValTok{1}\NormalTok{]}\OperatorTok{*}\KeywordTok{dim}\NormalTok{(fishery)[}\DecValTok{2}\NormalTok{]),}
+                      \DataTypeTok{catch=}\KeywordTok{c}\NormalTok{(fishery),}\DataTypeTok{stringsAsFactors =} \OtherTok{FALSE}\NormalTok{)}
+\NormalTok{  fishery}\OperatorTok{$}\NormalTok{cal.yr<-}\KeywordTok{as.numeric}\NormalTok{(}\KeywordTok{as.character}\NormalTok{(fishery}\OperatorTok{$}\NormalTok{cal.yr))}
+\NormalTok{  fishery}\OperatorTok{$}\NormalTok{gSSMU<-}\KeywordTok{as.numeric}\NormalTok{(}\KeywordTok{as.character}\NormalTok{(fishery}\OperatorTok{$}\NormalTok{gSSMU))}
+\NormalTok{  fishery}\OperatorTok{$}\NormalTok{matchme<-}\KeywordTok{paste}\NormalTok{(fishery}\OperatorTok{$}\NormalTok{cal.yr,fishery}\OperatorTok{$}\NormalTok{season,fishery}\OperatorTok{$}\NormalTok{gSSMU,}\DataTypeTok{sep=}\StringTok{"|"}\NormalTok{)}
+  \CommentTok{#print(str(fishery))}
+  \CommentTok{# now match predator data with krill data}
+\NormalTok{  out<-}\KeywordTok{rbind}\NormalTok{(fwt,phs,td,mml,fml,egg,cid,rec,}\DataTypeTok{make.row.names=}\OtherTok{FALSE}\NormalTok{)}
+  \CommentTok{# all birds from Copa always forage in gSSMU 1 (Bransfield SSMUs)}
+  \CommentTok{# CHPE from Cape Shirreff always forage in gSSMU 2 (Drake Passage SSMUs)}
+  \CommentTok{# GEPE from Cape Shirreff forage in gSSMU 2 during summer and gSSMU 1 during winter}
+  \CommentTok{#out$gSSMU<-ifelse(out$PROJECT=="COPA",1,}
+  \CommentTok{#                  ifelse(out$SPECIES=="CHPE",2,}
+  \CommentTok{#                         ifelse(out$SPECIES=="GEPE"&out$PROJECT=="CS"&out$season=="S",2,1)))}
+\NormalTok{  out}\OperatorTok{$}\NormalTok{gSSMU<-}\KeywordTok{rep}\NormalTok{(}\OtherTok{NA}\NormalTok{,}\KeywordTok{dim}\NormalTok{(out)[}\DecValTok{1}\NormalTok{])}
+\NormalTok{  out}\OperatorTok{$}\NormalTok{gSSMU<-}\KeywordTok{ifelse}\NormalTok{(out}\OperatorTok{$}\NormalTok{SPECIES}\OperatorTok{==}\StringTok{"ADPE"}\OperatorTok{&}\NormalTok{out}\OperatorTok{$}\NormalTok{PROJECT}\OperatorTok{==}\StringTok{"COPA"}\OperatorTok{&}\NormalTok{out}\OperatorTok{$}\NormalTok{season}\OperatorTok{==}\StringTok{"S"}\NormalTok{,}\DecValTok{1}\NormalTok{,out}\OperatorTok{$}\NormalTok{gSSMU)}
+\NormalTok{  out}\OperatorTok{$}\NormalTok{gSSMU<-}\KeywordTok{ifelse}\NormalTok{(out}\OperatorTok{$}\NormalTok{SPECIES}\OperatorTok{==}\StringTok{"ADPE"}\OperatorTok{&}\NormalTok{out}\OperatorTok{$}\NormalTok{PROJECT}\OperatorTok{==}\StringTok{"COPA"}\OperatorTok{&}\NormalTok{out}\OperatorTok{$}\NormalTok{season}\OperatorTok{==}\StringTok{"W"}\NormalTok{,}\OtherTok{NA}\NormalTok{,out}\OperatorTok{$}\NormalTok{gSSMU)}
+\NormalTok{  out}\OperatorTok{$}\NormalTok{gSSMU<-}\KeywordTok{ifelse}\NormalTok{(out}\OperatorTok{$}\NormalTok{SPECIES}\OperatorTok{==}\StringTok{"CHPE"}\OperatorTok{&}\NormalTok{out}\OperatorTok{$}\NormalTok{PROJECT}\OperatorTok{==}\StringTok{"COPA"}\OperatorTok{&}\NormalTok{out}\OperatorTok{$}\NormalTok{season}\OperatorTok{==}\StringTok{"S"}\NormalTok{,}\DecValTok{1}\NormalTok{,out}\OperatorTok{$}\NormalTok{gSSMU)}
+\NormalTok{  out}\OperatorTok{$}\NormalTok{gSSMU<-}\KeywordTok{ifelse}\NormalTok{(out}\OperatorTok{$}\NormalTok{SPECIES}\OperatorTok{==}\StringTok{"CHPE"}\OperatorTok{&}\NormalTok{out}\OperatorTok{$}\NormalTok{PROJECT}\OperatorTok{==}\StringTok{"COPA"}\OperatorTok{&}\NormalTok{out}\OperatorTok{$}\NormalTok{season}\OperatorTok{==}\StringTok{"W"}\NormalTok{,}\OtherTok{NA}\NormalTok{,out}\OperatorTok{$}\NormalTok{gSSMU)}
+\NormalTok{  out}\OperatorTok{$}\NormalTok{gSSMU<-}\KeywordTok{ifelse}\NormalTok{(out}\OperatorTok{$}\NormalTok{SPECIES}\OperatorTok{==}\StringTok{"GEPE"}\OperatorTok{&}\NormalTok{out}\OperatorTok{$}\NormalTok{PROJECT}\OperatorTok{==}\StringTok{"COPA"}\OperatorTok{&}\NormalTok{out}\OperatorTok{$}\NormalTok{season}\OperatorTok{==}\StringTok{"S"}\NormalTok{,}\DecValTok{1}\NormalTok{,out}\OperatorTok{$}\NormalTok{gSSMU)}
+\NormalTok{  out}\OperatorTok{$}\NormalTok{gSSMU<-}\KeywordTok{ifelse}\NormalTok{(out}\OperatorTok{$}\NormalTok{SPECIES}\OperatorTok{==}\StringTok{"GEPE"}\OperatorTok{&}\NormalTok{out}\OperatorTok{$}\NormalTok{PROJECT}\OperatorTok{==}\StringTok{"COPA"}\OperatorTok{&}\NormalTok{out}\OperatorTok{$}\NormalTok{season}\OperatorTok{==}\StringTok{"W"}\NormalTok{,}\DecValTok{1}\NormalTok{,out}\OperatorTok{$}\NormalTok{gSSMU)}
+\NormalTok{  out}\OperatorTok{$}\NormalTok{gSSMU<-}\KeywordTok{ifelse}\NormalTok{(out}\OperatorTok{$}\NormalTok{SPECIES}\OperatorTok{==}\StringTok{"CHPE"}\OperatorTok{&}\NormalTok{out}\OperatorTok{$}\NormalTok{PROJECT}\OperatorTok{==}\StringTok{"CS"}\OperatorTok{&}\NormalTok{out}\OperatorTok{$}\NormalTok{season}\OperatorTok{==}\StringTok{"S"}\NormalTok{,}\DecValTok{2}\NormalTok{,out}\OperatorTok{$}\NormalTok{gSSMU)}
+\NormalTok{  out}\OperatorTok{$}\NormalTok{gSSMU<-}\KeywordTok{ifelse}\NormalTok{(out}\OperatorTok{$}\NormalTok{SPECIES}\OperatorTok{==}\StringTok{"CHPE"}\OperatorTok{&}\NormalTok{out}\OperatorTok{$}\NormalTok{PROJECT}\OperatorTok{==}\StringTok{"CS"}\OperatorTok{&}\NormalTok{out}\OperatorTok{$}\NormalTok{season}\OperatorTok{==}\StringTok{"W"}\NormalTok{,}\OtherTok{NA}\NormalTok{,out}\OperatorTok{$}\NormalTok{gSSMU)}
+\NormalTok{  out}\OperatorTok{$}\NormalTok{gSSMU<-}\KeywordTok{ifelse}\NormalTok{(out}\OperatorTok{$}\NormalTok{SPECIES}\OperatorTok{==}\StringTok{"GEPE"}\OperatorTok{&}\NormalTok{out}\OperatorTok{$}\NormalTok{PROJECT}\OperatorTok{==}\StringTok{"CS"}\OperatorTok{&}\NormalTok{out}\OperatorTok{$}\NormalTok{season}\OperatorTok{==}\StringTok{"S"}\NormalTok{,}\DecValTok{2}\NormalTok{,out}\OperatorTok{$}\NormalTok{gSSMU)}
+  \CommentTok{# use following line if GEPE at CS forage in gSSMU 2 during winter}
+  \CommentTok{#out$gSSMU<-ifelse(out$SPECIES=="GEPE"&out$PROJECT=="CS"&out$season=="W",2,out$gSSMU)}
+  \CommentTok{# use following line if GEPE at CS forage in gSSMU 1 during winter}
+\NormalTok{  out}\OperatorTok{$}\NormalTok{gSSMU<-}\KeywordTok{ifelse}\NormalTok{(out}\OperatorTok{$}\NormalTok{SPECIES}\OperatorTok{==}\StringTok{"GEPE"}\OperatorTok{&}\NormalTok{out}\OperatorTok{$}\NormalTok{PROJECT}\OperatorTok{==}\StringTok{"CS"}\OperatorTok{&}\NormalTok{out}\OperatorTok{$}\NormalTok{season}\OperatorTok{==}\StringTok{"W"}\NormalTok{,}\DecValTok{3}\NormalTok{,out}\OperatorTok{$}\NormalTok{gSSMU)}
+  \CommentTok{#}
+\NormalTok{  out}\OperatorTok{$}\NormalTok{matchme<-}\KeywordTok{paste}\NormalTok{(out}\OperatorTok{$}\NormalTok{cal.yr,out}\OperatorTok{$}\NormalTok{season,out}\OperatorTok{$}\NormalTok{gSSMU,}\DataTypeTok{sep=}\StringTok{"|"}\NormalTok{)}
+\NormalTok{  out}\OperatorTok{$}\NormalTok{survey<-survey}\OperatorTok{$}\NormalTok{survey[}\KeywordTok{match}\NormalTok{(out}\OperatorTok{$}\NormalTok{matchme,survey}\OperatorTok{$}\NormalTok{matchme)]}
+\NormalTok{  out}\OperatorTok{$}\NormalTok{catch<-fishery}\OperatorTok{$}\NormalTok{catch[}\KeywordTok{match}\NormalTok{(out}\OperatorTok{$}\NormalTok{matchme,fishery}\OperatorTok{$}\NormalTok{matchme)]}
+  \CommentTok{#}
+\NormalTok{  out<-out[}\OperatorTok{!}\KeywordTok{is.na}\NormalTok{(out}\OperatorTok{$}\NormalTok{gSSMU),]}
+  
+  \CommentTok{# pull in the environmental indices}
+  \CommentTok{#}
+  \CommentTok{# SOUTHERN ANNULAR MODE}
+\NormalTok{  sam<-}\KeywordTok{read.csv}\NormalTok{(}\StringTok{"sam.csv"}\NormalTok{)}
+  \KeywordTok{names}\NormalTok{(sam)<-}\KeywordTok{c}\NormalTok{(}\StringTok{"yr"}\NormalTok{,}\StringTok{"mo"}\NormalTok{,}\StringTok{"sam"}\NormalTok{)}
+\NormalTok{  sam}\OperatorTok{$}\NormalTok{season<-}\KeywordTok{ifelse}\NormalTok{(}\KeywordTok{is.element}\NormalTok{(sam}\OperatorTok{$}\NormalTok{mo,}\KeywordTok{c}\NormalTok{(}\DecValTok{10}\OperatorTok{:}\DecValTok{12}\NormalTok{,}\DecValTok{1}\OperatorTok{:}\DecValTok{3}\NormalTok{)),}\StringTok{"S"}\NormalTok{,}\StringTok{"W"}\NormalTok{)}
+\NormalTok{  sam}\OperatorTok{$}\NormalTok{YEAR<-}\KeywordTok{ifelse}\NormalTok{(}\KeywordTok{is.element}\NormalTok{(sam}\OperatorTok{$}\NormalTok{mo,}\DecValTok{10}\OperatorTok{:}\DecValTok{12}\NormalTok{),sam}\OperatorTok{$}\NormalTok{yr}\OperatorTok{+}\DecValTok{1}\NormalTok{,sam}\OperatorTok{$}\NormalTok{yr)}
+\NormalTok{  sam<-}\KeywordTok{tapply}\NormalTok{(sam}\OperatorTok{$}\NormalTok{sam,}\KeywordTok{list}\NormalTok{(sam}\OperatorTok{$}\NormalTok{YEAR,sam}\OperatorTok{$}\NormalTok{season),mean)}
+\NormalTok{  sam<-}\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{YEAR=}\KeywordTok{rep}\NormalTok{(}\KeywordTok{dimnames}\NormalTok{(sam)[[}\DecValTok{1}\NormalTok{]],}\DecValTok{2}\NormalTok{),}\DataTypeTok{season=}\KeywordTok{rep}\NormalTok{(}\KeywordTok{dimnames}\NormalTok{(sam)[[}\DecValTok{2}\NormalTok{]],}\DataTypeTok{each=}\KeywordTok{dim}\NormalTok{(sam)[}\DecValTok{1}\NormalTok{]),}\DataTypeTok{sam=}\KeywordTok{c}\NormalTok{(sam))}
+\NormalTok{  out}\OperatorTok{$}\NormalTok{sam<-sam}\OperatorTok{$}\NormalTok{sam[}\KeywordTok{match}\NormalTok{(}\KeywordTok{paste}\NormalTok{(out}\OperatorTok{$}\NormalTok{cal.yr,out}\OperatorTok{$}\NormalTok{season,}\DataTypeTok{sep=}\StringTok{"|"}\NormalTok{),}\KeywordTok{paste}\NormalTok{(sam}\OperatorTok{$}\NormalTok{YEAR,sam}\OperatorTok{$}\NormalTok{season,}\DataTypeTok{sep=}\StringTok{"|"}\NormalTok{))]}
+\NormalTok{  out}\OperatorTok{$}\NormalTok{sam.sign<-}\KeywordTok{ifelse}\NormalTok{(out}\OperatorTok{$}\NormalTok{sam}\OperatorTok{<}\DecValTok{0}\NormalTok{,}\StringTok{"Neg"}\NormalTok{,}\StringTok{"Pos"}\NormalTok{)}
+  \CommentTok{#}
+  \CommentTok{# OCEANIC NINO INDEX}
+\NormalTok{  oni<-}\KeywordTok{read.csv}\NormalTok{(}\StringTok{"oni.csv"}\NormalTok{,}\DataTypeTok{stringsAsFactors =} \OtherTok{FALSE}\NormalTok{)}
+\NormalTok{  oni}\OperatorTok{$}\NormalTok{yr<-}\KeywordTok{ifelse}\NormalTok{(}\KeywordTok{is.element}\NormalTok{(oni}\OperatorTok{$}\NormalTok{SEAS,}\KeywordTok{c}\NormalTok{(}\StringTok{"OND"}\NormalTok{,}\StringTok{"NDJ"}\NormalTok{)),oni}\OperatorTok{$}\NormalTok{YR}\OperatorTok{+}\DecValTok{1}\NormalTok{,oni}\OperatorTok{$}\NormalTok{YR)}
+\NormalTok{  oni}\OperatorTok{$}\NormalTok{season<-}\KeywordTok{ifelse}\NormalTok{(}\KeywordTok{is.element}\NormalTok{(oni}\OperatorTok{$}\NormalTok{SEAS,}\KeywordTok{c}\NormalTok{(}\StringTok{"OND"}\NormalTok{,}\StringTok{"NDJ"}\NormalTok{,}\StringTok{"DJF"}\NormalTok{,}\StringTok{"JFM"}\NormalTok{)),}\StringTok{"S"}\NormalTok{,}\OtherTok{NA}\NormalTok{)}
+\NormalTok{  oni}\OperatorTok{$}\NormalTok{season<-}\KeywordTok{ifelse}\NormalTok{(}\KeywordTok{is.element}\NormalTok{(oni}\OperatorTok{$}\NormalTok{SEAS,}\KeywordTok{c}\NormalTok{(}\StringTok{"AMJ"}\NormalTok{,}\StringTok{"MJJ"}\NormalTok{,}\StringTok{"JJA"}\NormalTok{,}\StringTok{"JAS"}\NormalTok{)),}\StringTok{"W"}\NormalTok{,oni}\OperatorTok{$}\NormalTok{season)}
+\NormalTok{  oni<-}\KeywordTok{na.omit}\NormalTok{(oni)}
+\NormalTok{  oni<-}\KeywordTok{tapply}\NormalTok{(oni}\OperatorTok{$}\NormalTok{ANOM,}\KeywordTok{list}\NormalTok{(oni}\OperatorTok{$}\NormalTok{yr,oni}\OperatorTok{$}\NormalTok{season),mean)}
+\NormalTok{  oni<-}\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{yr=}\KeywordTok{rep}\NormalTok{(}\KeywordTok{dimnames}\NormalTok{(oni)[[}\DecValTok{1}\NormalTok{]],}\DecValTok{2}\NormalTok{),}\DataTypeTok{season=}\KeywordTok{rep}\NormalTok{(}\KeywordTok{dimnames}\NormalTok{(oni)[[}\DecValTok{2}\NormalTok{]],}\DataTypeTok{each=}\KeywordTok{dim}\NormalTok{(oni)[}\DecValTok{1}\NormalTok{]),}\DataTypeTok{oni=}\KeywordTok{c}\NormalTok{(oni))}
+\NormalTok{  out}\OperatorTok{$}\NormalTok{oni<-oni}\OperatorTok{$}\NormalTok{oni[}\KeywordTok{match}\NormalTok{(}\KeywordTok{paste}\NormalTok{(out}\OperatorTok{$}\NormalTok{cal.yr,out}\OperatorTok{$}\NormalTok{season,}\DataTypeTok{sep=}\StringTok{"|"}\NormalTok{),}\KeywordTok{paste}\NormalTok{(oni}\OperatorTok{$}\NormalTok{yr,oni}\OperatorTok{$}\NormalTok{season,}\DataTypeTok{sep=}\StringTok{"|"}\NormalTok{))]}
+\NormalTok{  out}\OperatorTok{$}\NormalTok{oni.class<-}\KeywordTok{ifelse}\NormalTok{(out}\OperatorTok{$}\NormalTok{oni }\OperatorTok{<=}\StringTok{ }\FloatTok{-0.5}\NormalTok{, }\StringTok{"Cool"}\NormalTok{,}\StringTok{"Neutral"}\NormalTok{)}
+\NormalTok{  out}\OperatorTok{$}\NormalTok{oni.class<-}\KeywordTok{ifelse}\NormalTok{(out}\OperatorTok{$}\NormalTok{oni }\OperatorTok{>=}\FloatTok{0.5}\NormalTok{, }\StringTok{"Warm"}\NormalTok{,out}\OperatorTok{$}\NormalTok{oni.class)}
+  \CommentTok{#}
+  \CommentTok{#}
+  \CommentTok{# some clean up}
+  \CommentTok{#}
+\NormalTok{  out}\OperatorTok{$}\NormalTok{catch[}\KeywordTok{is.na}\NormalTok{(out}\OperatorTok{$}\NormalTok{catch)]<-}\DecValTok{0}
+\NormalTok{  out<-out[}\OperatorTok{!}\KeywordTok{is.na}\NormalTok{(out}\OperatorTok{$}\NormalTok{sam),]}
+\NormalTok{  out<-out[}\OperatorTok{!}\KeywordTok{is.nan}\NormalTok{(out}\OperatorTok{$}\NormalTok{index),]}
+\NormalTok{  out<-out[}\OperatorTok{!}\KeywordTok{is.na}\NormalTok{(out}\OperatorTok{$}\NormalTok{index),]}
+  
+  \KeywordTok{write.csv}\NormalTok{(out, }\DataTypeTok{file =} \StringTok{"out.csv"}\NormalTok{)  }
+  \CommentTok{# will not try to impute missing winter surveys}
+  \CommentTok{# but will keep winter performance indices if want to plot them}
+  \ControlFlowTok{if}\NormalTok{(}\OperatorTok{!}\NormalTok{plot.winter)\{out<-out[}\OperatorTok{!}\NormalTok{(}\KeywordTok{is.na}\NormalTok{(out}\OperatorTok{$}\NormalTok{survey)}\OperatorTok{&}\NormalTok{out}\OperatorTok{$}\NormalTok{season}\OperatorTok{==}\StringTok{"W"}\NormalTok{),]\}}
+  \CommentTok{#}
+  \CommentTok{# if require minimum number of data points per study}
+  \ControlFlowTok{if}\NormalTok{(}\OperatorTok{!}\KeywordTok{is.null}\NormalTok{(trim))\{}
+\NormalTok{    study<-}\KeywordTok{as.numeric}\NormalTok{(}\KeywordTok{factor}\NormalTok{(}\KeywordTok{paste}\NormalTok{(out}\OperatorTok{$}\NormalTok{PROJECT,out}\OperatorTok{$}\NormalTok{SPECIES,out}\OperatorTok{$}\NormalTok{param,}\DataTypeTok{sep=}\StringTok{"|"}\NormalTok{)))}
+\NormalTok{    study.n<-}\KeywordTok{table}\NormalTok{(study)}
+\NormalTok{    keepers<-}\KeywordTok{as.numeric}\NormalTok{(}\KeywordTok{as.vector}\NormalTok{(}\KeywordTok{dimnames}\NormalTok{(study.n[study.n}\OperatorTok{>}\NormalTok{trim])[[}\DecValTok{1}\NormalTok{]]))}
+\NormalTok{    out<-out[}\KeywordTok{is.element}\NormalTok{(study,keepers),]}
+\NormalTok{  \}}
+\NormalTok{  out}
+\NormalTok{\}}
+\NormalTok{junk<-}\KeywordTok{make.localhr.data}\NormalTok{()}
+\CommentTok{# write out data}
+\KeywordTok{write.csv}\NormalTok{(junk, }\DataTypeTok{file =} \StringTok{"junk.csv"}\NormalTok{)  }
+\NormalTok{modelstring<-}\StringTok{"}
+\StringTok{ }
+\StringTok{      model\{}
+\StringTok{    for(i in 1:nsummerobs)\{}
+\StringTok{      lower[i]<-max(10000,catch[i])}
+\StringTok{      summer[i]~dlnorm(mulogsummer[gssmu[i],samclass[i]],taulogsummer) T(lower[i],100000000)}
+\StringTok{    \}}
+\StringTok{    }
+\StringTok{    for(i in 1:2)\{ # two gSSMUs #change here}
+\StringTok{      for(j in 1:2)\{ # two SAM classes}
+\StringTok{        mulogsummer[i,j]~dunif(0.1*meanlogsummer[i,j],10*meanlogsummer[i,j])}
+\StringTok{      \}}
+\StringTok{    \}}
+\StringTok{    taulogsummer<-pow(sigmalogsummer,-2)}
+\StringTok{    sigmalogsummer~dunif(0.1*sdlogsummer,10*sdlogsummer)}
+\StringTok{    for(i in 1:nsummerobs)\{}
+\StringTok{      hr.summer[i]<-ifelse(impute.me[i]==1,catch[i]/summer[i],1)}
+\StringTok{      bmass.summer[i]<-ifelse(impute.me[i]==1,summer[i],1)}
+\StringTok{    \}}
+\StringTok{    for(i in (nsummerobs+1):nobs)\{}
+\StringTok{      hr.summer[i]<-0}
+\StringTok{      bmass.summer[i]<-0 }
+\StringTok{    \}}
+
+\StringTok{    for(i in 1:nobs)\{}
+\StringTok{      hr[i]<-ifelse(impute.me[i]==1,hr.summer[i],catch[i]/survey[i])}
+\StringTok{      hrclass[i]<-ifelse(hr[i]<=0.01,1,ifelse(hr[i]>=0.1,3,2))}
+\StringTok{      bmass[i]<-ifelse(impute.me[i]==1,bmass.summer[i],survey[i])}
+\StringTok{      bclass[i]<-ifelse(bmass[i]<=1000000,1,2) }
+\StringTok{    \}}
+
+\StringTok{   }
+\StringTok{    for(i in 1:nobs)\{}
+\StringTok{      X[i,1]<-1.0     # intercept}
+\StringTok{      X[i,2]<-equals(bclass[i],2)-equals(bclass[i],1) # b2}
+\StringTok{      X[i,3]<-equals(hrclass[i],2)-equals(hrclass[i],1) # hr2}
+\StringTok{      X[i,4]<-equals(hrclass[i],3)-equals(hrclass[i],1) # hr3}
+\StringTok{      X[i,5]<-equals(oniclass[i],2)-equals(oniclass[i],1) # o2}
+\StringTok{      X[i,6]<-equals(oniclass[i],3)-equals(oniclass[i],1) # o3}
+\StringTok{    \}}
+\StringTok{  }
+\StringTok{ }
+\StringTok{    for(i in 1:nobs)\{}
+\StringTok{      index[i]~dnorm(mu[i],tau.index)}
+\StringTok{      mu[i] <- inprod(X[i,],beta[])}
+\StringTok{    \}}
+\StringTok{    }
+\StringTok{    beta[1]~dnorm(0, 0.0001)}
+\StringTok{    }
+\StringTok{    beta[2]~dnorm(0, 0.0001)}
+\StringTok{    }
+\StringTok{    beta[3]~dnorm(0, 0.0001)}
+\StringTok{    beta[4]~dnorm(0, 0.0001)}
+
+\StringTok{    beta[5]~dnorm(0, 0.0001)}
+\StringTok{    beta[6]~dnorm(0, 0.0001)}
+\StringTok{    }
+
+\StringTok{    # half-cauchy for variation among indices}
+\StringTok{    tau.index<-pow(sd.index,-2)}
+\StringTok{    #sd.index~dunif(0,10)}
+\StringTok{    sd.index~dt(0,t.tau.index,1)T(0,)}
+\StringTok{    t.tau.index<-pow(t.sd.index,-2)}
+\StringTok{    # hyperprior for half-cauchy scale}
+\StringTok{    t.sd.index~dunif(0,2)}
+
+\StringTok{    # derived quantities}
+\StringTok{    # first the design matrix for easily interpreting effects}
+\StringTok{    # row 1 -- ONI=cool, LKB<=1Mt, LHR<=0.01 (reference or best case)}
+\StringTok{    # row 2 -- ONI=cool, LKB>1Mt, 0.01<LHR<0.1}
+\StringTok{    # row 3 -- ONI=cool, LKB<=1Mt, LHR>=0.1}
+\StringTok{    # row 4 -- ONI=cool, LKB>1Mt, LHR<=0.01}
+\StringTok{    # row 5 -- ONI=cool, LKB<=1Mt, 0.01<LHR<0.1}
+\StringTok{    # row 6 -- ONI=cool, LKB>1Mt, LHR>=0.1}
+\StringTok{    # row 7 -- ONI=neutral, LKB<=1Mt, LHR<=0.01}
+\StringTok{    # row 8 -- ONI=neutral, LKB>1Mt, 0.01<LHR<0.1}
+\StringTok{    # row 9 -- ONI=neutral, LKB<=1Mt, LHR>=0.1}
+\StringTok{    # row 10 -- ONI=neutral, LKB>1Mt, LHR<=0.01}
+\StringTok{    # row 11 -- ONI=neutral, LKB<=1Mt, 0.01<LHR<0.1}
+\StringTok{    # row 12 -- ONI=neutral, LKB>1Mt, LHR>=0.1 (worst case)}
+\StringTok{    # row 13 -- ONI=warm, LKB<=1Mt, LHR<=0.01}
+\StringTok{    # row 14 -- ONI=warm, LKB>1Mt, 0.01<LHR<0.1}
+\StringTok{    # row 15 -- ONI=warm, LKB<=1Mt, LHR>=0.1}
+\StringTok{    # row 16 -- ONI=warm, LKB>1Mt, LHR<=0.01}
+\StringTok{    # row 17 -- ONI=warm, LKB<=1Mt, 0.01<LHR<0.1}
+\StringTok{    # row 18 -- ONI=warm, LKB>1Mt, LHR>=0.1}
+\StringTok{    for(i in 1:18)\{}
+\StringTok{      mu.new[i]<-inprod(predX[i,],beta[]) # posterior expectation at new data points}
+\StringTok{      index.new[i]~dnorm(mu.new[i],tau.index) # posterior predictive}
+\StringTok{    \}}
+\StringTok{    }
+\StringTok{    # some interesting probabilities}
+\StringTok{    }
+\StringTok{    # that effects change expected performance relative to the reference case}
+\StringTok{    # high biomass}
+\StringTok{    prob[1]<-ifelse(mu.new[2]<mu.new[1],1,0)}
+\StringTok{    prob.new[1]<-ifelse(index.new[2]<index.new[1],1,0)}
+\StringTok{    # med hr}
+\StringTok{    prob[2]<-ifelse(mu.new[3]<mu.new[1],1,0)}
+\StringTok{    prob.new[2]<-ifelse(index.new[3]<index.new[1],1,0)}
+\StringTok{    # high hr}
+\StringTok{    prob[3]<-ifelse(mu.new[5]<mu.new[1],1,0)}
+\StringTok{    prob.new[3]<-ifelse(index.new[5]<index.new[1],1,0)}
+\StringTok{    # neutral ONI}
+\StringTok{    prob[4]<-ifelse(mu.new[7]<mu.new[1],1,0)}
+\StringTok{    prob.new[4]<-ifelse(index.new[7]<index.new[1],1,0)}
+\StringTok{    # warm ONI}
+\StringTok{    prob[5]<-ifelse(mu.new[13]<mu.new[1],1,0)}
+\StringTok{    prob.new[5]<-ifelse(index.new[13]<index.new[1],1,0)}
+\StringTok{    # worst case}
+\StringTok{    prob[6]<-ifelse(mu.new[12]<mu.new[1],1,0)}
+\StringTok{    prob.new[6]<-ifelse(index.new[12]<index.new[1],1,0)}
+\StringTok{    }
+\StringTok{    # that other effects are more extreme than environmental effects}
+\StringTok{    # med hr has more negative effect than neutral ONI}
+\StringTok{    prob[7]<-ifelse(mu.new[3]<mu.new[7],1,0)}
+\StringTok{    prob.new[7]<-ifelse(index.new[3]<index.new[7],1,0)}
+\StringTok{    # that high hr has more negative effect than neutral ONI}
+\StringTok{    prob[8]<-ifelse(mu.new[5]<mu.new[7],1,0)}
+\StringTok{    prob.new[8]<-ifelse(index.new[5]<index.new[7],1,0)}
+\StringTok{    # that high krill biomass has more negative effect than neutral ONI}
+\StringTok{    prob[9]<-ifelse(mu.new[2]<mu.new[7],1,0)}
+\StringTok{    prob.new[9]<-ifelse(index.new[2]<index.new[7],1,0)}
+\StringTok{    # that med hr has more negative effect than warm ONI}
+\StringTok{    prob[10]<-ifelse(mu.new[3]<mu.new[13],1,0)}
+\StringTok{    prob.new[10]<-ifelse(index.new[3]<index.new[13],1,0)}
+\StringTok{    # that high hr has more negative effect than warm ONI}
+\StringTok{    prob[11]<-ifelse(mu.new[5]<mu.new[13],1,0)}
+\StringTok{    prob.new[11]<-ifelse(index.new[5]<index.new[13],1,0)}
+\StringTok{    # that high krill biomass has more negative effect than warm ONI}
+\StringTok{    prob[12]<-ifelse(mu.new[2]<mu.new[13],1,0)}
+\StringTok{    prob.new[12]<-ifelse(index.new[2]<index.new[13],1,0)}
+\StringTok{    }
+\StringTok{    }
+\StringTok{    # that effects change expected performance relative to long-term mean}
+\StringTok{    # reference case}
+\StringTok{    prob[13]<-ifelse(mu.new[1]<0,1,0)}
+\StringTok{    prob.new[13]<-ifelse(index.new[1]<0,1,0)}
+\StringTok{    # high biomass}
+\StringTok{    prob[14]<-ifelse(mu.new[2]<0,1,0)}
+\StringTok{    prob.new[14]<-ifelse(index.new[2]<0,1,0)}
+\StringTok{    # med hr}
+\StringTok{    prob[15]<-ifelse(mu.new[3]<0,1,0)}
+\StringTok{    prob.new[15]<-ifelse(index.new[3]<0,1,0)}
+\StringTok{    # high hr}
+\StringTok{    prob[16]<-ifelse(mu.new[5]<0,1,0)}
+\StringTok{    prob.new[16]<-ifelse(index.new[5]<0,1,0)}
+\StringTok{    # neutral ONI}
+\StringTok{    prob[17]<-ifelse(mu.new[7]<0,1,0)}
+\StringTok{    prob.new[17]<-ifelse(index.new[7]<0,1,0)}
+\StringTok{    # warm ONI}
+\StringTok{    prob[18]<-ifelse(mu.new[13]<0,1,0)}
+\StringTok{    prob.new[18]<-ifelse(index.new[13]<0,1,0)}
+\StringTok{    # worst case}
+\StringTok{    prob[19]<-ifelse(mu.new[12]<0,1,0)}
+\StringTok{    prob.new[19]<-ifelse(index.new[12]<0,1,0)}
+
+\StringTok{  \}}
+\StringTok{"}
+\CommentTok{# objects needed to fit the model and monitor variables of interest}
+\CommentTok{# there's a trick here -- if is.na(survey) then make survey a big number to prevent}
+\CommentTok{# division by zero during imputation procedure these will either be replaced}
+\CommentTok{# by imputed values (summer surveys) or not used (winter surveys)}
+\CommentTok{#}
+
+\NormalTok{pred.matrix<-}\KeywordTok{matrix}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\OperatorTok{-}\DecValTok{1}\NormalTok{,}\OperatorTok{-}\DecValTok{1}\NormalTok{,}\OperatorTok{-}\DecValTok{1}\NormalTok{,}\OperatorTok{-}\DecValTok{1}\NormalTok{,}\OperatorTok{-}\DecValTok{1}\NormalTok{,}
+                      \DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{,}\OperatorTok{-}\DecValTok{1}\NormalTok{,}\OperatorTok{-}\DecValTok{1}\NormalTok{,}\OperatorTok{-}\DecValTok{1}\NormalTok{,}\OperatorTok{-}\DecValTok{1}\NormalTok{,}
+                      \DecValTok{1}\NormalTok{,}\OperatorTok{-}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{0}\NormalTok{,}\OperatorTok{-}\DecValTok{1}\NormalTok{,}\OperatorTok{-}\DecValTok{1}\NormalTok{,}
+                      \DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{0}\NormalTok{,}\OperatorTok{-}\DecValTok{1}\NormalTok{,}\OperatorTok{-}\DecValTok{1}\NormalTok{,}
+                      \DecValTok{1}\NormalTok{,}\OperatorTok{-}\DecValTok{1}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{1}\NormalTok{,}\OperatorTok{-}\DecValTok{1}\NormalTok{,}\OperatorTok{-}\DecValTok{1}\NormalTok{,}
+                      \DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{1}\NormalTok{,}\OperatorTok{-}\DecValTok{1}\NormalTok{,}\OperatorTok{-}\DecValTok{1}\NormalTok{,}
+                      \DecValTok{1}\NormalTok{,}\OperatorTok{-}\DecValTok{1}\NormalTok{,}\OperatorTok{-}\DecValTok{1}\NormalTok{,}\OperatorTok{-}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{0}\NormalTok{,}
+                      \DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{,}\OperatorTok{-}\DecValTok{1}\NormalTok{,}\OperatorTok{-}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{0}\NormalTok{,}
+                      \DecValTok{1}\NormalTok{,}\OperatorTok{-}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{0}\NormalTok{,}
+                      \DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{0}\NormalTok{,}
+                      \DecValTok{1}\NormalTok{,}\OperatorTok{-}\DecValTok{1}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{0}\NormalTok{,}
+                      \DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{0}\NormalTok{,}
+                      \DecValTok{1}\NormalTok{,}\OperatorTok{-}\DecValTok{1}\NormalTok{,}\OperatorTok{-}\DecValTok{1}\NormalTok{,}\OperatorTok{-}\DecValTok{1}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{1}\NormalTok{,}
+                      \DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{,}\OperatorTok{-}\DecValTok{1}\NormalTok{,}\OperatorTok{-}\DecValTok{1}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{1}\NormalTok{,}
+                      \DecValTok{1}\NormalTok{,}\OperatorTok{-}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{1}\NormalTok{,}
+                      \DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{1}\NormalTok{,}
+                      \DecValTok{1}\NormalTok{,}\OperatorTok{-}\DecValTok{1}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{1}\NormalTok{,}
+                      \DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{1}\NormalTok{),}\DataTypeTok{nrow=}\DecValTok{18}\NormalTok{,}\DataTypeTok{ncol=}\DecValTok{6}\NormalTok{,}\DataTypeTok{byrow=}\OtherTok{TRUE}\NormalTok{)}
+\NormalTok{hr.data<-}\KeywordTok{list}\NormalTok{(}\DataTypeTok{index=}\KeywordTok{as.vector}\NormalTok{(junk}\OperatorTok{$}\NormalTok{index),}
+              \DataTypeTok{survey=}\KeywordTok{ifelse}\NormalTok{(}\KeywordTok{is.na}\NormalTok{(junk}\OperatorTok{$}\NormalTok{survey),}\FloatTok{1E12}\NormalTok{,junk}\OperatorTok{$}\NormalTok{survey),}
+              \DataTypeTok{catch=}\NormalTok{junk}\OperatorTok{$}\NormalTok{catch,}
+              \DataTypeTok{gssmu=}\NormalTok{junk}\OperatorTok{$}\NormalTok{gSSMU,}
+              \DataTypeTok{oniclass=}\KeywordTok{as.numeric}\NormalTok{(}\KeywordTok{factor}\NormalTok{(junk}\OperatorTok{$}\NormalTok{oni.class)),}
+              \DataTypeTok{samclass=}\KeywordTok{as.numeric}\NormalTok{(}\KeywordTok{factor}\NormalTok{(junk}\OperatorTok{$}\NormalTok{sam.sign)),}
+              \DataTypeTok{summer=}\NormalTok{junk}\OperatorTok{$}\NormalTok{survey[junk}\OperatorTok{$}\NormalTok{season}\OperatorTok{==}\StringTok{"S"}\NormalTok{],}
+              \DataTypeTok{impute.me=}\KeywordTok{ifelse}\NormalTok{(}\KeywordTok{is.na}\NormalTok{(junk}\OperatorTok{$}\NormalTok{survey)}\OperatorTok{&}\NormalTok{junk}\OperatorTok{$}\NormalTok{season}\OperatorTok{==}\StringTok{"S"}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{0}\NormalTok{),}
+              \DataTypeTok{meanlogsummer=}\KeywordTok{tapply}\NormalTok{(}\KeywordTok{log}\NormalTok{(junk}\OperatorTok{$}\NormalTok{survey[junk}\OperatorTok{$}\NormalTok{season}\OperatorTok{==}\StringTok{"S"}\NormalTok{]),}
+                                   \KeywordTok{list}\NormalTok{(junk}\OperatorTok{$}\NormalTok{gSSMU[junk}\OperatorTok{$}\NormalTok{season}\OperatorTok{==}\StringTok{"S"}\NormalTok{],junk}\OperatorTok{$}\NormalTok{sam.sign[junk}\OperatorTok{$}\NormalTok{season}\OperatorTok{==}\StringTok{"S"}\NormalTok{]),}
+\NormalTok{                                   mean,}\DataTypeTok{na.rm=}\OtherTok{TRUE}\NormalTok{),}
+              \DataTypeTok{sdlogsummer=}\KeywordTok{sd}\NormalTok{(}\KeywordTok{log}\NormalTok{(junk}\OperatorTok{$}\NormalTok{survey[junk}\OperatorTok{$}\NormalTok{season}\OperatorTok{==}\StringTok{"S"}\NormalTok{]),}\DataTypeTok{na.rm=}\OtherTok{TRUE}\NormalTok{),}
+              \DataTypeTok{nobs=}\KeywordTok{dim}\NormalTok{(junk)[}\DecValTok{1}\NormalTok{],}
+              \DataTypeTok{nsummerobs=}\KeywordTok{as.vector}\NormalTok{(}\KeywordTok{table}\NormalTok{(junk}\OperatorTok{$}\NormalTok{season)[}\DecValTok{1}\NormalTok{]),}
+              \DataTypeTok{predX=}\NormalTok{pred.matrix)}
+
+\CommentTok{#Plot the input}
+
+\KeywordTok{plot}\NormalTok{(}\KeywordTok{as.vector}\NormalTok{(junk}\OperatorTok{$}\NormalTok{index))}
+\KeywordTok{plot}\NormalTok{(}\KeywordTok{ifelse}\NormalTok{(}\KeywordTok{is.na}\NormalTok{(junk}\OperatorTok{$}\NormalTok{survey),}\FloatTok{1E12}\NormalTok{,junk}\OperatorTok{$}\NormalTok{survey))}
+\KeywordTok{plot}\NormalTok{(junk}\OperatorTok{$}\NormalTok{catch)}
+\KeywordTok{plot}\NormalTok{(junk}\OperatorTok{$}\NormalTok{gSSMU)}
+\KeywordTok{plot}\NormalTok{(}\KeywordTok{as.numeric}\NormalTok{(}\KeywordTok{factor}\NormalTok{(junk}\OperatorTok{$}\NormalTok{oni.class)))}
+\KeywordTok{plot}\NormalTok{(}\KeywordTok{as.numeric}\NormalTok{(}\KeywordTok{factor}\NormalTok{(junk}\OperatorTok{$}\NormalTok{sam.sign)))}
+\KeywordTok{plot}\NormalTok{(junk}\OperatorTok{$}\NormalTok{survey[junk}\OperatorTok{$}\NormalTok{season}\OperatorTok{==}\StringTok{"S"}\NormalTok{])}
+\KeywordTok{plot}\NormalTok{(}\KeywordTok{ifelse}\NormalTok{(}\KeywordTok{is.na}\NormalTok{(junk}\OperatorTok{$}\NormalTok{survey)}\OperatorTok{&}\NormalTok{junk}\OperatorTok{$}\NormalTok{season}\OperatorTok{==}\StringTok{"S"}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{0}\NormalTok{))}
+\KeywordTok{plot}\NormalTok{(}\KeywordTok{tapply}\NormalTok{(}\KeywordTok{log}\NormalTok{(junk}\OperatorTok{$}\NormalTok{survey[junk}\OperatorTok{$}\NormalTok{season}\OperatorTok{==}\StringTok{"S"}\NormalTok{]),}\KeywordTok{list}\NormalTok{(junk}\OperatorTok{$}\NormalTok{gSSMU[junk}\OperatorTok{$}\NormalTok{season}\OperatorTok{==}\StringTok{"S"}\NormalTok{],}
+\NormalTok{                                                    junk}\OperatorTok{$}\NormalTok{sam.sign[junk}\OperatorTok{$}\NormalTok{season}\OperatorTok{==}\StringTok{"S"}\NormalTok{]),}
+\NormalTok{            mean,}\DataTypeTok{na.rm=}\OtherTok{TRUE}\NormalTok{))}
+\KeywordTok{plot}\NormalTok{(}\KeywordTok{sd}\NormalTok{(}\KeywordTok{log}\NormalTok{(junk}\OperatorTok{$}\NormalTok{survey[junk}\OperatorTok{$}\NormalTok{season}\OperatorTok{==}\StringTok{"S"}\NormalTok{]),}\DataTypeTok{na.rm=}\OtherTok{TRUE}\NormalTok{))}
+\KeywordTok{plot}\NormalTok{(}\KeywordTok{dim}\NormalTok{(junk)[}\DecValTok{1}\NormalTok{])}
+\KeywordTok{plot}\NormalTok{(}\KeywordTok{as.vector}\NormalTok{(}\KeywordTok{table}\NormalTok{(junk}\OperatorTok{$}\NormalTok{season)[}\DecValTok{1}\NormalTok{]))}
+
+\NormalTok{hr.params<-}\KeywordTok{c}\NormalTok{(}\StringTok{"beta"}\NormalTok{,}\StringTok{"mulogsummer"}\NormalTok{,}\StringTok{"sigmalogsummer"}\NormalTok{,}\StringTok{"sd.index"}\NormalTok{,}\StringTok{"t.sd.index"}\NormalTok{)}
+
+\NormalTok{beta.init1<-}\KeywordTok{rep}\NormalTok{(}\OperatorTok{-}\DecValTok{1}\NormalTok{,}\DecValTok{6}\NormalTok{)}
+\NormalTok{beta.init2<-}\KeywordTok{rep}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{6}\NormalTok{)}
+\NormalTok{beta.init3<-}\KeywordTok{rep}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{6}\NormalTok{)}
+
+
+\NormalTok{hr.inits<-}\KeywordTok{list}\NormalTok{(}\KeywordTok{list}\NormalTok{(}\DataTypeTok{beta=}\NormalTok{beta.init1,}\DataTypeTok{t.sd.index=}\FloatTok{0.1}\NormalTok{,}\DataTypeTok{.RNG.seed=}\DecValTok{123}\NormalTok{,}
+                    \DataTypeTok{.RNG.name=}\StringTok{"base::Super-Duper"}\NormalTok{),}
+               \KeywordTok{list}\NormalTok{(}\DataTypeTok{beta=}\NormalTok{beta.init2,}\DataTypeTok{t.sd.index=}\FloatTok{1.0}\NormalTok{,}\DataTypeTok{.RNG.seed=}\DecValTok{456}\NormalTok{,}
+                    \DataTypeTok{.RNG.name=}\StringTok{"base::Super-Duper"}\NormalTok{),}
+               \KeywordTok{list}\NormalTok{(}\DataTypeTok{beta=}\NormalTok{beta.init3,}\DataTypeTok{t.sd.index=}\FloatTok{1.9}\NormalTok{,}\DataTypeTok{.RNG.seed=}\DecValTok{789}\NormalTok{,}
+                    \DataTypeTok{.RNG.name=}\StringTok{"base::Super-Duper"}\NormalTok{))}
+
+\NormalTok{hr.derived<-}\KeywordTok{c}\NormalTok{(}\StringTok{"index.new"}\NormalTok{,}\StringTok{"mu.new"}\NormalTok{,}\StringTok{"prob"}\NormalTok{,}\StringTok{"prob.new"}\NormalTok{)}
+
+\NormalTok{hr.imputed<-}\StringTok{"hr"}
+
+\CommentTok{# write out the input (to check how we are doing)}
+\KeywordTok{write.csv}\NormalTok{(hr.data}\OperatorTok{$}\NormalTok{index, }\DataTypeTok{file =} \StringTok{"index.csv"}\NormalTok{)}
+\KeywordTok{write.csv}\NormalTok{(hr.data}\OperatorTok{$}\NormalTok{survey, }\DataTypeTok{file =} \StringTok{"survey.csv"}\NormalTok{)}
+\KeywordTok{write.csv}\NormalTok{(hr.data}\OperatorTok{$}\NormalTok{catch, }\DataTypeTok{file =} \StringTok{"catch.csv"}\NormalTok{)}
+\KeywordTok{write.csv}\NormalTok{(hr.data}\OperatorTok{$}\NormalTok{gssmu, }\DataTypeTok{file =} \StringTok{"gssmu.csv"}\NormalTok{)}
+\KeywordTok{write.csv}\NormalTok{(hr.data}\OperatorTok{$}\NormalTok{oniclass, }\DataTypeTok{file =} \StringTok{"oniclass.csv"}\NormalTok{)}
+\KeywordTok{write.csv}\NormalTok{(hr.data}\OperatorTok{$}\NormalTok{samclass, }\DataTypeTok{file =} \StringTok{"samclass.csv"}\NormalTok{)}
+\KeywordTok{write.csv}\NormalTok{(hr.data}\OperatorTok{$}\NormalTok{summer, }\DataTypeTok{file =} \StringTok{"summer.csv"}\NormalTok{)}
+\KeywordTok{write.csv}\NormalTok{(hr.data}\OperatorTok{$}\NormalTok{impute.me, }\DataTypeTok{file =} \StringTok{"imputeme.csv"}\NormalTok{)}
+
+\KeywordTok{write.csv}\NormalTok{(hr.data}\OperatorTok{$}\NormalTok{meanlogsummer, }\DataTypeTok{file =} \StringTok{"meanlogsummer.csv"}\NormalTok{)}
+\KeywordTok{write.csv}\NormalTok{(hr.data}\OperatorTok{$}\NormalTok{sdlogsummer, }\DataTypeTok{file =} \StringTok{"sdlogsummer.csv"}\NormalTok{)}
+\KeywordTok{write.csv}\NormalTok{(hr.data}\OperatorTok{$}\NormalTok{nobs, }\DataTypeTok{file =} \StringTok{"nobs.csv"}\NormalTok{)}
+\KeywordTok{write.csv}\NormalTok{(hr.data}\OperatorTok{$}\NormalTok{nsummerobs, }\DataTypeTok{file =} \StringTok{"nsummerobs.csv"}\NormalTok{)}
+\KeywordTok{write.csv}\NormalTok{(hr.data}\OperatorTok{$}\NormalTok{predX, }\DataTypeTok{file =} \StringTok{"predX.csv"}\NormalTok{)}
+
+
+\CommentTok{# now do the analysis}
+\KeywordTok{library}\NormalTok{(coda)}
+\KeywordTok{library}\NormalTok{(rjags)}
+
+\NormalTok{hr.jags<-}\KeywordTok{jags.model}\NormalTok{(}\KeywordTok{textConnection}\NormalTok{(modelstring),hr.data,hr.inits,}\DataTypeTok{n.chains=}\DecValTok{3}\NormalTok{,}
+                    \DataTypeTok{n.adapt=}\DecValTok{250000}\NormalTok{)}
+\CommentTok{# burn in for 150000 iterations}
+\KeywordTok{update}\NormalTok{(hr.jags, }\DataTypeTok{n.iter=}\DecValTok{500000}\NormalTok{)}
+\NormalTok{hr.params.post<-}\KeywordTok{coda.samples}\NormalTok{(hr.jags,hr.params,}\DataTypeTok{n.iter=}\DecValTok{125000}\NormalTok{,}\DataTypeTok{thin=}\DecValTok{25}\NormalTok{)}
+\NormalTok{hr.derived.post<-}\KeywordTok{coda.samples}\NormalTok{(hr.jags,hr.derived,}\DataTypeTok{n.iter=}\DecValTok{125000}\NormalTok{,}\DataTypeTok{thin=}\DecValTok{25}\NormalTok{)}
+\NormalTok{hr.imputed.post<-}\KeywordTok{coda.samples}\NormalTok{(hr.jags,hr.imputed,}\DataTypeTok{n.iter=}\DecValTok{125000}\NormalTok{,}\DataTypeTok{thin=}\DecValTok{25}\NormalTok{)}
+\NormalTok{hr.params.summ<-}\KeywordTok{summary}\NormalTok{(hr.params.post)}
+\NormalTok{hr.derived.summ<-}\KeywordTok{summary}\NormalTok{(hr.derived.post)}
+\NormalTok{hr.imputed.summ<-}\KeywordTok{summary}\NormalTok{(hr.imputed.post)}
+
+\CommentTok{# write input/output}
+\CommentTok{# cat(capture.output(print(hr.params.post), file="hr_params_post.txt"))}
+\KeywordTok{sink}\NormalTok{(}\StringTok{"hr_params.txt"}\NormalTok{)}
+\KeywordTok{print}\NormalTok{(hr.params.post)}
+\KeywordTok{sink}\NormalTok{()}
+\KeywordTok{sink}\NormalTok{(}\StringTok{"hr_derived.txt"}\NormalTok{)}
+\KeywordTok{print}\NormalTok{(hr.derived.summ)}
+\KeywordTok{sink}\NormalTok{()}
+\KeywordTok{sink}\NormalTok{(}\StringTok{"hr_imputed.txt"}\NormalTok{)}
+\KeywordTok{print}\NormalTok{(hr.imputed.summ)}
+\KeywordTok{sink}\NormalTok{()}
+
+
+\KeywordTok{require}\NormalTok{(ggmcmc)}
+\NormalTok{hr.params.s<-}\KeywordTok{ggs}\NormalTok{(hr.params.post)}
+\NormalTok{hr.derived.s<-}\KeywordTok{ggs}\NormalTok{(hr.derived.post)}
+
+\CommentTok{# just want to copy hr.params.s to work with it for plotting diagnostics without screwing up the original object}
+\CommentTok{# also get rid of chains for t.sd.index since this is not really a parameter of interest}
+\NormalTok{HR.labels<-}\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{Parameter=}\KeywordTok{dimnames}\NormalTok{(hr.params.post[[}\DecValTok{1}\NormalTok{]])[[}\DecValTok{2}\NormalTok{]],}
+                      \DataTypeTok{Label=}\KeywordTok{c}\NormalTok{(}\StringTok{"alpha"}\NormalTok{,}\StringTok{"beta[3]"}\NormalTok{,}\StringTok{"beta[4]"}\NormalTok{,}\StringTok{"beta[5]"}\NormalTok{,}\StringTok{"beta[1]"}\NormalTok{,}
+                              \StringTok{"beta[2]"}\NormalTok{,}\StringTok{"K[B,-]"}\NormalTok{,}\StringTok{"K[D,-]"}\NormalTok{,}\StringTok{"K[B,+]"}\NormalTok{,}\StringTok{"K[D,+]"}\NormalTok{,}
+                              \StringTok{"sigma"}\NormalTok{,}\StringTok{"phi"}\NormalTok{,}\StringTok{"exclude"}\NormalTok{))}
+
+\NormalTok{hr.params2.s<-}\KeywordTok{ggs}\NormalTok{(hr.params.post,}\DataTypeTok{par_labels =}\NormalTok{ HR.labels)}
+\NormalTok{hr.params2.s<-hr.params2.s[hr.params2.s}\OperatorTok{$}\NormalTok{ParameterOriginal}\OperatorTok{!=}\StringTok{"t.sd.index"}\NormalTok{,]}
+
+\KeywordTok{ggmcmc}\NormalTok{(hr.params.s,}\DataTypeTok{file=}\StringTok{"diagnostics_hr_params_final.pdf"}\NormalTok{)}
+\KeywordTok{ggmcmc}\NormalTok{(hr.derived.s,}\DataTypeTok{file=}\StringTok{"diagnostics_hr_derived_final.pdf"}\NormalTok{)}
+
+\CommentTok{# plot posterior expectations of marginal effects}
+
+\CommentTok{# Figure 2}
+
+\CommentTok{# reference (best case)}
+\KeywordTok{boxplot}\NormalTok{(value}\OperatorTok{~}\KeywordTok{I}\NormalTok{(}\KeywordTok{as.numeric}\NormalTok{(Parameter)),}\DataTypeTok{data=}\NormalTok{hr.derived.s,}\DataTypeTok{subset=}\NormalTok{(}\KeywordTok{as.numeric}\NormalTok{(hr.derived.s}\OperatorTok{$}\NormalTok{Parameter)}\OperatorTok{==}\DecValTok{19}\NormalTok{),}
+        \DataTypeTok{range=}\DecValTok{0}\NormalTok{,}\DataTypeTok{ylim=}\KeywordTok{c}\NormalTok{(}\OperatorTok{-}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{),}\DataTypeTok{xaxt=}\StringTok{"n"}\NormalTok{,}\DataTypeTok{xlim=}\KeywordTok{c}\NormalTok{(}\FloatTok{0.5}\NormalTok{,}\FloatTok{7.5}\NormalTok{),}\DataTypeTok{ylab=}\StringTok{"expected performance"}\NormalTok{,}\DataTypeTok{whisklty=}\DecValTok{1}\NormalTok{,}\DataTypeTok{boxwex=}\DecValTok{1}\NormalTok{,}\DataTypeTok{at=}\DecValTok{1}\NormalTok{)}
+\CommentTok{# ONI}
+\KeywordTok{boxplot}\NormalTok{(value}\OperatorTok{~}\KeywordTok{I}\NormalTok{(}\KeywordTok{as.numeric}\NormalTok{(Parameter)),}\DataTypeTok{data=}\NormalTok{hr.derived.s,}\DataTypeTok{subset=}\NormalTok{(}\KeywordTok{is.element}\NormalTok{(}\KeywordTok{as.numeric}\NormalTok{(hr.derived.s}\OperatorTok{$}\NormalTok{Parameter),}\KeywordTok{c}\NormalTok{(}\DecValTok{25}\NormalTok{,}\DecValTok{31}\NormalTok{))),}
+        \DataTypeTok{range=}\DecValTok{0}\NormalTok{,}\DataTypeTok{xaxt=}\StringTok{"n"}\NormalTok{,}\DataTypeTok{yaxt=}\StringTok{"n"}\NormalTok{,}\DataTypeTok{whisklty=}\DecValTok{1}\NormalTok{,}\DataTypeTok{boxwex=}\FloatTok{0.5}\NormalTok{,}\DataTypeTok{add=}\OtherTok{TRUE}\NormalTok{,}\DataTypeTok{at=}\DecValTok{2}\OperatorTok{:}\DecValTok{3}\NormalTok{,}\DataTypeTok{col=}\StringTok{"gray80"}\NormalTok{)}
+\CommentTok{# biomass}
+\KeywordTok{boxplot}\NormalTok{(value}\OperatorTok{~}\KeywordTok{I}\NormalTok{(}\KeywordTok{as.numeric}\NormalTok{(Parameter)),}\DataTypeTok{data=}\NormalTok{hr.derived.s,}\DataTypeTok{subset=}\NormalTok{(}\KeywordTok{as.numeric}\NormalTok{(hr.derived.s}\OperatorTok{$}\NormalTok{Parameter)}\OperatorTok{==}\DecValTok{20}\NormalTok{),}
+        \DataTypeTok{range=}\DecValTok{0}\NormalTok{,}\DataTypeTok{xaxt=}\StringTok{"n"}\NormalTok{,}\DataTypeTok{yaxt=}\StringTok{"n"}\NormalTok{,}\DataTypeTok{whisklty=}\DecValTok{1}\NormalTok{,}\DataTypeTok{boxwex=}\DecValTok{1}\NormalTok{,}\DataTypeTok{add=}\OtherTok{TRUE}\NormalTok{,}\DataTypeTok{at=}\DecValTok{4}\NormalTok{,}\DataTypeTok{col=}\StringTok{"gray40"}\NormalTok{,}\DataTypeTok{medcol=}\StringTok{"white"}\NormalTok{)}
+\CommentTok{# harvest rate}
+\KeywordTok{boxplot}\NormalTok{(value}\OperatorTok{~}\KeywordTok{I}\NormalTok{(}\KeywordTok{as.numeric}\NormalTok{(Parameter)),}\DataTypeTok{data=}\NormalTok{hr.derived.s,}\DataTypeTok{subset=}\NormalTok{(}\KeywordTok{is.element}\NormalTok{(}\KeywordTok{as.numeric}\NormalTok{(hr.derived.s}\OperatorTok{$}\NormalTok{Parameter),}\KeywordTok{c}\NormalTok{(}\DecValTok{21}\NormalTok{,}\DecValTok{23}\NormalTok{))),}
+        \DataTypeTok{range=}\DecValTok{0}\NormalTok{,}\DataTypeTok{yaxt=}\StringTok{"n"}\NormalTok{,}\DataTypeTok{xaxt=}\StringTok{"n"}\NormalTok{,}\DataTypeTok{whisklty=}\DecValTok{1}\NormalTok{,}\DataTypeTok{boxwex=}\FloatTok{0.5}\NormalTok{,}\DataTypeTok{add=}\OtherTok{TRUE}\NormalTok{,}\DataTypeTok{at=}\DecValTok{5}\OperatorTok{:}\DecValTok{6}\NormalTok{,}\DataTypeTok{col=}\StringTok{"black"}\NormalTok{,}\DataTypeTok{medcol=}\StringTok{"white"}\NormalTok{)}
+\CommentTok{# worst case with PARAMETER 36 chosen - so with "warm" ONI.  Should be (hr.derived.s$Parameter)==12}
+\KeywordTok{boxplot}\NormalTok{(value}\OperatorTok{~}\KeywordTok{I}\NormalTok{(}\KeywordTok{as.numeric}\NormalTok{(Parameter)),}\DataTypeTok{data=}\NormalTok{hr.derived.s,}\DataTypeTok{subset=}\NormalTok{(}\KeywordTok{as.numeric}\NormalTok{(hr.derived.s}\OperatorTok{$}\NormalTok{Parameter)}\OperatorTok{==}\DecValTok{36}\NormalTok{),}
+        \DataTypeTok{range=}\DecValTok{0}\NormalTok{,}\DataTypeTok{xaxt=}\StringTok{"n"}\NormalTok{,}\DataTypeTok{yaxt=}\StringTok{"n"}\NormalTok{,}\DataTypeTok{whisklty=}\DecValTok{1}\NormalTok{,}\DataTypeTok{boxwex=}\DecValTok{1}\NormalTok{,}\DataTypeTok{add=}\OtherTok{TRUE}\NormalTok{,}\DataTypeTok{at=}\DecValTok{7}\NormalTok{)}
+\KeywordTok{axis}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DataTypeTok{at=}\DecValTok{1}\OperatorTok{:}\DecValTok{7}\NormalTok{,}\DataTypeTok{labels=}\KeywordTok{c}\NormalTok{(}\StringTok{"reference"}\NormalTok{,}\StringTok{"-0.5 < ONI < 0.5"}\NormalTok{,}\StringTok{"ONI >= 0.5"}\NormalTok{,}\StringTok{"LKB > 1 Mt"}\NormalTok{,}\StringTok{"0.01 < LHR < 0.10"}\NormalTok{,}\StringTok{"LHR >= 0.10"}\NormalTok{,}\StringTok{"worst case"}\NormalTok{))}
+\KeywordTok{abline}\NormalTok{(}\DataTypeTok{h=}\KeywordTok{mean}\NormalTok{(hr.derived.s}\OperatorTok{$}\NormalTok{value[}\KeywordTok{as.numeric}\NormalTok{(hr.derived.s}\OperatorTok{$}\NormalTok{Parameter)}\OperatorTok{==}\DecValTok{19}\NormalTok{]),}\DataTypeTok{lty=}\DecValTok{2}\NormalTok{)}
+\KeywordTok{abline}\NormalTok{(}\DataTypeTok{h=}\DecValTok{0}\NormalTok{)}
+
+\KeywordTok{write.csv}\NormalTok{(hr.derived.s, }\DataTypeTok{file =} \StringTok{"hr_derived_s.csv"}\NormalTok{)  }
+\CommentTok{# #  Added by me - plot all cases*}
+\CommentTok{# # reference (best case)}
+\KeywordTok{boxplot}\NormalTok{(value}\OperatorTok{~}\KeywordTok{I}\NormalTok{(}\KeywordTok{as.numeric}\NormalTok{(Parameter)),}\DataTypeTok{data=}\NormalTok{hr.derived.s,}\DataTypeTok{subset=}\NormalTok{(}\KeywordTok{as.numeric}\NormalTok{(hr.derived.s}\OperatorTok{$}\NormalTok{Parameter)}\OperatorTok{==}\DecValTok{19}\NormalTok{),}
+        \DataTypeTok{range=}\DecValTok{0}\NormalTok{,}\DataTypeTok{ylim=}\KeywordTok{c}\NormalTok{(}\OperatorTok{-}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{),}\DataTypeTok{xaxt=}\StringTok{"n"}\NormalTok{,}\DataTypeTok{xlim=}\KeywordTok{c}\NormalTok{(}\FloatTok{0.5}\NormalTok{,}\FloatTok{18.5}\NormalTok{),}\DataTypeTok{ylab=}\StringTok{"expected performance"}\NormalTok{,}\DataTypeTok{whisklty=}\DecValTok{1}\NormalTok{,}\DataTypeTok{boxwex=}\DecValTok{1}\NormalTok{,}\DataTypeTok{at=}\DecValTok{1}\NormalTok{)}
+
+\KeywordTok{boxplot}\NormalTok{(value}\OperatorTok{~}\KeywordTok{I}\NormalTok{(}\KeywordTok{as.numeric}\NormalTok{(Parameter)),}\DataTypeTok{data=}\NormalTok{hr.derived.s,}\DataTypeTok{subset=}\NormalTok{(}\KeywordTok{is.element}\NormalTok{(}\KeywordTok{as.numeric}\NormalTok{(hr.derived.s}\OperatorTok{$}\NormalTok{Parameter),}\KeywordTok{c}\NormalTok{(}\DecValTok{20}\OperatorTok{:}\DecValTok{36}\NormalTok{))),}
+        \DataTypeTok{range=}\DecValTok{0}\NormalTok{,}\DataTypeTok{xaxt=}\StringTok{"n"}\NormalTok{,}\DataTypeTok{yaxt=}\StringTok{"n"}\NormalTok{,}\DataTypeTok{whisklty=}\DecValTok{1}\NormalTok{,}\DataTypeTok{boxwex=}\FloatTok{0.5}\NormalTok{,}\DataTypeTok{add=}\OtherTok{TRUE}\NormalTok{,}\DataTypeTok{at=}\DecValTok{2}\OperatorTok{:}\DecValTok{18}\NormalTok{,}\DataTypeTok{col=}\StringTok{"gray80"}\NormalTok{)}
+
+\KeywordTok{axis}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DataTypeTok{at=}\DecValTok{1}\OperatorTok{:}\DecValTok{18}\NormalTok{,}\DataTypeTok{labels=}\KeywordTok{c}\NormalTok{(}\StringTok{"1"}\NormalTok{,}\StringTok{"2"}\NormalTok{,}\StringTok{"3"}\NormalTok{,}\StringTok{"4"}\NormalTok{,}\StringTok{"5"}\NormalTok{,}\StringTok{"6"}\NormalTok{,}\StringTok{"7"}\NormalTok{,}\StringTok{"8"}\NormalTok{,}\StringTok{"9"}\NormalTok{,}\StringTok{"10"}\NormalTok{,}\StringTok{"11"}\NormalTok{,}\StringTok{"12"}\NormalTok{,}\StringTok{"13"}\NormalTok{,}\StringTok{"14"}\NormalTok{,}\StringTok{"15"}\NormalTok{,}\StringTok{"16"}\NormalTok{,}\StringTok{"17"}\NormalTok{,}\StringTok{"18"}\NormalTok{))}
+\KeywordTok{abline}\NormalTok{(}\DataTypeTok{h=}\KeywordTok{mean}\NormalTok{(hr.derived.s}\OperatorTok{$}\NormalTok{value[}\KeywordTok{as.numeric}\NormalTok{(hr.derived.s}\OperatorTok{$}\NormalTok{Parameter)}\OperatorTok{==}\DecValTok{19}\NormalTok{]),}\DataTypeTok{lty=}\DecValTok{2}\NormalTok{)}
+\KeywordTok{abline}\NormalTok{(}\DataTypeTok{h=}\DecValTok{0}\NormalTok{)}
+
+\CommentTok{# Supplementary Figures}
+
+\CommentTok{# S1 -- trace plots of main model parameters}
+\KeywordTok{ggs_traceplot}\NormalTok{(hr.params2.s) }\OperatorTok{+}\StringTok{ }\KeywordTok{facet_wrap}\NormalTok{(}\OperatorTok{~}\StringTok{ }\NormalTok{Parameter, }\DataTypeTok{ncol =} \DecValTok{3}\NormalTok{, }\DataTypeTok{scales=}\StringTok{"free"}\NormalTok{)}
+
+\CommentTok{# S2 -- scale-reduction factors}
+\KeywordTok{ggs_Rhat}\NormalTok{(hr.params2.s)}
+
+\CommentTok{# S3 -- Geweke Z-scores}
+\KeywordTok{ggs_geweke}\NormalTok{(hr.params2.s,}\DataTypeTok{shadow_limit =} \FloatTok{1.96}\NormalTok{)}
+
+\CommentTok{# S4 -- autocorrelation plots}
+\KeywordTok{ggs_autocorrelation}\NormalTok{(hr.params2.s)}
+
+\CommentTok{# S5 -- crosscorrelations}
+\KeywordTok{ggs_crosscorrelation}\NormalTok{(hr.params2.s)}
+\CommentTok{#hr.params2.s<-ggs(hr.params.post)}
+\CommentTok{#hr.params2.s<-hr.params2.s[hr.params2.s$Parameter!="t.sd.index",]}
+\CommentTok{#ggs_pairs(hr.params2.s,lower=list(continuous="density"))}
+
+\CommentTok{# S6 -- posterior distributions}
+\KeywordTok{ggs_histogram}\NormalTok{(hr.params2.s) }\OperatorTok{+}\StringTok{ }\KeywordTok{facet_wrap}\NormalTok{(}\OperatorTok{~}\StringTok{ }\NormalTok{Parameter, }\DataTypeTok{ncol =} \DecValTok{3}\NormalTok{, }\DataTypeTok{scales=}\StringTok{"free"}\NormalTok{)}
+\CommentTok{#ggs_density(hr.params2.s) + facet_wrap(~ Parameter, ncol = 3, scales="free")}
+
+\CommentTok{# S7 -- plot posterior predictive distributions over data for visual posterior predictive check}
+\NormalTok{xx<-junk}
+\NormalTok{xx}\OperatorTok{$}\NormalTok{impute.me<-}\KeywordTok{ifelse}\NormalTok{(}\KeywordTok{is.na}\NormalTok{(xx}\OperatorTok{$}\NormalTok{survey) }\OperatorTok{&}\StringTok{ }\NormalTok{xx}\OperatorTok{$}\NormalTok{season}\OperatorTok{==}\StringTok{"S"}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{0}\NormalTok{)}
+\NormalTok{xx}\OperatorTok{$}\NormalTok{imputed.hr<-hr.imputed.summ}\OperatorTok{$}\NormalTok{statistics[,}\DecValTok{1}\NormalTok{]}
+\NormalTok{xx}\OperatorTok{$}\NormalTok{survey[xx}\OperatorTok{$}\NormalTok{impute.me}\OperatorTok{==}\DecValTok{1}\NormalTok{]<-xx}\OperatorTok{$}\NormalTok{catch[xx}\OperatorTok{$}\NormalTok{impute.me}\OperatorTok{==}\DecValTok{1}\NormalTok{]}\OperatorTok{/}\NormalTok{xx}\OperatorTok{$}\NormalTok{imputed.hr[xx}\OperatorTok{$}\NormalTok{impute.me}\OperatorTok{==}\DecValTok{1}\NormalTok{]}
+\NormalTok{xx}\OperatorTok{$}\NormalTok{hr.class<-}\KeywordTok{ifelse}\NormalTok{(xx}\OperatorTok{$}\NormalTok{catch}\OperatorTok{/}\NormalTok{xx}\OperatorTok{$}\NormalTok{survey}\OperatorTok{<=}\FloatTok{0.01}\NormalTok{,}\DecValTok{1}\NormalTok{,}\KeywordTok{ifelse}\NormalTok{(xx}\OperatorTok{$}\NormalTok{catch}\OperatorTok{/}\NormalTok{xx}\OperatorTok{$}\NormalTok{survey}\OperatorTok{>=}\FloatTok{0.1}\NormalTok{,}\DecValTok{3}\NormalTok{,}\DecValTok{2}\NormalTok{))}
+\NormalTok{xx}\OperatorTok{$}\NormalTok{kb.class<-}\KeywordTok{ifelse}\NormalTok{(xx}\OperatorTok{$}\NormalTok{survey}\OperatorTok{<=}\DecValTok{1000000}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{) }
+\NormalTok{xx}\OperatorTok{$}\NormalTok{oni.class<-}\KeywordTok{as.numeric}\NormalTok{(}\KeywordTok{factor}\NormalTok{(xx}\OperatorTok{$}\NormalTok{oni.class))}
+\NormalTok{xx}\OperatorTok{$}\NormalTok{case<-}\KeywordTok{ifelse}\NormalTok{(xx}\OperatorTok{$}\NormalTok{oni.class}\OperatorTok{==}\DecValTok{1} \OperatorTok{&}\StringTok{ }\NormalTok{xx}\OperatorTok{$}\NormalTok{kb.class}\OperatorTok{==}\DecValTok{1} \OperatorTok{&}\StringTok{ }\NormalTok{xx}\OperatorTok{$}\NormalTok{hr.class}\OperatorTok{==}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{,}
+                \KeywordTok{ifelse}\NormalTok{(xx}\OperatorTok{$}\NormalTok{oni.class}\OperatorTok{==}\DecValTok{1} \OperatorTok{&}\StringTok{ }\NormalTok{xx}\OperatorTok{$}\NormalTok{kb.class}\OperatorTok{==}\DecValTok{2} \OperatorTok{&}\StringTok{ }\NormalTok{xx}\OperatorTok{$}\NormalTok{hr.class}\OperatorTok{==}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{,}
+                \KeywordTok{ifelse}\NormalTok{(xx}\OperatorTok{$}\NormalTok{oni.class}\OperatorTok{==}\DecValTok{1} \OperatorTok{&}\StringTok{ }\NormalTok{xx}\OperatorTok{$}\NormalTok{kb.class}\OperatorTok{==}\DecValTok{1} \OperatorTok{&}\StringTok{ }\NormalTok{xx}\OperatorTok{$}\NormalTok{hr.class}\OperatorTok{==}\DecValTok{2}\NormalTok{,}\DecValTok{3}\NormalTok{,}
+                \KeywordTok{ifelse}\NormalTok{(xx}\OperatorTok{$}\NormalTok{oni.class}\OperatorTok{==}\DecValTok{1} \OperatorTok{&}\StringTok{ }\NormalTok{xx}\OperatorTok{$}\NormalTok{kb.class}\OperatorTok{==}\DecValTok{2} \OperatorTok{&}\StringTok{ }\NormalTok{xx}\OperatorTok{$}\NormalTok{hr.class}\OperatorTok{==}\DecValTok{2}\NormalTok{,}\DecValTok{4}\NormalTok{,}
+                \KeywordTok{ifelse}\NormalTok{(xx}\OperatorTok{$}\NormalTok{oni.class}\OperatorTok{==}\DecValTok{1} \OperatorTok{&}\StringTok{ }\NormalTok{xx}\OperatorTok{$}\NormalTok{kb.class}\OperatorTok{==}\DecValTok{1} \OperatorTok{&}\StringTok{ }\NormalTok{xx}\OperatorTok{$}\NormalTok{hr.class}\OperatorTok{==}\DecValTok{3}\NormalTok{,}\DecValTok{5}\NormalTok{,}
+                \KeywordTok{ifelse}\NormalTok{(xx}\OperatorTok{$}\NormalTok{oni.class}\OperatorTok{==}\DecValTok{1} \OperatorTok{&}\StringTok{ }\NormalTok{xx}\OperatorTok{$}\NormalTok{kb.class}\OperatorTok{==}\DecValTok{2} \OperatorTok{&}\StringTok{ }\NormalTok{xx}\OperatorTok{$}\NormalTok{hr.class}\OperatorTok{==}\DecValTok{3}\NormalTok{,}\DecValTok{6}\NormalTok{,}
+                \KeywordTok{ifelse}\NormalTok{(xx}\OperatorTok{$}\NormalTok{oni.class}\OperatorTok{==}\DecValTok{2} \OperatorTok{&}\StringTok{ }\NormalTok{xx}\OperatorTok{$}\NormalTok{kb.class}\OperatorTok{==}\DecValTok{1} \OperatorTok{&}\StringTok{ }\NormalTok{xx}\OperatorTok{$}\NormalTok{hr.class}\OperatorTok{==}\DecValTok{1}\NormalTok{,}\DecValTok{7}\NormalTok{,}
+                \KeywordTok{ifelse}\NormalTok{(xx}\OperatorTok{$}\NormalTok{oni.class}\OperatorTok{==}\DecValTok{2} \OperatorTok{&}\StringTok{ }\NormalTok{xx}\OperatorTok{$}\NormalTok{kb.class}\OperatorTok{==}\DecValTok{2} \OperatorTok{&}\StringTok{ }\NormalTok{xx}\OperatorTok{$}\NormalTok{hr.class}\OperatorTok{==}\DecValTok{1}\NormalTok{,}\DecValTok{8}\NormalTok{,}
+                \KeywordTok{ifelse}\NormalTok{(xx}\OperatorTok{$}\NormalTok{oni.class}\OperatorTok{==}\DecValTok{2} \OperatorTok{&}\StringTok{ }\NormalTok{xx}\OperatorTok{$}\NormalTok{kb.class}\OperatorTok{==}\DecValTok{1} \OperatorTok{&}\StringTok{ }\NormalTok{xx}\OperatorTok{$}\NormalTok{hr.class}\OperatorTok{==}\DecValTok{2}\NormalTok{,}\DecValTok{9}\NormalTok{,}
+                \KeywordTok{ifelse}\NormalTok{(xx}\OperatorTok{$}\NormalTok{oni.class}\OperatorTok{==}\DecValTok{2} \OperatorTok{&}\StringTok{ }\NormalTok{xx}\OperatorTok{$}\NormalTok{kb.class}\OperatorTok{==}\DecValTok{2} \OperatorTok{&}\StringTok{ }\NormalTok{xx}\OperatorTok{$}\NormalTok{hr.class}\OperatorTok{==}\DecValTok{2}\NormalTok{,}\DecValTok{10}\NormalTok{,}
+                \KeywordTok{ifelse}\NormalTok{(xx}\OperatorTok{$}\NormalTok{oni.class}\OperatorTok{==}\DecValTok{2} \OperatorTok{&}\StringTok{ }\NormalTok{xx}\OperatorTok{$}\NormalTok{kb.class}\OperatorTok{==}\DecValTok{1} \OperatorTok{&}\StringTok{ }\NormalTok{xx}\OperatorTok{$}\NormalTok{hr.class}\OperatorTok{==}\DecValTok{3}\NormalTok{,}\DecValTok{11}\NormalTok{,}
+                \KeywordTok{ifelse}\NormalTok{(xx}\OperatorTok{$}\NormalTok{oni.class}\OperatorTok{==}\DecValTok{2} \OperatorTok{&}\StringTok{ }\NormalTok{xx}\OperatorTok{$}\NormalTok{kb.class}\OperatorTok{==}\DecValTok{2} \OperatorTok{&}\StringTok{ }\NormalTok{xx}\OperatorTok{$}\NormalTok{hr.class}\OperatorTok{==}\DecValTok{3}\NormalTok{,}\DecValTok{12}\NormalTok{,}
+                \KeywordTok{ifelse}\NormalTok{(xx}\OperatorTok{$}\NormalTok{oni.class}\OperatorTok{==}\DecValTok{3} \OperatorTok{&}\StringTok{ }\NormalTok{xx}\OperatorTok{$}\NormalTok{kb.class}\OperatorTok{==}\DecValTok{1} \OperatorTok{&}\StringTok{ }\NormalTok{xx}\OperatorTok{$}\NormalTok{hr.class}\OperatorTok{==}\DecValTok{1}\NormalTok{,}\DecValTok{13}\NormalTok{,}
+                \KeywordTok{ifelse}\NormalTok{(xx}\OperatorTok{$}\NormalTok{oni.class}\OperatorTok{==}\DecValTok{3} \OperatorTok{&}\StringTok{ }\NormalTok{xx}\OperatorTok{$}\NormalTok{kb.class}\OperatorTok{==}\DecValTok{2} \OperatorTok{&}\StringTok{ }\NormalTok{xx}\OperatorTok{$}\NormalTok{hr.class}\OperatorTok{==}\DecValTok{1}\NormalTok{,}\DecValTok{14}\NormalTok{,}
+                \KeywordTok{ifelse}\NormalTok{(xx}\OperatorTok{$}\NormalTok{oni.class}\OperatorTok{==}\DecValTok{3} \OperatorTok{&}\StringTok{ }\NormalTok{xx}\OperatorTok{$}\NormalTok{kb.class}\OperatorTok{==}\DecValTok{1} \OperatorTok{&}\StringTok{ }\NormalTok{xx}\OperatorTok{$}\NormalTok{hr.class}\OperatorTok{==}\DecValTok{2}\NormalTok{,}\DecValTok{15}\NormalTok{,}
+                \KeywordTok{ifelse}\NormalTok{(xx}\OperatorTok{$}\NormalTok{oni.class}\OperatorTok{==}\DecValTok{3} \OperatorTok{&}\StringTok{ }\NormalTok{xx}\OperatorTok{$}\NormalTok{kb.class}\OperatorTok{==}\DecValTok{2} \OperatorTok{&}\StringTok{ }\NormalTok{xx}\OperatorTok{$}\NormalTok{hr.class}\OperatorTok{==}\DecValTok{2}\NormalTok{,}\DecValTok{16}\NormalTok{,}
+                \KeywordTok{ifelse}\NormalTok{(xx}\OperatorTok{$}\NormalTok{oni.class}\OperatorTok{==}\DecValTok{3} \OperatorTok{&}\StringTok{ }\NormalTok{xx}\OperatorTok{$}\NormalTok{kb.class}\OperatorTok{==}\DecValTok{1} \OperatorTok{&}\StringTok{ }\NormalTok{xx}\OperatorTok{$}\NormalTok{hr.class}\OperatorTok{==}\DecValTok{3}\NormalTok{,}\DecValTok{17}\NormalTok{,}\DecValTok{18}\NormalTok{)))))))))))))))))}
+\CommentTok{# plot the data}
+\KeywordTok{plot}\NormalTok{(}\KeywordTok{jitter}\NormalTok{(xx}\OperatorTok{$}\NormalTok{case[xx}\OperatorTok{$}\NormalTok{impute.me}\OperatorTok{==}\DecValTok{0}\NormalTok{],}\DataTypeTok{amount=}\FloatTok{0.25}\NormalTok{),xx}\OperatorTok{$}\NormalTok{index[xx}\OperatorTok{$}\NormalTok{impute.me}\OperatorTok{==}\DecValTok{0}\NormalTok{],}\DataTypeTok{type=}\StringTok{"n"}\NormalTok{,}\DataTypeTok{xlim=}\KeywordTok{c}\NormalTok{(}\FloatTok{0.65}\NormalTok{,}\FloatTok{18.35}\NormalTok{),}
+     \DataTypeTok{ylim=}\KeywordTok{c}\NormalTok{(}\OperatorTok{-}\FloatTok{3.5}\NormalTok{,}\FloatTok{3.5}\NormalTok{),}
+     \DataTypeTok{xlab=}\StringTok{"case"}\NormalTok{,}\DataTypeTok{xaxt=}\StringTok{"n"}\NormalTok{,}\DataTypeTok{ylab=}\StringTok{"std performance index"}\NormalTok{,}\DataTypeTok{pch=}\DecValTok{16}\NormalTok{)}
+\CommentTok{# add posterior predictive distributions as box plots}
+\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{18}\NormalTok{)\{}
+  \KeywordTok{boxplot}\NormalTok{(value}\OperatorTok{~}\KeywordTok{I}\NormalTok{(}\KeywordTok{as.numeric}\NormalTok{(Parameter)),}\DataTypeTok{data=}\NormalTok{hr.derived.s,}\DataTypeTok{subset=}\NormalTok{(}\KeywordTok{as.numeric}\NormalTok{(hr.derived.s}\OperatorTok{$}\NormalTok{Parameter)}\OperatorTok{==}\NormalTok{i),}
+          \DataTypeTok{range=}\FloatTok{1.5}\NormalTok{,}\DataTypeTok{outline=}\OtherTok{FALSE}\NormalTok{,}\DataTypeTok{xaxt=}\StringTok{"n"}\NormalTok{,}\DataTypeTok{whisklty=}\DecValTok{1}\NormalTok{,}\DataTypeTok{boxwex=}\DecValTok{1}\NormalTok{,}\DataTypeTok{at=}\NormalTok{i,}\DataTypeTok{add=}\OtherTok{TRUE}\NormalTok{)}
+\NormalTok{\}}
+\CommentTok{# plot the data}
+\KeywordTok{points}\NormalTok{(}\KeywordTok{jitter}\NormalTok{(xx}\OperatorTok{$}\NormalTok{case[xx}\OperatorTok{$}\NormalTok{impute.me}\OperatorTok{==}\DecValTok{0}\OperatorTok{&}\NormalTok{xx}\OperatorTok{$}\NormalTok{season}\OperatorTok{==}\StringTok{"S"}\NormalTok{],}\DataTypeTok{amount=}\FloatTok{0.2}\NormalTok{),xx}\OperatorTok{$}\NormalTok{index[xx}\OperatorTok{$}\NormalTok{impute.me}\OperatorTok{==}\DecValTok{0}\OperatorTok{&}\NormalTok{xx}\OperatorTok{$}\NormalTok{season}\OperatorTok{==}\StringTok{"S"}\NormalTok{],}
+       \DataTypeTok{cex=}\FloatTok{0.5}\NormalTok{,}\DataTypeTok{col=}\StringTok{"red"}\NormalTok{,}\DataTypeTok{pch=}\DecValTok{16}\NormalTok{)}
+\KeywordTok{points}\NormalTok{(}\KeywordTok{jitter}\NormalTok{(xx}\OperatorTok{$}\NormalTok{case[xx}\OperatorTok{$}\NormalTok{impute.me}\OperatorTok{==}\DecValTok{0}\OperatorTok{&}\NormalTok{xx}\OperatorTok{$}\NormalTok{season}\OperatorTok{==}\StringTok{"W"}\NormalTok{],}\DataTypeTok{amount=}\FloatTok{0.2}\NormalTok{),xx}\OperatorTok{$}\NormalTok{index[xx}\OperatorTok{$}\NormalTok{impute.me}\OperatorTok{==}\DecValTok{0}\OperatorTok{&}\NormalTok{xx}\OperatorTok{$}\NormalTok{season}\OperatorTok{==}\StringTok{"W"}\NormalTok{],}
+       \DataTypeTok{cex=}\FloatTok{0.5}\NormalTok{,}\DataTypeTok{col=}\StringTok{"blue"}\NormalTok{,}\DataTypeTok{pch=}\DecValTok{16}\NormalTok{)}
+\KeywordTok{points}\NormalTok{(}\KeywordTok{jitter}\NormalTok{(xx}\OperatorTok{$}\NormalTok{case[xx}\OperatorTok{$}\NormalTok{impute.me}\OperatorTok{==}\DecValTok{1}\NormalTok{],}\DataTypeTok{amount=}\FloatTok{0.2}\NormalTok{),xx}\OperatorTok{$}\NormalTok{index[xx}\OperatorTok{$}\NormalTok{impute.me}\OperatorTok{==}\DecValTok{1}\NormalTok{],}\DataTypeTok{cex=}\FloatTok{0.5}\NormalTok{,}\DataTypeTok{col=}\StringTok{"red"}\NormalTok{)}
+\KeywordTok{axis}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DataTypeTok{at=}\DecValTok{1}\OperatorTok{:}\DecValTok{18}\NormalTok{)}
+\KeywordTok{abline}\NormalTok{(}\DataTypeTok{h=}\DecValTok{0}\NormalTok{)}
+
+\CommentTok{# misc stuff}
+
+\NormalTok{junk2<-}\KeywordTok{make.localhr.data}\NormalTok{(}\DataTypeTok{plot.winter=}\OtherTok{TRUE}\NormalTok{)}
+\NormalTok{junk2}\OperatorTok{$}\NormalTok{impute.me<-}\KeywordTok{ifelse}\NormalTok{(}\KeywordTok{is.na}\NormalTok{(junk2}\OperatorTok{$}\NormalTok{survey)}\OperatorTok{&}\NormalTok{junk2}\OperatorTok{$}\NormalTok{season}\OperatorTok{==}\StringTok{"S"}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{0}\NormalTok{)}
+\NormalTok{junk2}\OperatorTok{$}\NormalTok{imputed<-}\KeywordTok{exp}\NormalTok{(}\KeywordTok{ifelse}\NormalTok{(junk2}\OperatorTok{$}\NormalTok{impute.me}\OperatorTok{==}\DecValTok{0}\NormalTok{,}\OtherTok{NA}\NormalTok{,}\KeywordTok{ifelse}\NormalTok{(junk2}\OperatorTok{$}\NormalTok{gSSMU}\OperatorTok{==}\DecValTok{1}\OperatorTok{&}\NormalTok{junk2}\OperatorTok{$}\NormalTok{sam.sign}\OperatorTok{==}\StringTok{"Neg"}\NormalTok{,}
+\NormalTok{                        hr.params.summ}\OperatorTok{$}\NormalTok{statistics[}\DecValTok{7}\NormalTok{,}\DecValTok{1}\NormalTok{],}
+                        \KeywordTok{ifelse}\NormalTok{(junk2}\OperatorTok{$}\NormalTok{gSSMU}\OperatorTok{==}\DecValTok{2}\OperatorTok{&}\NormalTok{junk2}\OperatorTok{$}\NormalTok{sam.sign}\OperatorTok{==}\StringTok{"Neg"}\NormalTok{,hr.params.summ}\OperatorTok{$}\NormalTok{statistics[}\DecValTok{8}\NormalTok{,}\DecValTok{1}\NormalTok{],}
+                        \KeywordTok{ifelse}\NormalTok{(junk2}\OperatorTok{$}\NormalTok{gSSMU}\OperatorTok{==}\DecValTok{1}\OperatorTok{&}\NormalTok{junk2}\OperatorTok{$}\NormalTok{sam.sign}\OperatorTok{==}\StringTok{"Pos"}\NormalTok{,hr.params.summ}\OperatorTok{$}\NormalTok{statistics[}\DecValTok{9}\NormalTok{,}\DecValTok{1}\NormalTok{],}
+\NormalTok{                        hr.params.summ}\OperatorTok{$}\NormalTok{statistics[}\DecValTok{10}\NormalTok{,}\DecValTok{1}\NormalTok{])))))}
+
+\KeywordTok{library}\NormalTok{(lattice)}
+\CommentTok{# plot the time series}
+\KeywordTok{xyplot}\NormalTok{(index}\OperatorTok{~}\NormalTok{cal.yr}\OperatorTok{|}\NormalTok{season,}\DataTypeTok{data=}\NormalTok{junk2,}\DataTypeTok{horizontal=}\OtherTok{FALSE}\NormalTok{,}\DataTypeTok{aspect=}\FloatTok{0.25}\NormalTok{,}\DataTypeTok{panel=}\ControlFlowTok{function}\NormalTok{(x,y,subscripts,...,}\DataTypeTok{Z=}\NormalTok{junk2}\OperatorTok{$}\NormalTok{survey,}\DataTypeTok{IMP=}\NormalTok{junk2}\OperatorTok{$}\NormalTok{imputed)\{}
+\NormalTok{  z<-(Z[subscripts]}\OperatorTok{-}\KeywordTok{mean}\NormalTok{(}\KeywordTok{c}\NormalTok{(Z[subscripts],IMP[subscripts]),}\DataTypeTok{na.rm=}\OtherTok{TRUE}\NormalTok{))}\OperatorTok{/}\KeywordTok{sd}\NormalTok{(}\KeywordTok{c}\NormalTok{(Z[subscripts],IMP[subscripts]),}\DataTypeTok{na.rm=}\OtherTok{TRUE}\NormalTok{)}
+\NormalTok{  imp<-(IMP[subscripts]}\OperatorTok{-}\KeywordTok{mean}\NormalTok{(}\KeywordTok{c}\NormalTok{(Z[subscripts],IMP[subscripts]),}\DataTypeTok{na.rm=}\OtherTok{TRUE}\NormalTok{))}\OperatorTok{/}\KeywordTok{sd}\NormalTok{(}\KeywordTok{c}\NormalTok{(Z[subscripts],IMP[subscripts]),}\DataTypeTok{na.rm=}\OtherTok{TRUE}\NormalTok{)}
+  \KeywordTok{panel.xyplot}\NormalTok{(x,y,...,}\DataTypeTok{pch=}\DecValTok{16}\NormalTok{,}\DataTypeTok{col=}\StringTok{"black"}\NormalTok{)}
+  \KeywordTok{panel.points}\NormalTok{(}\KeywordTok{as.numeric}\NormalTok{(x),z,}\DataTypeTok{col=}\StringTok{"red"}\NormalTok{,}\DataTypeTok{pch=}\DecValTok{16}\NormalTok{,}\DataTypeTok{cex=}\FloatTok{1.25}\NormalTok{)}
+  \KeywordTok{panel.points}\NormalTok{(}\KeywordTok{as.numeric}\NormalTok{(x),imp,}\DataTypeTok{col=}\StringTok{"red"}\NormalTok{,}\DataTypeTok{pch=}\DecValTok{1}\NormalTok{,}\DataTypeTok{cex=}\FloatTok{1.25}\NormalTok{)}
+  \KeywordTok{panel.abline}\NormalTok{(}\DataTypeTok{h=}\DecValTok{0}\NormalTok{,}\DataTypeTok{lty=}\DecValTok{2}\NormalTok{)\},}
+  \DataTypeTok{ylim=}\KeywordTok{c}\NormalTok{(}\OperatorTok{-}\FloatTok{3.5}\NormalTok{,}\FloatTok{4.5}\NormalTok{),}\DataTypeTok{layout=}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{),}\DataTypeTok{xlab=}\StringTok{"year"}\NormalTok{,}\DataTypeTok{ylab=}\StringTok{"std monitoring index"}\NormalTok{)}
+
+\CommentTok{# plot the time series with env indices (panel for Fig 1)}
+\KeywordTok{xyplot}\NormalTok{(index}\OperatorTok{~}\NormalTok{cal.yr}\OperatorTok{|}\NormalTok{season}\OperatorTok{+}\NormalTok{PROJECT,}\DataTypeTok{data=}\NormalTok{junk2,}\DataTypeTok{horizontal=}\OtherTok{FALSE}\NormalTok{,}\DataTypeTok{aspect=}\FloatTok{0.5}\NormalTok{,}\DataTypeTok{panel=}\ControlFlowTok{function}\NormalTok{(x,y,subscripts,...,}\DataTypeTok{Z=}\NormalTok{junk2}\OperatorTok{$}\NormalTok{survey,}
+                                                                                         \DataTypeTok{IMP=}\NormalTok{junk2}\OperatorTok{$}\NormalTok{imputed,}\DataTypeTok{ONI=}\NormalTok{junk2}\OperatorTok{$}\NormalTok{oni,}\DataTypeTok{SAM=}\NormalTok{junk2}\OperatorTok{$}\NormalTok{sam)\{}
+\NormalTok{  z<-(Z[subscripts]}\OperatorTok{-}\KeywordTok{mean}\NormalTok{(}\KeywordTok{c}\NormalTok{(Z[subscripts],IMP[subscripts]),}\DataTypeTok{na.rm=}\OtherTok{TRUE}\NormalTok{))}\OperatorTok{/}\KeywordTok{sd}\NormalTok{(}\KeywordTok{c}\NormalTok{(Z[subscripts],IMP[subscripts]),}\DataTypeTok{na.rm=}\OtherTok{TRUE}\NormalTok{)}
+\NormalTok{  imp<-(IMP[subscripts]}\OperatorTok{-}\KeywordTok{mean}\NormalTok{(}\KeywordTok{c}\NormalTok{(Z[subscripts],IMP[subscripts]),}\DataTypeTok{na.rm=}\OtherTok{TRUE}\NormalTok{))}\OperatorTok{/}\KeywordTok{sd}\NormalTok{(}\KeywordTok{c}\NormalTok{(Z[subscripts],IMP[subscripts]),}\DataTypeTok{na.rm=}\OtherTok{TRUE}\NormalTok{)}
+  \KeywordTok{panel.xyplot}\NormalTok{(x,y,...,}\DataTypeTok{pch=}\DecValTok{16}\NormalTok{,}\DataTypeTok{col=}\StringTok{"black"}\NormalTok{)}
+  \KeywordTok{panel.points}\NormalTok{(}\KeywordTok{as.numeric}\NormalTok{(x),z,}\DataTypeTok{col=}\StringTok{"red"}\NormalTok{,}\DataTypeTok{pch=}\DecValTok{16}\NormalTok{,}\DataTypeTok{cex=}\FloatTok{1.25}\NormalTok{)}
+  \KeywordTok{panel.points}\NormalTok{(}\KeywordTok{as.numeric}\NormalTok{(x),imp,}\DataTypeTok{col=}\StringTok{"red"}\NormalTok{,}\DataTypeTok{pch=}\DecValTok{1}\NormalTok{,}\DataTypeTok{cex=}\FloatTok{1.25}\NormalTok{)}
+\NormalTok{  tt.oni<-}\KeywordTok{data.frame}\NormalTok{(}\KeywordTok{as.numeric}\NormalTok{(x),ONI[subscripts])}
+\NormalTok{  tt.oni<-tt.oni[}\KeywordTok{order}\NormalTok{(tt.oni[,}\DecValTok{1}\NormalTok{]),]}
+  \KeywordTok{panel.lines}\NormalTok{(tt.oni[,}\DecValTok{1}\NormalTok{],tt.oni[,}\DecValTok{2}\NormalTok{],}\DataTypeTok{col=}\StringTok{"blue"}\NormalTok{)}
+\NormalTok{  tt.sam<-}\KeywordTok{data.frame}\NormalTok{(}\KeywordTok{as.numeric}\NormalTok{(x),SAM[subscripts])}
+\NormalTok{  tt.sam<-tt.sam[}\KeywordTok{order}\NormalTok{(tt.sam[,}\DecValTok{1}\NormalTok{]),]}
+  \KeywordTok{panel.lines}\NormalTok{(tt.sam[,}\DecValTok{1}\NormalTok{],tt.sam[,}\DecValTok{2}\NormalTok{],}\DataTypeTok{col=}\StringTok{"dark green"}\NormalTok{)}
+  \KeywordTok{panel.abline}\NormalTok{(}\DataTypeTok{h=}\DecValTok{0}\NormalTok{,}\DataTypeTok{lty=}\DecValTok{2}\NormalTok{)\},}
+  \DataTypeTok{ylim=}\KeywordTok{c}\NormalTok{(}\OperatorTok{-}\FloatTok{3.5}\NormalTok{,}\FloatTok{4.5}\NormalTok{),}\DataTypeTok{layout=}\KeywordTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{),}\DataTypeTok{xlab=}\StringTok{"year"}\NormalTok{,}\DataTypeTok{ylab=}\StringTok{"index"}\NormalTok{)}
+
+
+\CommentTok{# some stuff to tablulate local harvest rates by year (including imputed estimates)}
+
+\NormalTok{junk}\OperatorTok{$}\NormalTok{impute.me<-}\KeywordTok{ifelse}\NormalTok{(}\KeywordTok{is.na}\NormalTok{(junk}\OperatorTok{$}\NormalTok{survey)}\OperatorTok{&}\NormalTok{junk}\OperatorTok{$}\NormalTok{season}\OperatorTok{==}\StringTok{"S"}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{0}\NormalTok{)}
+\NormalTok{junk}\OperatorTok{$}\NormalTok{survey<-}\KeywordTok{ifelse}\NormalTok{(junk}\OperatorTok{$}\NormalTok{impute.me}\OperatorTok{==}\DecValTok{0}\NormalTok{,junk}\OperatorTok{$}\NormalTok{survey,}\KeywordTok{exp}\NormalTok{(}\KeywordTok{ifelse}\NormalTok{(junk}\OperatorTok{$}\NormalTok{gSSMU}\OperatorTok{==}\DecValTok{1}\OperatorTok{&}\NormalTok{junk}\OperatorTok{$}\NormalTok{sam.sign}\OperatorTok{==}\StringTok{"Neg"}\NormalTok{,}
+\NormalTok{          hr.params.summ}\OperatorTok{$}\NormalTok{statistics[}\DecValTok{7}\NormalTok{,}\DecValTok{1}\NormalTok{],}
+          \KeywordTok{ifelse}\NormalTok{(junk}\OperatorTok{$}\NormalTok{gSSMU}\OperatorTok{==}\DecValTok{2}\OperatorTok{&}\NormalTok{junk}\OperatorTok{$}\NormalTok{sam.sign}\OperatorTok{==}\StringTok{"Neg"}\NormalTok{,hr.params.summ}\OperatorTok{$}\NormalTok{statistics[}\DecValTok{8}\NormalTok{,}\DecValTok{1}\NormalTok{],}
+          \KeywordTok{ifelse}\NormalTok{(junk}\OperatorTok{$}\NormalTok{gSSMU}\OperatorTok{==}\DecValTok{1}\OperatorTok{&}\NormalTok{junk}\OperatorTok{$}\NormalTok{sam.sign}\OperatorTok{==}\StringTok{"Pos"}\NormalTok{,hr.params.summ}\OperatorTok{$}\NormalTok{statistics[}\DecValTok{9}\NormalTok{,}\DecValTok{1}\NormalTok{],}
+\NormalTok{          hr.params.summ}\OperatorTok{$}\NormalTok{statistics[}\DecValTok{10}\NormalTok{,}\DecValTok{1}\NormalTok{])))))}
+\NormalTok{junk}\OperatorTok{$}\NormalTok{hr<-junk}\OperatorTok{$}\NormalTok{catch}\OperatorTok{/}\NormalTok{junk}\OperatorTok{$}\NormalTok{survey}
+\NormalTok{junk}\OperatorTok{$}\NormalTok{hihr<-(junk}\OperatorTok{$}\NormalTok{hr}\OperatorTok{>=}\FloatTok{0.10}\NormalTok{)}
+
+\CommentTok{# table for supplementary info}
+\NormalTok{jj<-}\KeywordTok{unique}\NormalTok{(junk[,}\KeywordTok{c}\NormalTok{(}\DecValTok{7}\NormalTok{,}\DecValTok{8}\NormalTok{,}\DecValTok{6}\NormalTok{,}\DecValTok{11}\NormalTok{,}\DecValTok{17}\NormalTok{,}\DecValTok{16}\NormalTok{)])}
+\KeywordTok{names}\NormalTok{(jj)<-}\KeywordTok{c}\NormalTok{(}\StringTok{"calendar.year"}\NormalTok{,}\StringTok{"stratum"}\NormalTok{,}\StringTok{"season"}\NormalTok{,}\StringTok{"catch"}\NormalTok{,}\StringTok{"LHR"}\NormalTok{,}\StringTok{"imputed"}\NormalTok{)}
+\NormalTok{jj}\OperatorTok{$}\NormalTok{stratum<-}\KeywordTok{ifelse}\NormalTok{(jj}\OperatorTok{$}\NormalTok{stratum}\OperatorTok{==}\DecValTok{1}\NormalTok{,}\StringTok{"Bransfield"}\NormalTok{,}\StringTok{"Drake"}\NormalTok{)}
+\NormalTok{jj}\OperatorTok{$}\NormalTok{season<-}\KeywordTok{ifelse}\NormalTok{(jj}\OperatorTok{$}\NormalTok{season}\OperatorTok{==}\StringTok{"S"}\NormalTok{,}\StringTok{"Summer"}\NormalTok{,}\StringTok{"Winter"}\NormalTok{)}
+\NormalTok{jj}\OperatorTok{$}\NormalTok{imputed<-}\KeywordTok{ifelse}\NormalTok{(jj}\OperatorTok{$}\NormalTok{imputed}\OperatorTok{==}\DecValTok{1}\NormalTok{,}\StringTok{"Yes"}\NormalTok{,}\StringTok{"No"}\NormalTok{)}
+\CommentTok{# no catch data for 2016}
+\NormalTok{jj<-jj[jj}\OperatorTok{$}\NormalTok{calendar.year}\OperatorTok{!=}\DecValTok{2016}\NormalTok{,]}
+\KeywordTok{write.csv}\NormalTok{(jj[}\KeywordTok{order}\NormalTok{(jj[,}\DecValTok{1}\NormalTok{],jj[,}\DecValTok{2}\NormalTok{],jj[,}\DecValTok{3}\NormalTok{]),],}\DataTypeTok{file=}\StringTok{"hr.csv"}\NormalTok{,}\DataTypeTok{row.names =} \OtherTok{FALSE}\NormalTok{)}
+
+\CommentTok{# variation in catch by season and decade (panel for Fig 3)}
+\NormalTok{tt<-}\KeywordTok{read.csv}\NormalTok{(}\StringTok{"c1.csv"}\NormalTok{,}\DataTypeTok{header=}\OtherTok{TRUE}\NormalTok{,}\DataTypeTok{stringsAsFactors =} \OtherTok{FALSE}\NormalTok{)}
+\NormalTok{tt<-tt[}\KeywordTok{is.element}\NormalTok{(tt}\OperatorTok{$}\NormalTok{AssignedSSMU,}\KeywordTok{c}\NormalTok{(}\StringTok{"APBSE"}\NormalTok{,}\StringTok{"APBSW"}\NormalTok{,}\StringTok{"APDPE"}\NormalTok{,}\StringTok{"APDPW"}\NormalTok{,}\StringTok{"APE"}\NormalTok{,}\StringTok{"APEI"}\NormalTok{,}\StringTok{"APPA"}\NormalTok{,}\StringTok{"APW"}\NormalTok{)),]}
+\NormalTok{tt}\OperatorTok{$}\NormalTok{FishingSeason<-}\KeywordTok{ifelse}\NormalTok{(tt}\OperatorTok{$}\NormalTok{Month}\OperatorTok{==}\DecValTok{12}\NormalTok{,tt}\OperatorTok{$}\NormalTok{CalendarYear}\OperatorTok{+}\DecValTok{1}\NormalTok{,tt}\OperatorTok{$}\NormalTok{CalendarYear)}
+\NormalTok{tt}\OperatorTok{$}\NormalTok{season<-}\KeywordTok{ifelse}\NormalTok{(}\KeywordTok{is.element}\NormalTok{(tt}\OperatorTok{$}\NormalTok{Month,}\KeywordTok{c}\NormalTok{(}\DecValTok{10}\OperatorTok{:}\DecValTok{12}\NormalTok{,}\DecValTok{1}\OperatorTok{:}\DecValTok{3}\NormalTok{)),}\StringTok{"S"}\NormalTok{,}\StringTok{"W"}\NormalTok{)}
+\NormalTok{tt}\OperatorTok{$}\NormalTok{decade<-}\KeywordTok{ifelse}\NormalTok{(tt}\OperatorTok{$}\NormalTok{FishingSeason}\OperatorTok{<}\DecValTok{1990}\NormalTok{,}\StringTok{"before 1990"}\NormalTok{,}
+                  \KeywordTok{ifelse}\NormalTok{(tt}\OperatorTok{$}\NormalTok{FishingSeason}\OperatorTok{>}\DecValTok{1989}\OperatorTok{&}\NormalTok{tt}\OperatorTok{$}\NormalTok{FishingSeason}\OperatorTok{<}\DecValTok{2000}\NormalTok{,}\StringTok{"1990-1999"}\NormalTok{,}
+                         \KeywordTok{ifelse}\NormalTok{(tt}\OperatorTok{$}\NormalTok{FishingSeason}\OperatorTok{>}\DecValTok{1999}\OperatorTok{&}\NormalTok{tt}\OperatorTok{$}\NormalTok{FishingSeason}\OperatorTok{<}\DecValTok{2010}\NormalTok{,}\StringTok{"2000-2009"}\NormalTok{,}\StringTok{"after 2009"}\NormalTok{)))}
+\NormalTok{tt}\OperatorTok{$}\NormalTok{decade<-}\KeywordTok{ordered}\NormalTok{(tt}\OperatorTok{$}\NormalTok{decade,}\DataTypeTok{levels=}\KeywordTok{c}\NormalTok{(}\StringTok{"before 1990"}\NormalTok{,}\StringTok{"1990-1999"}\NormalTok{,}\StringTok{"2000-2009"}\NormalTok{,}\StringTok{"after 2009"}\NormalTok{))}
+\NormalTok{tt<-}\KeywordTok{tapply}\NormalTok{(tt}\OperatorTok{$}\NormalTok{TotalCatch,}\KeywordTok{list}\NormalTok{(tt}\OperatorTok{$}\NormalTok{decade,tt}\OperatorTok{$}\NormalTok{season),sum)}
+\NormalTok{tt<-}\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{catch=}\KeywordTok{as.numeric}\NormalTok{(tt),}\DataTypeTok{decade=}\KeywordTok{rep}\NormalTok{(}\KeywordTok{dimnames}\NormalTok{(tt)[[}\DecValTok{1}\NormalTok{]],}\KeywordTok{dim}\NormalTok{(tt)[}\DecValTok{2}\NormalTok{]),}\DataTypeTok{season=}\KeywordTok{rep}\NormalTok{(}\KeywordTok{dimnames}\NormalTok{(tt)[[}\DecValTok{2}\NormalTok{]],}
+                                                                                        \DataTypeTok{each=}\KeywordTok{dim}\NormalTok{(tt)[}\DecValTok{1}\NormalTok{]))}
+\NormalTok{tt}\OperatorTok{$}\NormalTok{decade<-}\KeywordTok{ordered}\NormalTok{(tt}\OperatorTok{$}\NormalTok{decade,}\DataTypeTok{levels=}\KeywordTok{c}\NormalTok{(}\StringTok{"before 1990"}\NormalTok{,}\StringTok{"1990-1999"}\NormalTok{,}\StringTok{"2000-2009"}\NormalTok{,}\StringTok{"after 2009"}\NormalTok{))}
+\CommentTok{#}
+\KeywordTok{barchart}\NormalTok{(}\KeywordTok{I}\NormalTok{(catch}\OperatorTok{/}\DecValTok{1000}\NormalTok{)}\OperatorTok{~}\NormalTok{season}\OperatorTok{|}\NormalTok{decade,}\DataTypeTok{data=}\NormalTok{tt,}\DataTypeTok{layout=}\KeywordTok{c}\NormalTok{(}\DecValTok{4}\NormalTok{,}\DecValTok{1}\NormalTok{),}\DataTypeTok{aspect=}\DecValTok{1}\NormalTok{,}\DataTypeTok{xlab=}\StringTok{"Season"}\NormalTok{,}\DataTypeTok{ylab=}\StringTok{"Total catch (1000 t)"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
 \newpage
 
 \hypertarget{citations}{%
