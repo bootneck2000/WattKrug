@@ -34,7 +34,7 @@
 \IfFileExists{microtype.sty}{\usepackage{microtype}}{}
 \usepackage[margin=3cm]{geometry}
 \bibliographystyle{elsarticle-harv}
-\usepackage{longtable}
+\usepackage{graphicx}
 \ifxetex
   \usepackage[setpagesize=false, % page size defined by xetex
               unicode=false, % unicode breaks when used with xetex
@@ -411,8 +411,8 @@ The authors contend that they have little doubt that penguins are
 responding to both the environment and fishing; we contend that they are
 reacting to the environment, and the scales at which their model
 incorporates fishing bear no relevance to the scales at which penguins
-exploit (FIgure S1). The authors of the original model also identifying
-an insensitivity of penguin performance to marginal changes in LKB as
+exploit (Figure S1). The authors of the original model also identify an
+insensitivity of penguin performance to marginal changes in LKB as
 corroborating previous failed attempts to parameterise functional
 responses of penguins - we fully agree as our reanalysis draws similar
 conclusions of insensitivity, but we propose that even the SSMU scale is
@@ -514,10 +514,10 @@ is for chinstraps that have displayed tendencies to disperse much more
 widely during winter (see above section and references therein). An
 additional issue with the spatial restriction of catch data is that a
 high proportion of surveys are associated with accumulated annual catch
-rates = 0. While this may not pose a serious problem for chinstraps (30
-of 38 colonies are exposed to at least one non-zero catch rate) the
-problem may be quite serious for gentoos (24 of 47 colonies are exposed
-to at least one non-zero catch rate).
+rates = 0. While this may not pose a serious problem for chinstraps
+(79\% of colonies have had some level of catch within their 30km radius)
+the problem may be quite serious for gentoos (51\% of colonies had catch
+within a 30km radius).
 
 The authors use monthly data on the Southern Annular Mode (SAM) index to
 represent environmental variability (Doddridge and Marshall, 2017; Kwok
@@ -548,30 +548,30 @@ SAM index is the mean SAM index over almost the same period, but
 excluding the three months of the breeding season itself. To clarify
 this, we change the subscripts in the model equation:
 
-\[bin\lambda_{std_I}=\sum_{i=0}^{i=12}{catch_i}*\frac{\sum_{i=4}^{i=12}{SAM_i}}{9}+(1|colony\text{ }ID)\]
+\[bin\lambda_{std_I}=\sum_{i=0}^{i=12}{catch_i}*\frac{\sum_{i=0}^{i=8}{SAM_i}}{9}+(1|colony\text{ }ID)\]
 
 Here, \(I\) represents the survey interval, expressed in months rather
 than years, while \(i\) represents the number of months prior to the
-survey carried out in the last year of the interval \(I\). While \(i\)
-is always \(\leqslant\) 12, \(I\) is always \(\geqslant\) 12. In fact,
-based on the Krüger et al. (2021) supplementary dataset, \(I>12\) in
-\textasciitilde{} 26\% and 47\% of all intervals for Chinstraps and
-Gentoos respectively (Table 1). This illustrates the substantial and
-increasing issue of temporal mismatch between the response variable and
-the explanatory variables with increasing \(I\). As \(I\) increases, the
-difference in the number of breeding pairs between the first and last
-year of an interval will increasingly be a function of the catch rates
-and environmental conditions in ALL years in the interval, not just the
-final year. In the extreme case, it is highly unlikely that an overall
-decrease in breeding population size of Chinstraps at Penguin Island
-between 1980 and 2000 is in large part a response of local catch rates
-and SAM index in the single year preceding the 2000 breeding season
-survey. In addition, with increasing \(I\), the probability that a
-change in number of breeding pairs has been monotonous and linear
-throughout the entire interval becomes less likely, and the probability
-decreases that \(bin\lambda_{std_I}\) has the same sign as the actual
-(unobserved) change between the last two breeding seasons in the
-interval.
+start of the survey carried out in the last year of the interval \(I\).
+While \(i\) is always \(\leqslant\) 12, \(I\) is always \(\geqslant\)
+12. In fact, based on the Krüger et al. (2021) supplementary dataset,
+\(I>12\) in \textasciitilde{} 26\% and 47\% of all intervals for
+Chinstraps and Gentoos respectively (Figure 5). This illustrates the
+substantial and increasing issue of temporal mismatch between the
+response variable and the explanatory variables with increasing \(I\).
+As \(I\) increases, the difference in the number of breeding pairs
+between the first and last year of an interval will increasingly be a
+function of the catch rates and environmental conditions in ALL years in
+the interval, not just the final year. In the extreme case, it is highly
+unlikely that an overall decrease in breeding population size of
+Chinstraps at Penguin Island between 1980 and 2000 is in large part a
+response of local catch rates and SAM index in the single year preceding
+the 2000 breeding season survey. In addition, with increasing \(I\), the
+probability that a change in number of breeding pairs has been
+monotonous and linear throughout the entire interval becomes less
+likely, and the probability decreases that \(bin\lambda_{std_I}\) has
+the same sign as the actual (unobserved) change between the last two
+breeding seasons in the interval.
 
 \hypertarget{possible-tests-and-alternative-modelling-approaches}{%
 \subsection{Possible tests and alternative modelling
@@ -670,7 +670,7 @@ that reflect more of the physical and biological complexity of the
 system in question. In all cases, our goal is to ensure that the best
 available objective scientific evidence is presented to our
 environmental managers and, where appropriate, flag that disagreement
-exists. Our paper should be viewed in this light to generate
+exists. Our paper is intended to be viewed in this light to generate
 constructive dialogue that addresses our common concern of the potential
 for localised fishing to impact dependent aspects of the ecosystem.
 \newpage  
@@ -692,6 +692,14 @@ for localised fishing to impact dependent aspects of the ecosystem.
 \includegraphics[width=1\linewidth]{./Watters EMM figures/All spp summer then winter 37} \hfill{}
 
 \caption{Model output for the alternatve Watters et al. 2020 scenario outlined above (all species initially present, Adélie and chinstrap penguins migrate out of the area after breeding, LKB and LHR rescaled to SSMU and March included in summer or winter).   Selected cases as per Watters et al. 2020 for March in A) Summer and B) Winter are provided, with the corresponding case-by-case boxplots presented beneath.  Boxplots are colour-coded by ONI state (red=warm, white=neutral, blue=cold).  In all cases, the marginal effect of ONI dominated the expected performance of penguins against their long-term mean, irrespective of LKB or LHR.}\label{fig:Scenario plot 1}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics{WattKrug_files/figure-latex/gapCheck-1.pdf}
+\caption{Frequency distribution (percent) of intervals between
+consecutive breeding surveys for chinstrap and gentoo penguins, taken
+from the supplementary data for Kruger et al 2021.}
 \end{figure}
 
 \begin{figure}
@@ -756,124 +764,6 @@ Worst case & 0.76 & \- & \- & 0.63 & 0.55\\
 \blandscape
 
 \elandscape
-
-\begin{longtable}[]{@{}ccc@{}}
-\caption{Frequency distribution (percent) of intervals between
-consecutive breeding surveys for chinstrap and gentoo penguins used by
-Kruger et al 2021.}\tabularnewline
-\toprule
-\begin{minipage}[b]{0.20\columnwidth}\centering
-~\strut
-\end{minipage} & \begin{minipage}[b]{0.15\columnwidth}\centering
-Chinstrap\strut
-\end{minipage} & \begin{minipage}[b]{0.11\columnwidth}\centering
-Gentoo\strut
-\end{minipage}\tabularnewline
-\midrule
-\endfirsthead
-\toprule
-\begin{minipage}[b]{0.20\columnwidth}\centering
-~\strut
-\end{minipage} & \begin{minipage}[b]{0.15\columnwidth}\centering
-Chinstrap\strut
-\end{minipage} & \begin{minipage}[b]{0.11\columnwidth}\centering
-Gentoo\strut
-\end{minipage}\tabularnewline
-\midrule
-\endhead
-\begin{minipage}[t]{0.20\columnwidth}\centering
-\textbf{1 year}\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\centering
-63.11\strut
-\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\centering
-69.19\strut
-\end{minipage}\tabularnewline
-\begin{minipage}[t]{0.20\columnwidth}\centering
-\textbf{\textgreater1 year}\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\centering
-26.16\strut
-\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\centering
-47.05\strut
-\end{minipage}\tabularnewline
-\begin{minipage}[t]{0.20\columnwidth}\centering
-\textbf{\textgreater2 years}\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\centering
-15.26\strut
-\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\centering
-14.26\strut
-\end{minipage}\tabularnewline
-\begin{minipage}[t]{0.20\columnwidth}\centering
-\textbf{\textgreater3 years}\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\centering
-8.7\strut
-\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\centering
-9.05\strut
-\end{minipage}\tabularnewline
-\begin{minipage}[t]{0.20\columnwidth}\centering
-\textbf{\textgreater4 years}\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\centering
-6.8\strut
-\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\centering
-4.13\strut
-\end{minipage}\tabularnewline
-\begin{minipage}[t]{0.20\columnwidth}\centering
-\textbf{\textgreater5 years}\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\centering
-3.52\strut
-\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\centering
-3.18\strut
-\end{minipage}\tabularnewline
-\begin{minipage}[t]{0.20\columnwidth}\centering
-\textbf{\textgreater6 years}\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\centering
-3.05\strut
-\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\centering
-2.36\strut
-\end{minipage}\tabularnewline
-\begin{minipage}[t]{0.20\columnwidth}\centering
-\textbf{\textgreater7 years}\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\centering
-2.23\strut
-\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\centering
-0.94\strut
-\end{minipage}\tabularnewline
-\begin{minipage}[t]{0.20\columnwidth}\centering
-\textbf{\textgreater8 years}\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\centering
-1.76\strut
-\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\centering
-0.94\strut
-\end{minipage}\tabularnewline
-\begin{minipage}[t]{0.20\columnwidth}\centering
-\textbf{\textgreater9 years}\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\centering
-1.76\strut
-\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\centering
-0.47\strut
-\end{minipage}\tabularnewline
-\begin{minipage}[t]{0.20\columnwidth}\centering
-\textbf{\textgreater14 years}\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\centering
-1.29\strut
-\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\centering
-0.47\strut
-\end{minipage}\tabularnewline
-\begin{minipage}[t]{0.20\columnwidth}\centering
-\textbf{\textgreater15 years}\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\centering
-1.29\strut
-\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\centering
-0\strut
-\end{minipage}\tabularnewline
-\begin{minipage}[t]{0.20\columnwidth}\centering
-\textbf{\textgreater19 years}\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\centering
-0.82\strut
-\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\centering
-0\strut
-\end{minipage}\tabularnewline
-\bottomrule
-\end{longtable}
 
 \newpage  
 \beginsupplement
