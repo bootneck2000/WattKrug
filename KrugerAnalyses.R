@@ -25,9 +25,12 @@ peng.n <- peng %>%
 
 peng <- right_join(peng, peng.n, by='site.name') 
 
-peng <- peng %>% filter(count.type=='nests', 
+peng <- peng %>% filter(count.type!='chicks', 
                         (month=='11' | month=='12'))
 
+names(peng)[grep('penguin.count', names(peng))] <- 'count'
+
+peng$count[which(peng$count.type=='adults')]
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ## Read the data in the kruger et al. supplement:
 
@@ -73,4 +76,18 @@ for(i in 2:dim(gaptab)[1]) {
 rownames(gaptab)[-c(1,2)] <- paste('>', as.numeric(rownames(gaptab)[-c(1,2)])-1, ' years', sep='') 
 rownames(gaptab)[1] <- '1 year'
 rownames(gaptab)[2] <- '>1 year'
+
+max.krug<- krug %>% filter(site.name==gaps$site.name[which.max(gaps$yrdiff)], common.name==gaps$common.name[which.max(gaps$yrdiff)])
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## Create binary population change index:
+krug$binLambda <- -sign(krug$lambda)
+krug$binLambda[which(krug$binLambda<0)] <- 0
+
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## Check frequency of zero catches:
+noCatch <- inner_join(krug %>% group_by(common.name) %>% summarise(len=length(unique(site.name))),krug %>% filter(catch>0) %>% group_by(common.name) %>% summarise(len=length(unique(site.name))), by='common.name')
+names(noCatch) <- c('Species', 'All colonies', 'Colonies with non-zero catches')
+
 
