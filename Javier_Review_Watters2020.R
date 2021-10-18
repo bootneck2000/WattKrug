@@ -11,21 +11,22 @@ library(ggpubr)
 library(broom)
 library(AICcmodavg)
 library(tidyverse)
+library(stringr)
 
 
-setwd("E:/Documents/R workspace/Southern Ocean/Watters Sci Rep/Data from paper")
-S1 <- read.csv("catch.csv") # Krill catches
-S2 <- read.csv("cid.csv") # Clutch dates
-S3 <- read.csv("egg.csv") # Egg mass and volume
-S4 <- read.csv("fweight.csv") # Fledgling mass
-S5 <- read.csv("krillsurveywithJoinville.csv") # LKB
-S6 <- read.csv("massatlay.csv") # Adult penguin mass at laying
-S7 <- read.csv("oni.csv") # ONI
-S8 <- read.csv("recruitment.csv") # Cohort strength
-S9 <- read.csv("sam.csv") # SAM
-S10 <- read.csv("success.csv") # Chick breeding success
-S11 <- read.csv("tripduration.csv") # Forging trip duration
-S12 <- read.csv("c1.csv") # Krill catches and LHR
+S1 <- read_csv("./Supplementary Files/41598_2020_59223_MOESM2_ESM.csv") # Krill catches
+S2 <- read_csv("./Supplementary Files/41598_2020_59223_MOESM3_ESM.csv") # Clutch dates
+S3 <- read_csv("./Supplementary Files/41598_2020_59223_MOESM4_ESM.csv", col_types="ccccdddd") # Egg mass and volume
+S4 <- read_csv("./Supplementary Files/41598_2020_59223_MOESM5_ESM.csv") # Fledgling mass
+S5 <- read_csv("./Supplementary Files/41598_2020_59223_MOESM6_ESM.csv") # LKB
+S6 <- read_csv("./Supplementary Files/41598_2020_59223_MOESM7_ESM.csv") # Adult penguin mass at laying
+S7 <- read_csv("./Supplementary Files/41598_2020_59223_MOESM8_ESM.csv") # ONI
+S8 <- read_csv("./Supplementary Files/41598_2020_59223_MOESM9_ESM.csv") # Cohort strength
+S9 <- read_csv("./Supplementary Files/41598_2020_59223_MOESM10_ESM.csv") # SAM
+S10 <- read_csv("./Supplementary Files/41598_2020_59223_MOESM11_ESM.csv") # Chick breeding success
+S11 <- read_csv("./Supplementary Files/41598_2020_59223_MOESM12_ESM.csv") # Forging trip duration
+S12 <- read_csv("./Supplementary Files/41598_2020_59223_MOESM13_ESM.csv") # Krill catches and LHR
+
 
 
 ###############################
@@ -113,9 +114,9 @@ boxplot(logB ~ sam.sign*gSSMU, data = LKB)
 # includes low LKB, some indices of penguin performance decrease when penguins forage on small krill..."
 # We checked this using data frm the original paper by Hinke et al. 2007
 
-krill.diet <- read.csv("Krill_size_Hinke2007.csv") 
+krill.diet <- read.csv("./Supplementary Files/Krill_size_Hinke2007.csv") 
 
-# First, we check if low LKB (1Mt) are correlated with low krill size in diet
+# First, we check if low LKB (1Mt) are correlated with smaller krill length in diet
 
 # gSSMU1
 Survey <- survey %>% filter(gSSMU == "1")
@@ -131,7 +132,7 @@ ggplot(LKB1.kr, aes(x = LKB, y = value, col = variable)) +
   geom_boxplot(outlier.shape = NA) + 
   # geom_jitter(aes(col = variable, shape = variable), width = 0.5, size = 4) +
   geom_point(position = position_jitterdodge(), size = 4) +
-  labs(x = "Local Krill Biomass", y = "Mean krill size in diet (mm)", title = "gSSMU1 summer") + 
+  labs(x = "Local Krill Biomass", y = "Mean krill length in diet (mm)", title = "gSSMU1 summer") + 
   theme(axis.text = element_text(size = 12)) 
 
 one.way <- aov(value ~ LKB, data = LKB1.kr)
@@ -353,33 +354,61 @@ fml$season=rep("W",dim(fml)[1])
 
 # avg egg density using both eggs (egg)
 # bigger indicates better winter
-e1e2 <- S3
-egg<-e1e2[,c(1:3)]
-egg$egg<-(e1e2[,5]+e1e2[,7])/(e1e2[,6]+e1e2[,8])
-# most winter indices (except rec) are relevant to the first year in the split-season designation
-egg$Year<-as.numeric(substr(egg$YEAR,1,4))
-egg<-tapply(egg$egg,list(egg$Year,egg$PROJECT,egg$SPECIES),mean,na.rm=TRUE)
-egg<-data.frame(Year=rep(dimnames(egg)[[1]],dim(egg)[2]*dim(egg)[3]),
-                PROJECT=rep(rep(dimnames(egg)[[2]],each=dim(egg)[1]),dim(egg)[3]),
-                SPECIES=rep(dimnames(egg)[[3]],each=dim(egg)[1]*dim(egg)[2]),
-                egg=c(egg),stringsAsFactors = FALSE)
-egg$matchme<-paste(egg$PROJECT,egg$SPECIES,sep="|")
-tt<-tapply(egg$egg,list(egg$matchme),mean,na.rm=TRUE)
-ttt<-tapply(egg$egg,list(egg$matchme),sd,na.rm=TRUE)
-mean.egg<-tt[match(egg$matchme,names(tt))]
-sd.egg<-ttt[match(egg$matchme,names(ttt))]
-egg$std.mean.egg<-(egg$egg-mean.egg)/sd.egg
-egg<-egg[,-c(5)]
-names(egg)[5]<-"index1"
-#omits<-(egg$SPECIES=="ADPE"&egg$PROJECT=="CS")|(egg$SPECIES=="CHPE"&egg$PROJECT=="COPA")
-egg <- na.omit(egg)
-egg$Year <- as.integer(egg$Year)
-egg$param=rep("EGG",dim(egg)[1])
-egg$season=rep("W",dim(egg)[1])
-#print(str(egg))
-
-
-# clutch initiation date (cid)
+#function for scaling and centring the data
+scale_this = function(x) {
+  (x - mean(x, na.rm=TRUE)) / sd(x, na.rm=TRUE)
+}
+#create standardised centred index for egg density
+  egg = S3 %>%
+    dplyr::mutate(egg_den = c((E1_WT + E2_WT) / (E1_VOL + E2_VOL))) %>%
+    dplyr::mutate(Year = as.numeric(str_sub(YEAR,1,4))) %>%
+    drop_na() %>%
+    dplyr::select(Year, PROJECT, SPECIES, egg_den) %>%
+    dplyr::group_by(Year, PROJECT, SPECIES) %>%
+    nest() %>%
+    dplyr::mutate(data = map(data, ~
+                               .x %>%
+                               mutate(mean_egg = mean(egg_den)))) %>%
+    unnest(cols = c(data)) %>%
+    ungroup() %>%
+    dplyr::mutate(match_me = paste(PROJECT,SPECIES,sep="|")) %>%
+    dplyr::group_by(match_me) %>%
+    nest() %>%
+    dplyr::mutate(data = map(data, ~.x %>%
+                               mutate(index1 = scale_this(mean_egg)))) %>%
+    dplyr::ungroup() %>%
+    tidyr::unnest(cols = c(data)) %>%
+    dplyr::distinct(mean_egg, .keep_all=TRUE) %>%
+    dplyr::mutate(param="EGG", season="W") %>%
+    dplyr::select(Year, PROJECT, SPECIES, egg_den, index1, param, season)
+####original EGG DENSITY code from Watters et al. (2020)----
+  # avg egg density using both eggs (egg)
+  # bigger indicates better winter
+  e1e2 <- S3
+  egg<-e1e2[,c(1:3)]
+  egg$egg<-(e1e2[,5]+e1e2[,7])/(e1e2[,6]+e1e2[,8])
+  # most winter indices (except rec) are relevant to the first year in the split-season designation
+  egg$Year<-as.numeric(substr(egg$YEAR,1,4))
+  egg<-tapply(egg$egg,list(egg$Year,egg$PROJECT,egg$SPECIES),mean,na.rm=TRUE)
+  egg<-data.frame(Year=rep(dimnames(egg)[[1]],dim(egg)[2]*dim(egg)[3]),
+                  PROJECT=rep(rep(dimnames(egg)[[2]],each=dim(egg)[1]),dim(egg)[3]),
+                  SPECIES=rep(dimnames(egg)[[3]],each=dim(egg)[1]*dim(egg)[2]),
+                  egg=c(egg),stringsAsFactors = FALSE)
+  egg$matchme<-paste(egg$PROJECT,egg$SPECIES,sep="|")
+  tt<-tapply(egg$egg,list(egg$matchme),mean,na.rm=TRUE)
+  ttt<-tapply(egg$egg,list(egg$matchme),sd,na.rm=TRUE)
+  mean.egg<-tt[match(egg$matchme,names(tt))]
+  sd.egg<-ttt[match(egg$matchme,names(ttt))]
+  egg$std.mean.egg<-(egg$egg-mean.egg)/sd.egg
+  egg<-egg[,-c(5)]
+  names(egg)[5]<-"index1"
+  #omits<-(egg$SPECIES=="ADPE"&egg$PROJECT=="CS")|(egg$SPECIES=="CHPE"&egg$PROJECT=="COPA")
+  egg <- na.omit(egg)
+  egg$Year <- as.integer(egg$Year)
+  egg$param=rep("EGG",dim(egg)[1])
+  egg$season=rep("W",dim(egg)[1])
+  #print(str(egg))
+#### clutch initiation date (cid)----
 # earlier indicates better winter
 library(lubridate)
 
@@ -391,7 +420,7 @@ cid$Year<-as.numeric(substr(cid$YEAR,1,4))
 # call this "revcid" for "reversed" CID
 cid$revcid <- as.vector(as.POSIXlt(paste(substr(cid$YEAR,1,4),"-12-31",sep=""))-strptime(cid[,4],"%m/%e/%Y"))
 cid$MEAN_CID <- as.Date(cid$MEAN_CID, tryFormats = c("%m/%d/%Y"))
-cid$Julian <- yday(cid$MEAN_CID)
+cid$Julian <- lubridate::yday(cid$MEAN_CID)
 cid$matchme<-paste(cid$PROJECT,cid$SPECIES,sep="|")
 tt<-tapply(cid$revcid,list(cid$matchme),mean,na.rm=TRUE)
 ttt<-tapply(cid$revcid,list(cid$matchme),sd,na.rm=TRUE)
@@ -432,7 +461,7 @@ names(rec)[1] <- "Year"
 # Relationship KRILL size and Penguin Indexes -----------------------------
 
 #Krill size is only summer data; varies depending on Species and Location
-krill.diet <- read.csv("Krill_size_Hinke2007.csv") 
+#krill.diet <- read.csv("Krill_size_Hinke2007.csv") 
 krill.diet$Location <- str_replace_all(krill.diet$Location, c(AB = "COPA"))
 names(krill.diet) <- c("Year", "ADPE", "CHPE", "GEPE", "PROJECT")
 krill.spp <- melt(krill.diet, id = c("Year", "PROJECT"))
@@ -479,11 +508,6 @@ summary(ab.lm)
 
 two.way1 <- aov(index1 ~ oni.class + param, data = Peng.summer)
 summary(two.way)
-
-
-
-
-
 
 
 # Relationship ONI and Penguin Indexes ------------------------------------

@@ -144,6 +144,7 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
   # avg egg density using both eggs (egg)
   # bigger indicates better winter
   e1e2<-read.csv("egg.csv",header=TRUE,stringsAsFactors = FALSE)
+  e1e2 = S3
   egg<-e1e2[,c(1:3)]
   egg$egg<-(e1e2[,5]+e1e2[,7])/(e1e2[,6]+e1e2[,8])
   egg<-tapply(egg$egg,list(egg$YEAR,egg$PROJECT,egg$SPECIES),mean,na.rm=TRUE)
