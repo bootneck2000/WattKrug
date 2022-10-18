@@ -1,43 +1,43 @@
 ---
-title: A preliminary evaluation of the evidence supporting fishery-driven localised depletion effects on the performance and demographic trends of pygoscelid penguins in Subarea 48.1
+title: A preliminary evaluation
 author:
   - name: Andrew Lowther
-    email: andrew.lowther@npolar.no
-    footnote: 1
+    email: andrew.lowther@npolar.com
+    affiliation: Some Institute of Technology
+    correspndingauthor: true
   - name: Martin Biuw
     email: martin.biuw@hi.no
-    footnote: 2
-    affiliation: Institute of Marine Research (Tromsø)
+    affiliation: Another University
   - name: Ulf Lindstrøm
     email: ulf.lindstroem@hi.no
-    affiliation: Institute of Marine Research (Tromsø)
-    footnote: 2
+    affiliation: IMRT
   - name: Bjørn A. Krafft
     email: bjorn.krafft@hi.no
-    affiliation: Institute of Marine Research (Bergen)
-    footnote: 2
-address:
-  - code: Norwegian Polar Institute
-    address: Norwegian Polar Institute, Research Department, Fram Centre, Hjalmar Johansensgata 14, Tromsø, Norway, 9297
-  - code: Institute of Marine Research (Tromsø)
-    address: Institute of Marine Research, Tromsø 9296, Norway
-  - code: Institute of Marine Research (Bergen)
-    address: Institute of Marine Research, Nordnesgaten 50, 5005 Bergen, Norway
-footnote:
-  - code: 1
-    text: "Corresponding Author"
-  - code: 2
-    text: "Equal contribution"
+    affiliation: A University
+addreess:
+  - code: Some Institute of Technology
+    address: Research Department,Tromsø, Norway, 9297
+  - code: Another University
+    address: Tromsø 9296, Norway
+  - code: A University
+    address: Nordnesgaten 50, 5005 Bergen, Norway
 abstract: |
     Two independent lines of evidence have been presented to the working groups and SC-CAMLR that claim to demonstrate that fishery-driven localised depletion of krill around pygoscelid penguin colonies has had a deleterious effect on their performance traits and demographic trends, that are equivalent to the impacts of climate variation. One study utilises 30 years of penguin foraging and reproductive performance of penguins in relation to krill biomass using 30 years of data collected at two colonies in the South Shetland Islands, whereas the other uses demographic rate changes derived from a comprehensive dataset of penguin population count data across Subarea 48.1 matched against acoustic measurements of krill biomass and krill catches at the gSSMU scale [@Watters2020].  The second uses estimated population trajectories across a wide range of penguin breeding colonies in relation to krill catches within a 30km radius [@Kruger2021]. Both studies then explore the synergistic relationships to measurements of broad-scale climactic variation (El Niño-Southern Oscillation; ENSO, and the Southern Annular Mode; SAM).  Herein we provide a preliminary assessment of the efficacy of both approaches in drawing conclusions, that are now being used at the Commission level, as representing sound scientific advice. We demonstrate that several underlying assumptions in Watters et al. 2020 are contrary to the published scientific literature, and when the model syntax is re-written to reflect these, predicted penguin performance against long term expected means are substantially different to those presented to CCAMLR.  The evidence provided by @Kruger2021 uses a different analytical approach, however given the details provided we were unable to recreate the initial results and could not test the sensitivity of the model to some of the assumptions made. We do, however, point to areas in which we have concerns, and would welcome collaboration in order to clarify and address these through a more in-depth future analysis.  Overall while our preliminary assessment focuses on potential issues, future work  will centre on considering competitive interactions both at appropriate time and space scales between the fishery as well as between a range of krill dependent predators beyond just pygoscelid penguins.
+keywords: 
+  - keyword1
+  - keyword2
 journal: "WG-EMM 2021"
-geometry: margin=3cm
 date: "`r Sys.Date()`"
+classoption: preprint, 3p, authoryear
 bibliography: mylib.bib
-#linenumbers: true
-#numbersections: true
-csl: elsevier-harvard.csl
-output: rticles::elsevier_article
+linenumbers: false
+numbersections: true
+# Use a CSL with `citation_package = "default"`
+# csl: https://www.zotero.org/styles/elsevier-harvard
+output: 
+  rticles::elsevier_article:
+    keep_tex: true
+    citation_package: natbib
 header-includes:
   - \usepackage{booktabs}
   - \usepackage{longtable}
