@@ -33,26 +33,20 @@ names(peng)[grep('penguin.count', names(peng))] <- 'count'
 peng$count[which(peng$count.type=='adults')]
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ## Read the data in the kruger et al. supplement:
-
-krug <- tabulizer::extract_tables('./Kruger/13280_2020_1386_MOESM1_ESM.pdf', pages=c(4:13))
-krug[[1]] <- krug[[1]][-c(1:2),]
-krug[[1]] <- t(apply(krug[[1]], 1, function(x) unlist(strsplit(x, ' '))))
-krug <- as.data.frame(do.call('rbind', krug))
-names(krug) <- c('common.name', 'site.name', 'Longitude', 'Latitude', 'year', 'catch', 'SAM', 'count', 'lambda') 
-for(i in 3:length(krug)) krug[,i] <- as.numeric(krug[,i])
+load("./Kruger/kruger_tables_extracted.RData") #tabulapdf::extract_area followed by rbdind
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ## Compare the downloaded and supplementary data:
 compMat <- cbind(as.vector(by(peng, peng$common.name, function(y) length(unique(y$site.name)))),
-                 as.vector(by(krug, krug$common.name, function(y) length(unique(y$site.name)))))
+                 as.vector(by(krug, krug$species, function(y) length(unique(y$loc)))))
 dimnames(compMat) <- list(Species=c('Chinstrap', 'Gentoo'),
                           Dataset=c('MAAPD download', 'Kruger supplementary'))
 
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ## Check distribution of intervals between surveys:
-krug <- krug[order(krug$site.name, krug$year),]
-gaps <- by(krug, list(krug$site.name, krug$common.name), function(x) {
+krug <- krug[order(krug$loc, krug$year),]
+gaps <- by(krug, list(krug$loc, krug$species), function(x) {
   yr.diff <- diff(x$year)
   n.per <- length(yr.diff)
   n.gap <- length(which(yr.diff>1))
@@ -62,10 +56,10 @@ gaps <- by(krug, list(krug$site.name, krug$common.name), function(x) {
 })
 
 gaps <- krug %>% 
-  group_by(site.name, common.name) %>%
+  group_by(loc, species) %>%
   summarize(yrdiff=diff(year)) %>% as.data.frame()
 
-gaptab <- table(gaps$yrdiff, gaps$common.name)
+gaptab <- table(gaps$yrdiff, gaps$species)
 gaptab <- round(100*gaptab/apply(gaptab, 2, sum), 2)
 
 for(i in 2:dim(gaptab)[1]) {
@@ -77,7 +71,7 @@ rownames(gaptab)[-c(1,2)] <- paste('>', as.numeric(rownames(gaptab)[-c(1,2)])-1,
 rownames(gaptab)[1] <- '1 year'
 rownames(gaptab)[2] <- '>1 year'
 
-max.krug<- krug %>% filter(site.name==gaps$site.name[which.max(gaps$yrdiff)], common.name==gaps$common.name[which.max(gaps$yrdiff)])
+max.krug<- krug %>% filter(loc==gaps$loc[which.max(gaps$yrdiff)], species==gaps$species[which.max(gaps$yrdiff)])
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ## Create binary population change index:
@@ -87,7 +81,7 @@ krug$binLambda[which(krug$binLambda<0)] <- 0
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ## Check frequency of zero catches:
-noCatch <- inner_join(krug %>% group_by(common.name) %>% summarise(len=length(unique(site.name))),krug %>% filter(catch>0) %>% group_by(common.name) %>% summarise(len=length(unique(site.name))), by='common.name')
+noCatch <- inner_join(krug %>% group_by(species) %>% summarise(len=length(unique(loc))),krug %>% filter(catch>0) %>% group_by(species) %>% summarise(len=length(unique(loc))), by='species')
 names(noCatch) <- c('Species', 'All colonies', 'Colonies with non-zero catches')
 
 
