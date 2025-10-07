@@ -1,11 +1,11 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025) (preloaded format=pdflatex 2025.7.18)  18 JUL 2025 13:53
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025) (preloaded format=pdflatex 2025.10.7)  7 OCT 2025 15:06
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
 **WattKrug.tex
 (./WattKrug.tex
 LaTeX2e <2025-06-01> patch level 1
-L3 programming layer <2025-07-11>
+L3 programming layer <2025-09-02>
 (./elsarticle.cls
 Document Class: elsarticle 2008/05/22, 1.0.1: Elsevier Science
 \@bls=\dimen148
@@ -39,7 +39,7 @@ File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
 )
 Package graphics Info: Driver file: pdftex.def on input line 106.
 (/Users/god/Library/TinyTeX/texmf-dist/tex/latex/graphics-def/pdftex.def
-File: pdftex.def 2024/04/13 v1.2c Graphics/color driver for pdftex
+File: pdftex.def 2025/09/29 v1.2d Graphics/color driver for pdftex
 ))
 \Gin@req@height=\dimen150
 \Gin@req@width=\dimen151
@@ -195,7 +195,7 @@ LaTeX Info: Redefining \] on input line 2950.
 ) (/Users/god/Library/TinyTeX/texmf-dist/tex/latex/lineno/lineno.sty
 Package: lineno 2025/05/13 line numbers on paragraphs v5.5
 (/Users/god/Library/TinyTeX/texmf-dist/tex/latex/etoolbox/etoolbox.sty
-Package: etoolbox 2025/02/11 v2.5l e-TeX tools for LaTeX (JAW)
+Package: etoolbox 2025/10/02 v2.5m e-TeX tools for LaTeX (JAW)
 \etb@tempcnta=\count302
 ) (/Users/god/Library/TinyTeX/texmf-dist/tex/latex/kvoptions/kvoptions.sty
 Package: kvoptions 2022-06-15 v3.15 Key value format for package options (HO)
@@ -843,7 +843,7 @@ l.800 ...ing the variance in penguin vital rates.}
 [20] (./WattKrug.aux)
  ***********
 LaTeX2e <2025-06-01> patch level 1
-L3 programming layer <2025-07-11>
+L3 programming layer <2025-09-02>
  ***********
 
 LaTeX Warning: There were undefined references.
@@ -852,15 +852,15 @@ Package rerunfilecheck Info: File `WattKrug.out' has not changed.
 (rerunfilecheck)             Checksum: D5CBEDFD60DB01E79847CCEE7F1EAD39;2029.
  ) 
 Here is how much of TeX's memory you used:
- 13644 strings out of 469797
- 212161 string characters out of 5482061
- 637869 words of memory out of 5000000
- 41685 multiletter control sequences out of 15000+600000
- 681437 words of font info for 81 fonts, out of 8000000 for 9000
+ 13648 strings out of 469729
+ 212234 string characters out of 5476768
+ 638282 words of memory out of 5000000
+ 41757 multiletter control sequences out of 15000+600000
+ 682333 words of font info for 81 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  72i,10n,79p,937b,589s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </Users/god/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></Users/god/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx7.pfb></Users/god/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmex10.pfb></Users/god/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi10.pfb></Users/god/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi5.pfb></Users/god/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi6.pfb></Users/god/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi7.pfb></Users/god/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb></Users/god/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr12.pfb></Users/god/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr6.pfb></Users/god/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr7.pfb></Users/god/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr8.pfb></Users/god/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri10.pfb></Users/god/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri8.pfb></Users/god/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></Users/god/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy6.pfb></Users/god/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy7.pfb></Users/god/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt8.pfb></Users/god/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb>
-Output written on WattKrug.pdf (20 pages, 19335798 bytes).
+Output written on WattKrug.pdf (20 pages, 19335719 bytes).
 PDF statistics:
  362 PDF objects out of 1000 (max. 8388607)
  282 compressed objects within 3 object streams
