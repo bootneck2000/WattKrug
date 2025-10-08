@@ -381,184 +381,68 @@ discussions during WG-ASAM this year to consider spatial scales of
 management to areas in which the fishery operates, rather than at the
 Subarea level.
 
-# @Kruger2021 / WG-EMM 2019/10
+```{r, results='asis', echo=FALSE}
+table_data <- data.frame(
+  Statement = c(
+    "Does intervention X improve outcome Y?",
+    "Is variable A associated with variable B?",
+    "Was there a difference between groups 1 and 2?"
+  ),
+  Data_Source = c(
+    "Dataset1.csv",
+    "SurveyData2024.xlsx",
+    "ExperimentResults.txt"
+  ),
+  Support_and_Significance = c(
+    "Yes; t = 2.45, p = 0.018",
+    "No; r = 0.05, p = 0.670",
+    "Yes; x = 5.12, p = 0.024"
+  ),
+  Appendix_Reference = c(
+    "Appendix A, Code Chunk 3",
+    "Appendix B, Section 2",
+    "Appendix C, Table S1"
+  ),
+  stringsAsFactors = FALSE
+)
 
-The key objective of the paper by @Kruger2021 is to examine the
-potential synergistic effects of climate change and increased fishing
-activity in recent decades on the breeding performance of chinstrap and
-gentoo penguins. The authors make the implicit assumption that there has
-been a general decrease in krill density in response to climate change,
-although this is still a topic of debate and is not supported by recent
-large-scale surveys in the Scotia Sea (SG-ASAM 2019/08 Rev.1).
-
-To address this topic, the authors fit a Generalized Linear Mixed
-Effects model of the general form:
-$$\lambda=catch*SAM+(1|colony\text{ }ID)$$ where $\lambda$ is an index
-of change in penguin breeding performance, $catch$ is annual krill
-catch, $SAM$ is the Southern Annular Mode index, and the term in
-brackets indicate a random intercept term by colony. We would like to
-discuss some points regarding both the model formulation and the input
-data that we believe raise some potential concerns about the overall
-approach and the conclusions drawn. Based on the issues we raise here,
-we would welcome the opportunity to collaborate openly on a) recreating
-these analyses b) testing their sensitivity to the assumptions made and
-c) develop alternative approaches to alleviate these issues and provide
-a less biased result. Below we go through these issues in some detail.
-Unlike in the case of @Watters2020, scripts are not provided for the
-analyses done by @Kruger2021, and therefore we have not been able to
-recreate their analyses or test various aspects of data input,
-underlying assumptions and alternative model formulations. Additionally,
-there appear to be some discrepancies between the data provided in the
-supplementary material and what was actually used in the paper.
-
-## Response variable: Penguin breeding performance
-
-As the basis for the index of change in breeding performance
-($\lambda$), @Kruger2021 use data on the number of occupied nests
-(breeding pairs) counted at a large number of sites throughout the
-Antarctic Peninsula collected between 1980 and 2017. These data are
-available from the Mapping Application for Penguin Populations and
-Projected Dynamics (MAPPPD) data archive (www.penguinmap.com;
-@Humphries2017). @Kruger2021 include count data on occupied nests based
-on surveys carried out in November or December, reflecting the early
-breeding season. They further subset the data to include only colonies
-for which at least 2 survey estimates are available throughout the
-38-year period under consideration (i.e. 1980-2017). These data are
-provided in the supplementary materials for the paper. Based on the raw
-counts, they calculate an index of temporal variation in population
-growth rate using: $$\lambda_{std}=((n_b/n_a)/years_{b-a}-1$$ where $n$
-is the number of breeding pairs counted in Nov-Dec of a given year, $b$
-and the number of breeding pairs counted in the nearest previous year,
-$a$, in which a Nov-Dec survey was conducted, divided by the interval
-between surveys (i.e. $b-a$). While this index may be a robust index of
-relative population change, the authors then convert $\lambda_{std}$
-into a binary index, $bin\lambda_{std}$ that takes the value 1 for
-negative growth and 0 for positive growth. The rationale is that this
-value can be interpreted as the probability of population decline in
-response to catch and environmental change. However by only taking the
-sign of the change and creating a binary response the authors completely
-ignore the magnitude of the absolute or relative change in population
-size; that is, a decline of 1% or 99% of the population size in year $a$
-is considered equivalent in the model.
-
-## Predictor variables: Krill catch and SAM
-
-As in the case of @Watters2020, @Kruger2021 also use CCAMLR C1 Catch and
-Effort data from the krill fishery to estimate fishing pressure, but in
-this case only hauls within a 30km radius are considered for each
-specific colony. This selection is based on previous observations that
-foraging of pygoscelid penguins is more probable within 30 km of the
-colonies during the breeding season [@Warwick-Evans2018]. While they
-initially summarise these data within distinct time periods (reflecting
-different important stages of the penguin annual cycle), these are only
-used for illustrative purposes [Fig 3 in @Kruger2021]. When modelling
-the effect of fisheries on population response, the authors instead use
-accumulated annual catches within these 30km areas, making the
-assumption that the number of breeding penguins counted in a given
-survey is affected by local resource availability, also during the
-non-breeding period in winter. While this might be valid for gentoo
-penguins which appear to remain close to the breeding colonies also
-outside the breeding season
-[@korczak-abshireCoastalRegionsNorthern2021], it is questionable how
-appropriate this is for chinstraps that have displayed tendencies to
-disperse much more widely during winter (see above section and
-references therein). An additional issue with the spatial restriction of
-catch data is that a high proportion of surveys are associated with
-accumulated annual catch rates = 0. While this may not pose a serious
-problem for chinstraps (`r round(100*noCatch[1,3]/noCatch[1,2])`% of
-colonies have had some level of catch within their 30km radius) the
-problem may be quite serious for gentoos
-(`r round(100*noCatch[2,3]/noCatch[2,2])`% of colonies had catch within
-a 30km radius).
-
-The authors use monthly data on the Southern Annular Mode (SAM) index to
-represent environmental variability
-[@doddridgeModulationSeasonalCycle2017;
-@kwokSpatialPatternsVariability2002]. Based on an observed 0-3 month
-lagged correlation between SAM and relevant local climate variables
-(fractional sea ice cover, open water sensible heat flux and sea level
-air pressure), the authors exclude SAM values for months coinciding with
-the breeding season. As discussed in the review of @Watters2020 above,
-the climactic conditions over the WAP are a function primarily of the
-Amundsen Sea Low and its interactions with both ENSO and SAM, as well as
-the bathymetry of the local areas. There is a rich scientific literature
-addressing climate-driven hydrographic variability in the WAP , none of
-which is considered in this paper.
-
-## Spatio-temporal mismatch
-
-While the above sections describe some of our specific concerns with the
-various input data to the GLME, our main concern relates to issues of
-mismatch between these various data in space and time. Given the
-different data selections and transformations, the specific model
-specification presented in @Kruger2021 is:
-$$bin\lambda_{std}=catch_y*SAM+(1|colony\text{ }ID)$$ where the
-subscript $y$ denotes the accumulated krill catch within 30km of each
-colony over the year last survey in a survey interval (i.e. year $b$
-using the notation in the performance equation above). Similarly, the
-SAM index is the mean SAM index over almost the same period, but
-excluding the three months of the breeding season itself. To clarify
-this, we change the subscripts in the model equation:
-
-$$bin\lambda_{std_I}=\sum_{i=0}^{i=12}{catch_i}*\frac{\sum_{i=0}^{i=8}{SAM_i}}{9}+(1|colony\text{ }ID)$$
-
-Here, $I$ represents the survey interval, expressed in months rather
-than years, while $i$ represents the number of months prior to the start
-of the survey carried out in the last year of the interval $I$. While
-$i$ is always $\leqslant$ 12, $I$ is always $\geqslant$ 12. In fact,
-based on the @Kruger2021 supplementary dataset, $I>12$ in \~
-`r round(gaptab[2,1])`% and `r round(gaptab[2,2])`% of all intervals for
-`r colnames(gaptab)[1]`s and `r colnames(gaptab)[2]`s respectively
-(Figure 5). This illustrates the substantial and increasing issue of
-temporal mismatch between the response variable and the explanatory
-variables with increasing $I$. As $I$ increases, the difference in the
-number of breeding pairs between the first and last year of an interval
-will increasingly be a function of the catch rates and environmental
-conditions in ALL years in the interval, not just the final year. In the
-extreme case, it is highly unlikely that an overall decrease in breeding
-population size of `r gaps$common.name[which.max(gaps$yrdiff)]`s at
-`r peng$site.name[match(gaps$site.name[which.max(gaps$yrdiff)], peng$site.id)]`
-between `r max.krug$year[which.max(diff(max.krug$year))]` and
-`r max.krug$year[which.max(diff(max.krug$year))+1]` is in large part a
-response of local catch rates and SAM index in the single year preceding
-the `r max.krug$year[which.max(diff(max.krug$year))+1]` breeding season
-survey. In addition, with increasing $I$, the probability that a change
-in number of breeding pairs has been monotonous and linear throughout
-the entire interval becomes less likely, and the probability decreases
-that $bin\lambda_{std_I}$ has the same sign as the actual (unobserved)
-change between the last two breeding seasons in the interval.
-
-## Possible tests and alternative modelling approaches
-
-To address the issues raised above, the analyses of @Kruger2021 should
-be re-run with e.g. random subsets of the data or with data
-substitutions/permutations of the survey estimates. For instance,
-additional simulated surveys could be inserted into intervals $I>12$,
-specifically such that it changes the monotonous trend over the interval
-to change the sign of the associated $bin\lambda_{std_I}$. Additionally,
-the 30km radius for catch rates could be relaxed, at least for months
-outside of the breeding period, when especially chinstraps are known to
-disperse widely throughout the wider West Antarctic shelf regions (see
-Fig. 2).
-
-In general, we strongly argue that the spatio-temporal mismatch between
-the various input data must be explicitly accounted for in some way. One
-relatively simple approach would be to relax the temporal restriction of
-covariate data, such that catch rates and SAM values for all
-years/months within an interval between surveys are combined, rather
-than only using values from within the last year before the next survey.
-However, the most appropriate general strategy would be to include an
-approach for estimating spatio-temporal autocorrelation structures in
-the data, and exploiting these structures explicitly in the modelling.
-For instance, colonies closer could "borrow strength" from each-other in
-cases of long intervals between consecutive surveys at some colonies,
-especially for survey estimates of breeding population size. Additional
-consideration of lagged recruitment (fledging to reproductive age) is
-also needed, alongside the ability to detect it given irregular
-surveying effort and methods for longitudinal detection (such as banding
-or other permanent marking). We would very much welcome the opportunity
-to discuss various options for such approaches directly with the
-authors.
+if (knitr::is_latex_output()) {
+  cat("\\begin{table}[ht]\n\\centering\n")
+  cat("\\resizebox{\\textwidth}{!}{%\n")
+  print(
+    knitr::kable(
+      table_data,
+      format = "latex",
+      booktabs = TRUE,
+      escape = TRUE,
+      align = "lccc",
+      col.names = c(
+        "Statement/Question",
+        "Data Source",
+        "Support & Significance",
+        "Appendix Reference"
+      )
+    ),
+    row.names = FALSE
+  )
+  cat("}\n")
+  cat("\\caption{Summary Table showing what was bullshit, and where to find the analysis and data in our paper.}\n")
+  cat("\\end{table}\n")
+} else {
+  knitr::kable(
+    table_data,
+    format = "html",
+    caption = "Summary Table showing what was bullshit, and where to find the analysis and data in our paper.",
+    align = "lccc",
+    col.names = c(
+      "Statement/Question",
+      "Data Source",
+      "Support & Significance",
+      "Appendix Reference"
+    )
+  )
+}
+```
 
 # Discussion
 

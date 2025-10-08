@@ -12,7 +12,8 @@ library(broom)
 library(AICcmodavg)
 library(tidyverse)
 library(stringr)
-
+dir = '/Users/god/Documents/R workspace/WattKrug'
+setwd(dir)
 
 S1 <- read_csv("./Supplementary Files/c1.csv") # Krill catches
 S2 <- read_csv("./Supplementary Files/cid.csv") # Clutch dates

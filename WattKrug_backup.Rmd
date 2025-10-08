@@ -61,8 +61,6 @@ library(googledrive)
 library(rmdrive)
 ```
 
-```{r read in content, include=FALSE}
-````
 Introduction
 ============
 

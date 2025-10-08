@@ -257,8 +257,8 @@ centrally foraging, typically departing mid-February for their moulting
 grounds on the sea ice. chinstrap penguins depart for a pre-moult
 foraging trip towards the end of February and return to land in order to
 moult, before departing again for their overwinter trip
-\href{Figure\%202}{\citet{Hinke2015}; \citet{Hinke2019}}. Conversely,
-gentoo penguins appear to remain near their breeding colonies overwinter
+\href{Figure\%202}{@Hinke2015; @Hinke2019}. Conversely, gentoo penguins
+appear to remain near their breeding colonies overwinter
 \citep{korczak-abshireCoastalRegionsNorthern2021}.
 
 We use the Argos-CLS PTT telemetry data provided by the supporting
@@ -372,7 +372,7 @@ caution that this is unlikely to be a realistic assumption
   from the beginning of the month (Figure 4). Given the highly variable
   rates of catch throughout the study period, we run scenarios that
   classify March as either summer or winter to reflect the linkage
-  between March and the breeding state of penguins i.e.~Adélie and
+  between March and the breeding state of penguins i.e. Adélie and
   chinstrap penguins have either migrated out of the area or have ceased
   to be centrally foraging species by March.
 \end{enumerate}
@@ -455,184 +455,22 @@ discussions during WG-ASAM this year to consider spatial scales of
 management to areas in which the fishery operates, rather than at the
 Subarea level.
 
-\section{\texorpdfstring{\citet{Kruger2021} / WG-EMM
-2019/10}{@Kruger2021 / WG-EMM 2019/10}}\label{kruger2021-wg-emm-201910}
+\begin{table}[ht]
+\centering
+\resizebox{\textwidth}{!}{%
 
-The key objective of the paper by \citet{Kruger2021} is to examine the
-potential synergistic effects of climate change and increased fishing
-activity in recent decades on the breeding performance of chinstrap and
-gentoo penguins. The authors make the implicit assumption that there has
-been a general decrease in krill density in response to climate change,
-although this is still a topic of debate and is not supported by recent
-large-scale surveys in the Scotia Sea (SG-ASAM 2019/08 Rev.1).
-
-To address this topic, the authors fit a Generalized Linear Mixed
-Effects model of the general form:
-\[\lambda=catch*SAM+(1|colony\text{ }ID)\] where \(\lambda\) is an index
-of change in penguin breeding performance, \(catch\) is annual krill
-catch, \(SAM\) is the Southern Annular Mode index, and the term in
-brackets indicate a random intercept term by colony. We would like to
-discuss some points regarding both the model formulation and the input
-data that we believe raise some potential concerns about the overall
-approach and the conclusions drawn. Based on the issues we raise here,
-we would welcome the opportunity to collaborate openly on a) recreating
-these analyses b) testing their sensitivity to the assumptions made and
-c) develop alternative approaches to alleviate these issues and provide
-a less biased result. Below we go through these issues in some detail.
-Unlike in the case of \citet{Watters2020}, scripts are not provided for
-the analyses done by \citet{Kruger2021}, and therefore we have not been
-able to recreate their analyses or test various aspects of data input,
-underlying assumptions and alternative model formulations. Additionally,
-there appear to be some discrepancies between the data provided in the
-supplementary material and what was actually used in the paper.
-
-\subsection{Response variable: Penguin breeding
-performance}\label{response-variable-penguin-breeding-performance}
-
-As the basis for the index of change in breeding performance
-(\(\lambda\)), \citet{Kruger2021} use data on the number of occupied
-nests (breeding pairs) counted at a large number of sites throughout the
-Antarctic Peninsula collected between 1980 and 2017. These data are
-available from the Mapping Application for Penguin Populations and
-Projected Dynamics (MAPPPD) data archive (www.penguinmap.com;
-\citet{Humphries2017}). \citet{Kruger2021} include count data on
-occupied nests based on surveys carried out in November or December,
-reflecting the early breeding season. They further subset the data to
-include only colonies for which at least 2 survey estimates are
-available throughout the 38-year period under consideration
-(i.e.~1980-2017). These data are provided in the supplementary materials
-for the paper. Based on the raw counts, they calculate an index of
-temporal variation in population growth rate using:
-\[\lambda_{std}=((n_b/n_a)/years_{b-a}-1\] where \(n\) is the number of
-breeding pairs counted in Nov-Dec of a given year, \(b\) and the number
-of breeding pairs counted in the nearest previous year, \(a\), in which
-a Nov-Dec survey was conducted, divided by the interval between surveys
-(i.e.~\(b-a\)). While this index may be a robust index of relative
-population change, the authors then convert \(\lambda_{std}\) into a
-binary index, \(bin\lambda_{std}\) that takes the value 1 for negative
-growth and 0 for positive growth. The rationale is that this value can
-be interpreted as the probability of population decline in response to
-catch and environmental change. However by only taking the sign of the
-change and creating a binary response the authors completely ignore the
-magnitude of the absolute or relative change in population size; that
-is, a decline of 1\% or 99\% of the population size in year \(a\) is
-considered equivalent in the model.
-
-\subsection{Predictor variables: Krill catch and
-SAM}\label{predictor-variables-krill-catch-and-sam}
-
-As in the case of \citet{Watters2020}, \citet{Kruger2021} also use
-CCAMLR C1 Catch and Effort data from the krill fishery to estimate
-fishing pressure, but in this case only hauls within a 30km radius are
-considered for each specific colony. This selection is based on previous
-observations that foraging of pygoscelid penguins is more probable
-within 30 km of the colonies during the breeding season
-\citep{Warwick-Evans2018}. While they initially summarise these data
-within distinct time periods (reflecting different important stages of
-the penguin annual cycle), these are only used for illustrative purposes
-\citep[Fig 3 in][]{Kruger2021}. When modelling the effect of fisheries
-on population response, the authors instead use accumulated annual
-catches within these 30km areas, making the assumption that the number
-of breeding penguins counted in a given survey is affected by local
-resource availability, also during the non-breeding period in winter.
-While this might be valid for gentoo penguins which appear to remain
-close to the breeding colonies also outside the breeding season
-\citep{korczak-abshireCoastalRegionsNorthern2021}, it is questionable
-how appropriate this is for chinstraps that have displayed tendencies to
-disperse much more widely during winter (see above section and
-references therein). An additional issue with the spatial restriction of
-catch data is that a high proportion of surveys are associated with
-accumulated annual catch rates = 0. While this may not pose a serious
-problem for chinstraps (79\% of colonies have had some level of catch
-within their 30km radius) the problem may be quite serious for gentoos
-(51\% of colonies had catch within a 30km radius).
-
-The authors use monthly data on the Southern Annular Mode (SAM) index to
-represent environmental variability
-\citep{doddridgeModulationSeasonalCycle2017, kwokSpatialPatternsVariability2002}.
-Based on an observed 0-3 month lagged correlation between SAM and
-relevant local climate variables (fractional sea ice cover, open water
-sensible heat flux and sea level air pressure), the authors exclude SAM
-values for months coinciding with the breeding season. As discussed in
-the review of \citet{Watters2020} above, the climactic conditions over
-the WAP are a function primarily of the Amundsen Sea Low and its
-interactions with both ENSO and SAM, as well as the bathymetry of the
-local areas. There is a rich scientific literature addressing
-climate-driven hydrographic variability in the WAP , none of which is
-considered in this paper.
-
-\subsection{Spatio-temporal mismatch}\label{spatio-temporal-mismatch}
-
-While the above sections describe some of our specific concerns with the
-various input data to the GLME, our main concern relates to issues of
-mismatch between these various data in space and time. Given the
-different data selections and transformations, the specific model
-specification presented in \citet{Kruger2021} is:
-\[bin\lambda_{std}=catch_y*SAM+(1|colony\text{ }ID)\] where the
-subscript \(y\) denotes the accumulated krill catch within 30km of each
-colony over the year last survey in a survey interval (i.e.~year \(b\)
-using the notation in the performance equation above). Similarly, the
-SAM index is the mean SAM index over almost the same period, but
-excluding the three months of the breeding season itself. To clarify
-this, we change the subscripts in the model equation:
-
-\[bin\lambda_{std_I}=\sum_{i=0}^{i=12}{catch_i}*\frac{\sum_{i=0}^{i=8}{SAM_i}}{9}+(1|colony\text{ }ID)\]
-
-Here, \(I\) represents the survey interval, expressed in months rather
-than years, while \(i\) represents the number of months prior to the
-start of the survey carried out in the last year of the interval \(I\).
-While \(i\) is always \(\leqslant\) 12, \(I\) is always \(\geqslant\)
-12. In fact, based on the \citet{Kruger2021} supplementary dataset,
-\(I>12\) in \textasciitilde{} 27\% and 48\% of all intervals for
-Chinstraps and Gentoos respectively (Figure 5). This illustrates the
-substantial and increasing issue of temporal mismatch between the
-response variable and the explanatory variables with increasing \(I\).
-As \(I\) increases, the difference in the number of breeding pairs
-between the first and last year of an interval will increasingly be a
-function of the catch rates and environmental conditions in ALL years in
-the interval, not just the final year. In the extreme case, it is highly
-unlikely that an overall decrease in breeding population size of s at
-between 1980 and 2000 is in large part a response of local catch rates
-and SAM index in the single year preceding the 2000 breeding season
-survey. In addition, with increasing \(I\), the probability that a
-change in number of breeding pairs has been monotonous and linear
-throughout the entire interval becomes less likely, and the probability
-decreases that \(bin\lambda_{std_I}\) has the same sign as the actual
-(unobserved) change between the last two breeding seasons in the
-interval.
-
-\subsection{Possible tests and alternative modelling
-approaches}\label{possible-tests-and-alternative-modelling-approaches}
-
-To address the issues raised above, the analyses of \citet{Kruger2021}
-should be re-run with e.g.~random subsets of the data or with data
-substitutions/permutations of the survey estimates. For instance,
-additional simulated surveys could be inserted into intervals \(I>12\),
-specifically such that it changes the monotonous trend over the interval
-to change the sign of the associated \(bin\lambda_{std_I}\).
-Additionally, the 30km radius for catch rates could be relaxed, at least
-for months outside of the breeding period, when especially chinstraps
-are known to disperse widely throughout the wider West Antarctic shelf
-regions (see Fig. 2).
-
-In general, we strongly argue that the spatio-temporal mismatch between
-the various input data must be explicitly accounted for in some way. One
-relatively simple approach would be to relax the temporal restriction of
-covariate data, such that catch rates and SAM values for all
-years/months within an interval between surveys are combined, rather
-than only using values from within the last year before the next survey.
-However, the most appropriate general strategy would be to include an
-approach for estimating spatio-temporal autocorrelation structures in
-the data, and exploiting these structures explicitly in the modelling.
-For instance, colonies closer could ``borrow strength'' from each-other
-in cases of long intervals between consecutive surveys at some colonies,
-especially for survey estimates of breeding population size. Additional
-consideration of lagged recruitment (fledging to reproductive age) is
-also needed, alongside the ability to detect it given irregular
-surveying effort and methods for longitudinal detection (such as banding
-or other permanent marking). We would very much welcome the opportunity
-to discuss various options for such approaches directly with the
-authors.
+\begin{tabular}{lccc}
+\toprule
+Statement/Question & Data Source & Support \& Significance & Appendix Reference\\
+\midrule
+Does intervention X improve outcome Y? & Dataset1.csv & Yes; t = 2.45, p = 0.018 & Appendix A, Code Chunk 3\\
+Is variable A associated with variable B? & SurveyData2024.xlsx & No; r = 0.05, p = 0.670 & Appendix B, Section 2\\
+Was there a difference between groups 1 and 2? & ExperimentResults.txt & Yes; x = 5.12, p = 0.024 & Appendix C, Table S1\\
+\bottomrule
+\end{tabular}
+}
+\caption{Summary Table showing what was bullshit, and where to find the analysis and data in our paper.}
+\end{table}
 
 \section{Discussion}\label{discussion}
 
@@ -756,6 +594,7 @@ LHR high & 0.45 & 0.10 & 0.16 & 0.23 & 0.39\\
 Worst case & 0.84 & NA & NA & 0.71 & 0.59\\
 \bottomrule
 \end{longtable}
+
 \end{landscape}
 \begin{landscape}
 
@@ -790,15 +629,18 @@ Worst case & 0.76 & NA & NA & 0.63 & 0.55\\
 \section{Supplementary material}\label{supplementary-material}
 
 \begin{figure}
- \includegraphics[width=0.8\linewidth]{./Watters EMM figures/summer catch/Year by year catch} \caption{C1 Catch and Effort data for 2010 - 2018, for all catches during the period of the austral summer relating to Adélie and chinstrap penguins in Subarea 48.1 (i.e. up to $10^{th}$ March).  The telemetry data presented in Hinke et al. 2017 for chinstrap penguins at both Cape Shireff and Copacabana and the gSSMU used in the Watters et al. 2020 paper are superimposed to highlight the extreme variability in actual catch, relative to the scale of LHR used to reflect interactions with penguins.  Our reanalysis re-scaled LHR to the SSMU level, though we contend that for the purposes of matching predator data at appropriate spatial scales even this is too coarse a resolution.}\label{fig:Supplementary Figure 1}
- \end{figure}
+\includegraphics[width=0.8\linewidth]{./Watters EMM figures/summer catch/Year by year catch} \caption{C1 Catch and Effort data for 2010 - 2018, for all catches during the period of the austral summer relating to Adélie and chinstrap penguins in Subarea 48.1 (i.e. up to $10^{th}$ March).  The telemetry data presented in Hinke et al. 2017 for chinstrap penguins at both Cape Shireff and Copacabana and the gSSMU used in the Watters et al. 2020 paper are superimposed to highlight the extreme variability in actual catch, relative to the scale of LHR used to reflect interactions with penguins.  Our reanalysis re-scaled LHR to the SSMU level, though we contend that for the purposes of matching predator data at appropriate spatial scales even this is too coarse a resolution.}\label{fig:Supplementary Figure 1}
+\end{figure}
+
 \end{landscape}
+
 \begin{figure}
 
 \includegraphics[width=1\linewidth]{./Watters EMM figures/Other spp distribution} \hfill{}
 
 \caption{The summer distribution of foraging effort by A) adult female Antarctic fur seals (adapted from telemetry data available in Hinke et al. 2017), B) migratory adult male Antarctic fur seals (adapted from Lowther et al. 2020) C) humpback whales throughout December (adapted from Johannessen et al., this meeting) and D) nonbreeding adult Adélie penguins during the breeding season (adapted from data in Oosthuizen et al., this meeting). Potential effects of competitive overlap between pygoscelid penguins and other krill dependent predators, particularly those who have increased their abundance dramatically over the preceding 40 years, are excluded from both approaches, creating an unrealistic set of boundary conditions for interpreting the variance in penguin vital rates.}\label{fig:Supplementary Figure 2 other species plots}
 \end{figure}
+
 \newpage
 
 \renewcommand\refname{Citations}
