@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025) (preloaded format=pdflatex 2025.10.7)  8 OCT 2025 14:47
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025) (preloaded format=pdflatex 2025.10.7)  9 OCT 2025 10:29
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -653,18 +653,8 @@ LaTeX Warning: Reference `2' on page 1 undefined on input line 171.
 {/Users/god/Library/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{/Users/god/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{/Users/god/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}]
 
 [2{/Users/god/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{/Users/god/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}]
-Underfull \hbox (badness 10000) in paragraph at lines 349--362
-
- []
-
-
 
 [3]
-Underfull \hbox (badness 10000) in paragraph at lines 362--367
-
- []
-
-
 
 [4]
 
@@ -672,14 +662,14 @@ Underfull \hbox (badness 10000) in paragraph at lines 362--367
 pdfTeX warning (ext4): destination with the same identifier (name{table.1}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.525 
-      ]
+l.516 \newpage
+              ]
 
 [6]
-<./Watters EMM figures/Penguin distributions.png, id=120, 381.5856pt x 825.8052pt>
+<./Watters EMM figures/Penguin distributions.png, id=109, 381.5856pt x 825.8052pt>
 File: ./Watters EMM figures/Penguin distributions.png Graphic file (type png)
 <use ./Watters EMM figures/Penguin distributions.png>
-Package pdftex.def Info: ./Watters EMM figures/Penguin distributions.png  used on input line 544.
+Package pdftex.def Info: ./Watters EMM figures/Penguin distributions.png  used on input line 519.
 (pdftex.def)             Requested size: 288.32329pt x 624.00206pt.
 
 Overfull \vbox (77.80415pt too high) has occurred while \output is active []
@@ -690,12 +680,12 @@ Overfull \vbox (77.80415pt too high) has occurred while \output is active []
 pdfTeX warning (ext4): destination with the same identifier (name{figure.1}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.546 
+l.521 
        <./Watters EMM figures/Penguin distributions.png>]
-<./Watters EMM figures/Overwinter pengo distributions.png, id=131, 431.6928pt x 814.7238pt>
+<./Watters EMM figures/Overwinter pengo distributions.png, id=120, 431.6928pt x 814.7238pt>
 File: ./Watters EMM figures/Overwinter pengo distributions.png Graphic file (type png)
 <use ./Watters EMM figures/Overwinter pengo distributions.png>
-Package pdftex.def Info: ./Watters EMM figures/Overwinter pengo distributions.png  used on input line 548.
+Package pdftex.def Info: ./Watters EMM figures/Overwinter pengo distributions.png  used on input line 523.
 (pdftex.def)             Requested size: 332.68385pt x 627.86139pt.
 
 Overfull \vbox (62.66348pt too high) has occurred while \output is active []
@@ -706,20 +696,20 @@ Overfull \vbox (62.66348pt too high) has occurred while \output is active []
 pdfTeX warning (ext4): destination with the same identifier (name{figure.2}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.550 
+l.525 
        <./Watters EMM figures/Overwinter pengo distributions.png>]
-<./Watters EMM figures/Watters original and mistake.png, id=138, 585.6279pt x 799.5471pt>
+<./Watters EMM figures/Watters original and mistake.png, id=127, 585.6279pt x 799.5471pt>
 File: ./Watters EMM figures/Watters original and mistake.png Graphic file (type png)
 <use ./Watters EMM figures/Watters original and mistake.png>
-Package pdftex.def Info: ./Watters EMM figures/Watters original and mistake.png  used on input line 552.
+Package pdftex.def Info: ./Watters EMM figures/Watters original and mistake.png  used on input line 527.
 (pdftex.def)             Requested size: 332.68385pt x 454.19717pt.
-<./Watters EMM figures/All spp summer then winter 37.png, id=139, 600.3228pt x 704.3916pt>
+<./Watters EMM figures/All spp summer then winter 37.png, id=128, 600.3228pt x 704.3916pt>
 File: ./Watters EMM figures/All spp summer then winter 37.png Graphic file (type png)
 <use ./Watters EMM figures/All spp summer then winter 37.png>
-Package pdftex.def Info: ./Watters EMM figures/All spp summer then winter 37.png  used on input line 557.
+Package pdftex.def Info: ./Watters EMM figures/All spp summer then winter 37.png  used on input line 532.
 (pdftex.def)             Requested size: 443.57848pt x 520.47852pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 557--558
+Underfull \hbox (badness 10000) in paragraph at lines 532--533
 
  []
 
@@ -729,15 +719,15 @@ Underfull \hbox (badness 10000) in paragraph at lines 557--558
 pdfTeX warning (ext4): destination with the same identifier (name{figure.3}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.561 
+l.536 
        <./Watters EMM figures/Watters original and mistake.png>]
-<WattKrug_files/figure-latex/gapCheck-1.pdf, id=146, 469.755pt x 325.215pt>
+<WattKrug_files/figure-latex/gapCheck-1.pdf, id=135, 469.755pt x 325.215pt>
 File: WattKrug_files/figure-latex/gapCheck-1.pdf Graphic file (type pdf)
 <use WattKrug_files/figure-latex/gapCheck-1.pdf>
-Package pdftex.def Info: WattKrug_files/figure-latex/gapCheck-1.pdf  used on input line 562.
+Package pdftex.def Info: WattKrug_files/figure-latex/gapCheck-1.pdf  used on input line 537.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
 
-Overfull \hbox (41.17538pt too wide) in paragraph at lines 562--563
+Overfull \hbox (41.17538pt too wide) in paragraph at lines 537--538
 [][] 
  []
 
@@ -747,16 +737,16 @@ Overfull \hbox (41.17538pt too wide) in paragraph at lines 562--563
 pdfTeX warning (ext4): destination with the same identifier (name{figure.4}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.564 \begin{landscape}
+l.539 \begin{landscape}
                         <./Watters EMM figures/All spp summer then winter 37.png>]
 
 [11 <./WattKrug_files/figure-latex/gapCheck-1.pdf>]
-Overfull \hbox (27.63399pt too wide) in alignment at lines 566--580
+Overfull \hbox (27.63399pt too wide) in alignment at lines 541--555
  [] [] [] [] [] [] 
  []
 
 
-Overfull \hbox (27.63399pt too wide) in alignment at lines 582--596
+Overfull \hbox (27.63399pt too wide) in alignment at lines 557--571
  [] [] [] [] [] [] 
  []
 
@@ -765,7 +755,7 @@ Overfull \hbox (27.63399pt too wide) in alignment at lines 582--596
 [12
 
 ]
-Overfull \hbox (27.63399pt too wide) in alignment at lines 601--615
+Overfull \hbox (27.63399pt too wide) in alignment at lines 576--590
  [] [] [] [] [] [] 
  []
 
@@ -783,38 +773,38 @@ Overfull \hbox (27.63399pt too wide) in alignment at lines 601--615
 
 
 ]
-<./Watters EMM figures/summer catch/Year by year catch.png, id=179, 809.424pt x 560.5743pt>
+<./Watters EMM figures/summer catch/Year by year catch.png, id=167, 809.424pt x 560.5743pt>
 File: ./Watters EMM figures/summer catch/Year by year catch.png Graphic file (type png)
 <use ./Watters EMM figures/summer catch/Year by year catch.png>
-Package pdftex.def Info: ./Watters EMM figures/summer catch/Year by year catch.png  used on input line 632.
+Package pdftex.def Info: ./Watters EMM figures/summer catch/Year by year catch.png  used on input line 607.
 (pdftex.def)             Requested size: 499.40466pt x 345.8674pt.
 
 pdfTeX warning (ext4): destination with the same identifier (name{figure.1}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.632 ...summer catch/Year by year catch} \caption
+l.607 ...summer catch/Year by year catch} \caption
                                                   {C1 Catch and Effort data ...
 pdfTeX warning (ext4): destination with the same identifier (name{figure.1}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.632 ...es even this is too coarse a resolution.}
+l.607 ...es even this is too coarse a resolution.}
                                                   \label{fig:Supplementary F...
 pdfTeX warning (ext4): destination with the same identifier (name{figure.1}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.632 ...es even this is too coarse a resolution.}
+l.607 ...es even this is too coarse a resolution.}
                                                   \label{fig:Supplementary F...
 
 [15
 
  <./Watters EMM figures/summer catch/Year by year catch.png>]
-<./Watters EMM figures/Other spp distribution.png, id=185, 812.3148pt x 574.7874pt>
+<./Watters EMM figures/Other spp distribution.png, id=174, 812.3148pt x 574.7874pt>
 File: ./Watters EMM figures/Other spp distribution.png Graphic file (type png)
 <use ./Watters EMM figures/Other spp distribution.png>
-Package pdftex.def Info: ./Watters EMM figures/Other spp distribution.png  used on input line 639.
+Package pdftex.def Info: ./Watters EMM figures/Other spp distribution.png  used on input line 614.
 (pdftex.def)             Requested size: 443.57848pt x 313.87125pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 639--640
+Underfull \hbox (badness 10000) in paragraph at lines 614--615
 
  []
 
@@ -822,17 +812,17 @@ Underfull \hbox (badness 10000) in paragraph at lines 639--640
 pdfTeX warning (ext4): destination with the same identifier (name{figure.2}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.641 \caption
+l.616 \caption
               {The summer distribution of foraging effort by A) adult female...
 pdfTeX warning (ext4): destination with the same identifier (name{figure.2}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.641 ...ing the variance in penguin vital rates.}
+l.616 ...ing the variance in penguin vital rates.}
                                                   \label{fig:Supplementary F...
 pdfTeX warning (ext4): destination with the same identifier (name{figure.2}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.641 ...ing the variance in penguin vital rates.}
+l.616 ...ing the variance in penguin vital rates.}
                                                   \label{fig:Supplementary F...
 
 [16
@@ -850,21 +840,21 @@ L3 programming layer <2025-09-02>
 LaTeX Warning: There were undefined references.
 
 Package rerunfilecheck Info: File `WattKrug.out' has not changed.
-(rerunfilecheck)             Checksum: 7525460079BC6A37E14B1694C5FC499C;761.
+(rerunfilecheck)             Checksum: 85003843472490A892BBAAFA58235568;563.
  ) 
 Here is how much of TeX's memory you used:
- 13614 strings out of 469729
- 211402 string characters out of 5476768
- 637641 words of memory out of 5000000
- 41735 multiletter control sequences out of 15000+600000
+ 13610 strings out of 469729
+ 211338 string characters out of 5476768
+ 636660 words of memory out of 5000000
+ 41734 multiletter control sequences out of 15000+600000
  679352 words of font info for 80 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  72i,10n,79p,937b,589s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </Users/god/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></Users/god/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx7.pfb></Users/god/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi10.pfb></Users/god/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi6.pfb></Users/god/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb></Users/god/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr12.pfb></Users/god/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr6.pfb></Users/god/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr7.pfb></Users/god/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr8.pfb></Users/god/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri10.pfb></Users/god/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri8.pfb></Users/god/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></Users/god/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy6.pfb></Users/god/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy7.pfb></Users/god/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt8.pfb></Users/god/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb>
-Output written on WattKrug.pdf (18 pages, 19305308 bytes).
+Output written on WattKrug.pdf (18 pages, 19300995 bytes).
 PDF statistics:
- 292 PDF objects out of 1000 (max. 8388607)
- 220 compressed objects within 3 object streams
- 53 named destinations out of 1000 (max. 500000)
- 84 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 281 PDF objects out of 1000 (max. 8388607)
+ 209 compressed objects within 3 object streams
+ 50 named destinations out of 1000 (max. 500000)
+ 76 words of extra memory for PDF output out of 10000 (max. 10000000)
 

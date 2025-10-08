@@ -115,62 +115,45 @@ messy = c("37a.R")
 
 Concerns over the potential impact of localised depletion of krill
 through concentrated fishing effort on krill-dependent predators has
-been a topic of debate within SC-CAMLR and its Working Groups for many
-years. Recently, two studies have been presented that suggest that local
+been a topic of debate within the Antarctic science community for many
+years. Recently, one study has been presented that suggest that local
 harvesting rates can impact predator performance to the same degree as
-poor environmental conditions [@Watters2020] and when poor climactic
-conditions are coupled to locally high harvest rates the synergistic
-impacts on predators are evident [@Kruger2021].
-
-While both studies attempt to tackle the same overall problem, they do
-so using very different methodologies. @Watters2020 analysed various
-performance indices in relation to local krill biomass (LKB), local
-harvesting rates (LHR) and the Oceanic Niño Index (ONI) using a
-hierarchical bayesian model. The penguin performance indices (including
-those collected under CEMP) were collected at two sites (Cape Shireff on
+poor environmental conditions [@Watters2020] by matching various
+performance indices of krill-dependent penguins relative to estimates of
+krill biomass, fishing pressure and broad scale climate variability. The
+penguin performance indices were collected at two sites (Cape Shireff on
 Livingstone Island and Copacabana on King George Island, South Shetland
 Islands; Figure 1) in the period 1982 - 2016 whereas krill abundance
 data, which cover the at-sea distributions of chinstrap, gentoo and
 Adélie penguins, were collected during summer (1996 - 2011) and winter
-(2012, 2014 and 2015). By drawing in monthly krill catches from the C1
-Catch and Effort data and climate data (ONI), the authors use a
-hierarchical analysis of variance approach to estimate the variance in
-performance indices as a function of Local Krill Biomass (LKB), Local
-Harvesting Rates (LHR; the ratio of krill catch to LKB) and ONI. In
-contrast, @Kruger2021 utilise a broader range of penguin colonies across
-chinstrap and gentoo penguins throughout the Antarctic Peninsula area,
-in combination with their respective abundance survey estimates (number
-of occupied nests) from an open-source database (www.penguinmap.org).
-The authors calculate population trends for appropriate sites, and using
-the CCAMLR C1 Catch and Effort data to extract annual catch values
-within a 30km radius of each colony. Finally, @Kruger2021 use the sign
-of the difference in the number of nests between annual surveys as a
-response in a binomial generalised linear mixed effects model using the
-accumulated annual catch and the mean wintertime Southern Annular Mode
-(SAM) to determine the relative contributions of each predictor and
-their interactive effects on population abundance trends. Both studies
-draw similar conclusions; that local harvesting levels of krill impact
-predators, and the degree of impact can either be similar to that of
-poor environmental conditions or have a synergistic impact when high
-local harvesting coincides with poor conditions.
+(2012, 2014 and 2015). By drawing in monthly krill catches from Catch
+and Effort data reported to CCAMLR and climate data (ONI), the authors
+use a hierarchical analysis of variance approach to estimate the
+variance in these indices as a function of Local Krill Biomass (LKB),
+Local Harvesting Rates (LHR; the ratio of krill catch to LKB) and the
+Oceanic Niño Index (ONI). The study drew the conclusion that local
+harvesting levels of krill adversely impact penguins, and the degree of
+impact can either be similar to that of poor environmental conditions or
+have a synergistic impact when high local harvesting coincides with poor
+conditions.
 
-The conclusions of these papers have been propagated into Commission
-documentation supporting the reformulation of the D1MPA proposal
-(CCAMLR-39/BG/02) as well as into Commission discussions (CCAMLR-39,
-Para 5.48 & Para 5.51). However, while the two studies have moved from
-Working Papers of EMM into the realm of the peer-reviewed literature,
-there are some areas of concern regarding the structuring of these
-studies that we think deserve attention. Some of these concerns are
-unique to each study while others are common across both, and we
-structure our paper accordingly. Firstly, we review @Watters2020 and
-@Kruger2021 through the lens of some of the ecological assumptions made
-versus the available evidence pertaining to them. Within the constraints
-of the data and analytical methods that are available from the studies,
-we also quantify how rationalising these assumptions to the evidence
-available changes the model outputs and on the conclusions drawn. We
-then highlight some overarching concerns applicable to both papers.
+The conclusions of this paper, which at the time of writing has
+accumulated 162 citations, have been used by CCAMLR in support of
+developing Marine Protected Area proposals and fisheries management
+strategies as well as being used in the review process of the Marine
+Stewardship Council fisheries certification process for Antarctic krill.
+In other words, the study has been propagated into geopolitical and
+socioeconomic environments that are having real-world impacts beyond
+scientific debate. However, there are several areas of concern regarding
+the structuring of this study that deserve attention. Firstly, we review
+@Watters2020 through the lens of the ecological assumptions underpinning
+the study conclusions, versus the available evidence supporting them.
+Secondly, we quantitatively assess how rationalising these assumptions
+to the evidence available changes the model outputs and on the
+conclusions drawn. We then highlight some overarching concerns
+applicable to the paper.
 
-# @Watters2020 / WG-EMM 2019/11
+Mismatched scales of predator monitoring and fisheries management
 
 A key goal for the paper is to highlight the consequences of mismatching
 scales at which the Antarctic krill fishery is managed with the scales
@@ -194,10 +177,9 @@ are the first to fledge their chicks and thus cease to be centrally
 foraging, typically departing mid-February for their moulting grounds on
 the sea ice. chinstrap penguins depart for a pre-moult foraging trip
 towards the end of February and return to land in order to moult, before
-departing again for their overwinter trip [\@Hinke2015;
-\@Hinke2019](Figure%202). Conversely, gentoo penguins appear to remain
-near their breeding colonies overwinter
-[@korczak-abshireCoastalRegionsNorthern2021].
+departing again for their overwinter trip @Hinke2015; @Hinke2019.
+Conversely, gentoo penguins appear to remain near their breeding
+colonies overwinter [@korczak-abshireCoastalRegionsNorthern2021].
 
 We use the Argos-CLS PTT telemetry data provided by the supporting
 studies to characterise the actual at-sea habitat used, in the context
@@ -208,9 +190,9 @@ penguins in this area). For each species, we refrain from undertaking
 extensive state-space modelling of location errors and merely exclude
 locations with a "Z" error class, accepting the remaining locations had
 varying degrees of uncertainty around them, then calculated the 99%
-Minimum Convex Polygon (home range) using the R package *adehabitatHR*
-and calculate their associated areas in $nm^2$. For chinstrap penguins
-at Cape Shireff, this equated to a home range area of \~$4,782nm^2$, or
+Minimum Convex Polygon (home range) using the R package adehabitatHR and
+calculate their associated areas in $nm^2$. For chinstrap penguins at
+Cape Shireff, this equated to a home range area of \~$4,782nm^2$, or
 only 23% of the gSSMU to which their performance metrics are indexed
 against [@Watters2020]. For the same species at Copacabana the 99% MCP
 home range is 2,905$nm^2$, or \~19% of gSSMU 1 in the Bransfield Strait.
@@ -277,33 +259,35 @@ caution that this is unlikely to be a realistic assumption
 
 ## Modifications
 
-1.  We scale the gSSMU LKB to the SSMU that the summer tracking data
-    indicate penguins occupied. To do this, we calculate the area
-    ($nm^2$) of the SSMU for which the predator occupies and the gSSMU
-    to which it is assigned, then create a scaling ratio. For example,
-    we scale LKB for Cape Shireff chinstrap penguins solely to ADPDW
-    (Figure 1) by multiplying the gSSMU LKB by the areal ratio of
-    ADPDW/gSSMU #2. We then select the corresponding SSMU catch values
-    provided in @Watters2020 (Supplementary Info) to estimate SSMU-scale
-    LHR. We also caution that while considering the gSSMU scale of
-    harvesting as inappropriate for "local" effects, even the SSMU-scale
-    catch levels likely do not reflect pressures at scales relevant to
-    breeding penguins (Supplementary Figure 1).\
-2.  We remove Adélie and chinstrap penguins from the model formulation
-    over winter; that is, we attribute each species as "NA" during
-    winter (to account for dispersal after breeding), thus removing them
-    from association with any gSSMU.\
-3.  The authors place LKB/LHR values in March into the "summer" period.
-    However fishing effort over the period that performance indices are
-    available is not uniform over the thirty year period, with catch
-    over the preceding decade tending towards a nonlinear increase from
-    the middle of March and three years where catch rates increased
-    rapidly from the beginning of the month (Figure 4). Given the highly
-    variable rates of catch throughout the study period, we run
-    scenarios that classify March as either summer or winter to reflect
-    the linkage between March and the breeding state of penguins i.e.
-    Adélie and chinstrap penguins have either migrated out of the area
-    or have ceased to be centrally foraging species by March.
+We scale the gSSMU LKB to the SSMU that the summer tracking data
+indicate penguins occupied. To do this, we calculate the area ($nm^2$)
+of the SSMU for which the predator occupies and the gSSMU to which it is
+assigned, then create a scaling ratio. For example, we scale LKB for
+Cape Shireff chinstrap penguins solely to ADPDW (Figure 1) by
+multiplying the gSSMU LKB by the areal ratio of ADPDW/gSSMU #2. We then
+select the corresponding SSMU catch values provided in @Watters2020
+(Supplementary Info) to estimate SSMU-scale LHR. We also caution that
+while considering the gSSMU scale of harvesting as inappropriate for
+"local" effects, even the SSMU-scale catch levels likely do not reflect
+pressures at scales relevant to breeding penguins (Supplementary Figure
+1).
+
+We remove Adélie and chinstrap penguins from the model formulation over
+winter; that is, we attribute each species as "NA" during winter (to
+account for dispersal after breeding), thus removing them from
+association with any gSSMU.
+
+The authors place LKB/LHR values in March into the "summer" period.
+However fishing effort over the period that performance indices are
+available is not uniform over the thirty year period, with catch over
+the preceding decade tending towards a nonlinear increase from the
+middle of March and three years where catch rates increased rapidly from
+the beginning of the month (Figure 4). Given the highly variable rates
+of catch throughout the study period, we run scenarios that classify
+March as either summer or winter to reflect the linkage between March
+and the breeding state of penguins i.e. Adélie and chinstrap penguins
+have either migrated out of the area or have ceased to be centrally
+foraging species by March.
 
 Thus we reformulate the underlying assumptions above into a new model
 construct, in which performance indices from gentoo, chinstrap and
@@ -324,7 +308,7 @@ additional tables in the same format with the probabilities extracted
 from our reformulated model, the difference between the latter two
 tables reflecting whether March is in summer or winter.
 
-## Results
+### Results
 
 From the original @Watters2020 model, the probability that the Worst
 Case would cause penguin performance indices to drop below their
@@ -384,8 +368,8 @@ Subarea level.
 ```{r, results='asis', echo=FALSE}
 table_data <- data.frame(
   Statement = c(
-    "Does intervention X improve outcome Y?",
-    "Is variable A associated with variable B?",
+    "Does LKB vary with SAM sign and strata ??",
+    "Is low LKB (<1Mt) correlated with small krill ?",
     "Was there a difference between groups 1 and 2?"
   ),
   Data_Source = c(
