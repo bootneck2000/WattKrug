@@ -1,4 +1,4 @@
-# Analisis Watters et al 2020
+# Analysis Watters et al 2020
 
 
 library(readr)
