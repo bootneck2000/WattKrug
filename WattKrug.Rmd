@@ -458,44 +458,6 @@ knitr::include_graphics("./Watters EMM figures/All spp summer then winter 37.png
 knitr::include_graphics("./Watters EMM figures/ADE and CHIN summer 40 41.png")
 ```
 
-```{r gapCheck, echo=F, fig.show="hold", fig.pos='center', fig.cap='Frequency distribution (percent) of intervals between consecutive breeding surveys for chinstrap and gentoo penguins, taken from the supplementary data for Kruger et al 2021.'}
-
-# pander::pander(gaptab, caption='Frequency distribution (percent) of intervals between consecutive breeding surveys for chinstrap and gentoo penguins used by Kruger et al 2021.', justify='center')
-
- 
-
-par(las=2)
-
-plot(gaptab[,1], type='n', axes=F,
-
-     xlim=c(0.5, nrow(gaptab)+0.5), ylim=c(0, ceiling(max(gaptab))),
-
-     ylab='Percent of observed intervals', xlab='')
-
-axis(2)
-
-axis(1, at=c(1:nrow(gaptab)), labels=dimnames(gaptab)[[1]])
-
-abline(h=seq(0, ceiling(max(gaptab)), by=10), lty=2, col='grey')
-
-box()
-
-plotrix::axis.break(breakpos=10.5)
-
-plotrix::axis.break(breakpos=12.5)
-
-rect(c(1:nrow(gaptab))-0.4, rep(0, nrow(gaptab)), c(1:nrow(gaptab)), gaptab[,1], col=RColorBrewer::brewer.pal(3, 'Dark2')[1])
-
-rect(c(1:nrow(gaptab)), rep(0, nrow(gaptab)), c(1:nrow(gaptab))+0.4, gaptab[,2], col=RColorBrewer::brewer.pal(3, 'Dark2')[2])
-
-legend('topright', pch=22,
-
-       pt.bg=RColorBrewer::brewer.pal(3, 'Dark2')[c(1,2)],
-
-       dimnames(gaptab)[[2]])
-
-```
-
 ```{r Scenario plot 3, out.width="100%", fig.align="left", echo=FALSE, eval=FALSE, fig.cap="Model output for Scenario \\#3 outlined above (all species initially present,Adélie and chinstrap penguins migrate out of the area after breeding, LKB and LHR rescaled to SSMU and March included in summer or winter).   Selected cases as per Watters et al. 2020 for March in A) Summer and B) Winter are provided, with the corresponding case-by-case boxplots presented beneath.  Boxplots are colour-coded by ONI state (red;warm, white;neutral, blue;cold).  In all cases, the marginal effect of ONI dominated the expected performance of penguins against their long-term mean, irrespective of LKB or LHR."}
 
 knitr::include_graphics("./Watters EMM figures/Gentoo only 38 39.png")

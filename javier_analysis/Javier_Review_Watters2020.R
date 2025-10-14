@@ -388,10 +388,8 @@ scale_this = function(x) {
   e1e2 <- S3
   egg<-e1e2[,c(1:3)]
   egg$egg<-(e1e2[,5]+e1e2[,7])/(e1e2[,6]+e1e2[,8])
-  # most winter indices (except rec) are relevant to the first year in the split-season designation
-  egg$Year<-as.numeric(substr(egg$YEAR,1,4))
-  egg<-tapply(egg$egg,list(egg$Year,egg$PROJECT,egg$SPECIES),mean,na.rm=TRUE)
-  egg<-data.frame(Year=rep(dimnames(egg)[[1]],dim(egg)[2]*dim(egg)[3]),
+  egg<-tapply(egg$egg,list(egg$YEAR,egg$PROJECT,egg$SPECIES),mean,na.rm=TRUE)
+  egg<-data.frame(YEAR=rep(dimnames(egg)[[1]],dim(egg)[2]*dim(egg)[3]),
                   PROJECT=rep(rep(dimnames(egg)[[2]],each=dim(egg)[1]),dim(egg)[3]),
                   SPECIES=rep(dimnames(egg)[[3]],each=dim(egg)[1]*dim(egg)[2]),
                   egg=c(egg),stringsAsFactors = FALSE)
@@ -401,13 +399,14 @@ scale_this = function(x) {
   mean.egg<-tt[match(egg$matchme,names(tt))]
   sd.egg<-ttt[match(egg$matchme,names(ttt))]
   egg$std.mean.egg<-(egg$egg-mean.egg)/sd.egg
-  egg<-egg[,-c(5)]
-  names(egg)[5]<-"index1"
+  egg<-egg[,-c(4:5)]
+  names(egg)[4]<-"index"
   #omits<-(egg$SPECIES=="ADPE"&egg$PROJECT=="CS")|(egg$SPECIES=="CHPE"&egg$PROJECT=="COPA")
-  egg <- na.omit(egg)
-  egg$Year <- as.integer(egg$Year)
+  #egg<-egg[!omits,]
   egg$param=rep("EGG",dim(egg)[1])
   egg$season=rep("W",dim(egg)[1])
+  # most winter indices (except rec) are relevant to the first year in the split-season designation
+  egg$cal.yr<-as.numeric(substr(egg$YEAR,1,4))
   #print(str(egg))
 #### clutch initiation date (cid)----
 # earlier indicates better winter
@@ -466,7 +465,7 @@ names(rec)[1] <- "Year"
 # Relationship KRILL size and Penguin Indexes -----------------------------
 
 #Krill size is only summer data; varies depending on Species and Location
-#krill.diet <- read.csv("Krill_size_Hinke2007.csv") 
+krill.diet <- read.csv("/Users/god/Documents/R workspace/WattKrug/Supplementary Files/Krill_size_Hinke2007.csv") 
 krill.diet$Location <- str_replace_all(krill.diet$Location, c(AB = "COPA"))
 names(krill.diet) <- c("Year", "ADPE", "CHPE", "GEPE", "PROJECT")
 krill.spp <- melt(krill.diet, id = c("Year", "PROJECT"))
@@ -575,7 +574,9 @@ model.set <- list(two.way1, two.way2, inter.way1, inter.way2)
 model.names <- c("two.way param", "two.way Species", "Inter.param", "Inter.Species")
 aictab(model.set, modnames = model.names)
 
-
+#column name fix on egg
+egg = egg %>%
+  dplyr::mutate(Year = cal.yr)
 # Winter Indexes
 oni.w <- oni %>% filter(season == "W")
 mml.oni <- merge(x = mml, y = oni.w, by = "Year", all.x = TRUE)
