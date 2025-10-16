@@ -17,7 +17,7 @@ library(tidyverse)
 make.localhr.data<-function(trim=1,plot.winter=FALSE){
   # fledge weight (fwt)
   # bigger indicates better summer
-  fwt<-read.csv("fweight.csv",header=TRUE,stringsAsFactors = FALSE)
+  fwt<-read.csv("./Supplementary Files/fweight.csv",header=TRUE,stringsAsFactors = FALSE)
   fwt<-tapply(fwt$WT,list(fwt$YEAR,fwt$PROJECT,fwt$SPECIES),mean)
   fwt<-data.frame(YEAR=rep(dimnames(fwt)[[1]],dim(fwt)[2]*dim(fwt)[3]),
                   PROJECT=rep(rep(dimnames(fwt)[[2]],each=dim(fwt)[1]),dim(fwt)[3]),
@@ -42,7 +42,7 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
   #
   # post-hatch success (phs) (numbers of chicks creched/numbers of chicks hatched)
   # bigger indicates better summer
-  phs<-read.csv("success.csv",header=TRUE,stringsAsFactors = FALSE)
+  phs<-read.csv("./Supplementary Files/success.csv",header=TRUE,stringsAsFactors = FALSE)
   phs$phs<-phs$N_CRECHE/phs$N_CHICKS
   phs$phs<-log(phs$phs/(1-phs$phs))
   phs$matchme<-paste(phs$PROJECT,phs$SPECIES,sep="|")
@@ -61,7 +61,7 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
   #
   # trip duration (td)
   # smaller indicates better summer (thus need to switch direction of index)
-  td<-read.csv("tripduration.csv",header=TRUE,stringsAsFactors = FALSE)
+  td<-read.csv("./Supplementary Files/tripduration.csv",header=TRUE,stringsAsFactors = FALSE)
   td<-td[,c(1:3,8)]
   # next line is to make trip duration point in same direction as fwt and phs (max td is 59.95 for all trips)
   # call this "revtd" for "reversed" trip duration
@@ -92,7 +92,7 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
   #
   # adult male mass at E1 lay (mml)
   # bigger indicates better winter
-  ade1<-read.csv("massatlay.csv",header=TRUE,stringsAsFactors = FALSE)
+  ade1<-read.csv("./Supplementary Files/massatlay.csv",header=TRUE,stringsAsFactors = FALSE)
   mml<-ade1[,c(1:3,5)]
   mml<-tapply(mml$WT_MALE,list(mml$YEAR,mml$PROJECT,mml$SPECIES),mean,na.rm=TRUE)
   mml<-data.frame(YEAR=rep(dimnames(mml)[[1]],dim(mml)[2]*dim(mml)[3]),
@@ -143,7 +143,7 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
   #
   # avg egg density using both eggs (egg)
   # bigger indicates better winter
-  e1e2<-read.csv("egg.csv",header=TRUE,stringsAsFactors = FALSE)
+  e1e2<-read.csv("./Supplementary Files/egg.csv",header=TRUE,stringsAsFactors = FALSE)
   egg<-e1e2[,c(1:3)]
   egg$egg<-(e1e2[,5]+e1e2[,7])/(e1e2[,6]+e1e2[,8])
   egg<-tapply(egg$egg,list(egg$YEAR,egg$PROJECT,egg$SPECIES),mean,na.rm=TRUE)
@@ -170,7 +170,7 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
   #
   # clutch initiation date (cid)
   # earlier indicates better winter
-  cid<-read.csv("cid.csv",header=TRUE,stringsAsFactors = FALSE)[,1:4]
+  cid<-read.csv("./Supplementary Files/cid.csv",header=TRUE,stringsAsFactors = FALSE)[,1:4]
   # next line is to make CID point in same direction as other 
   #indices where bigger indicates better conditions (take diff from Dec 31)
   # call this "revcid" for "reversed" CID
@@ -194,7 +194,7 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
   #
   # cohort recruitment (rec)
   # bigger indicates better winter
-  rec<-read.csv("recruitment.csv",header=TRUE,stringsAsFactors = FALSE)[,1:4]
+  rec<-read.csv("./Supplementary Files/recruitment.csv",header=TRUE,stringsAsFactors = FALSE)[,1:4]
   names(rec)[4]<-"rec"
   rec$rec<-log(rec$rec/(1-rec$rec))
   rec$matchme<-paste(rec$PROJECT,rec$SPECIES,sep="|")
@@ -214,7 +214,7 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
   # read in the krill survey and fishery data
   #
   # krill survey biomass
-  survey<-read.csv("krillsurveywithJoinville.csv",header=TRUE,stringsAsFactors = FALSE)
+  survey<-read.csv("./Supplementary Files/krillsurveywithJoinville.csv",header=TRUE,stringsAsFactors = FALSE)
   # use next line if want to filter acoustic data to have minimum number of miles (comment out if not desired)
   # as per CSR, 80 nmi would be about equivalent of 2 tracklines in the Bransfield
   #survey<-survey[survey$nmi.count>=80,]
@@ -249,7 +249,7 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
   #
   #
   # krill fishery catches
-  fishery<-read.csv("c1.csv",header=TRUE,stringsAsFactors = FALSE)
+  fishery<-read.csv("./Supplementary Files/c1.csv",header=TRUE,stringsAsFactors = FALSE)
   # change here - current modification for March in Winter permutation
   fishery$season<-ifelse(is.element(fishery$Month,c(10:12,1:2)),"S","W") #1:3 if March in Summer
   gSSMU1<-c("APBSE") # change here
@@ -303,7 +303,7 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
   # pull in the environmental indices
   #
   # SOUTHERN ANNULAR MODE
-  sam<-read.csv("sam.csv")
+  sam<-read.csv("./Supplementary Files/sam.csv")
   names(sam)<-c("yr","mo","sam")
   sam$season<-ifelse(is.element(sam$mo,c(10:12,1:3)),"S","W")
   sam$YEAR<-ifelse(is.element(sam$mo,10:12),sam$yr+1,sam$yr)
@@ -313,7 +313,7 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
   out$sam.sign<-ifelse(out$sam<0,"Neg","Pos")
   #
   # OCEANIC NINO INDEX
-  oni<-read.csv("oni.csv",stringsAsFactors = FALSE)
+  oni<-read.csv("./Supplementary Files/oni.csv",stringsAsFactors = FALSE)
   oni$yr<-ifelse(is.element(oni$SEAS,c("OND","NDJ")),oni$YR+1,oni$YR)
   oni$season<-ifelse(is.element(oni$SEAS,c("OND","NDJ","DJF","JFM")),"S",NA)
   oni$season<-ifelse(is.element(oni$SEAS,c("AMJ","MJJ","JJA","JAS")),"W",oni$season)
@@ -332,7 +332,7 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
   out<-out[!is.nan(out$index),]
   out<-out[!is.na(out$index),]
   
-  write.csv(out, file = "out.csv")  
+  write.csv(out, file = "./Supplementary Files/out.csv")  
   # will not try to impute missing winter surveys
   # but will keep winter performance indices if want to plot them
   if(!plot.winter){out<-out[!(is.na(out$survey)&out$season=="W"),]}
@@ -811,10 +811,11 @@ jj<-jj[jj$calendar.year!=2016,]
 write.csv(jj[order(jj[,1],jj[,2],jj[,3]),],file="hr.csv",row.names = FALSE)
 
 # variation in catch by season and decade (panel for Fig 3)
-tt<-read.csv("c1.csv",header=TRUE,stringsAsFactors = FALSE)
+tt<-read.csv('./Supplementary Files/c1.csv',header=TRUE,stringsAsFactors = FALSE)
 tt<-tt[is.element(tt$AssignedSSMU,c("APBSE","APBSW","APDPE","APDPW","APE","APEI","APPA","APW")),]
 tt$FishingSeason<-ifelse(tt$Month==12,tt$CalendarYear+1,tt$CalendarYear)
-tt$season<-ifelse(is.element(tt$Month,c(10:12,1:3)),"S","W")
+#NEXT LINE: change 1:2 to 1:3 to make March be Summer.  Current config is for March to be in Winter for matching penguin breeding
+tt$season<-ifelse(is.element(tt$Month,c(10:12,1:2)),"S","W")
 tt$decade<-ifelse(tt$FishingSeason<1990,"before 1990",
                   ifelse(tt$FishingSeason>1989&tt$FishingSeason<2000,"1990-1999",
                          ifelse(tt$FishingSeason>1999&tt$FishingSeason<2010,"2000-2009","after 2009")))

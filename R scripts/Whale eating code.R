@@ -32,9 +32,9 @@ bsw_whales_1_consumption_day = bsw_whales_1$z * 0.632
 bsw_whales_2_consumption_day = bsw_whales_2$z * 0.632
 bsw_whales_3_consumption_day = bsw_whales_3$z * 0.632
 
-bsw_whales_1_breed_season = bsw_whales_1_consumption_day * 90
-bsw_whales_2_breed_season = bsw_whales_2_consumption_day * 90
-bsw_whales_3_breed_season = bsw_whales_3_consumption_day * 90
+bsw_whales_1_breed_season = bsw_whales_1_consumption_day * 30
+bsw_whales_2_breed_season = bsw_whales_2_consumption_day * 30
+bsw_whales_3_breed_season = bsw_whales_3_consumption_day * 30
 
 bsw_whales_total_breed_season = bsw_whales_1_breed_season + bsw_whales_2_breed_season + bsw_whales_3_breed_season
 ####BS EAST----
@@ -50,11 +50,29 @@ bse_whales_1_consumption_day = bse_whales_1$z * 0.632
 bse_whales_2_consumption_day = bse_whales_2$z * 0.632
 bse_whales_3_consumption_day = bse_whales_3$z * 0.632
 
-bse_whales_1_breed_season = bse_whales_1_consumption_day * 90
-bse_whales_2_breed_season = bse_whales_2_consumption_day * 90
-bse_whales_3_breed_season = bse_whales_3_consumption_day * 90
+bse_whales_1_breed_season = bse_whales_1_consumption_day * 30
+bse_whales_2_breed_season = bse_whales_2_consumption_day * 30
+bse_whales_3_breed_season = bse_whales_3_consumption_day * 30
 
 bse_whales_total_breed_season = bse_whales_1_breed_season + bse_whales_2_breed_season + bse_whales_3_breed_season
 
 
 TOTAL_BS_WHALE = bse_whales_total_breed_season + bsw_whales_total_breed_season
+
+####Now we read in the catch data from Watters et al, subset the two SSMU, sum the catch for the same periods, and compare----
+catch = read_csv("/Users/god/Documents/R workspace/WattKrug/Supplementary Files/c1.csv") %>%
+  dplyr::filter(AssignedSSMU == c("APBSE", "APBSW"))%>%#, CalendarYear >= "2010") %>%
+  dplyr::group_by(AssignedSSMU, CalendarYear) %>%
+  dplyr::summarise(TotalCatch = sum(TotalCatch, na.rm = TRUE))
+
+####back of the fag packt reverse calc for male AFS to hit the 155kt 48.1 trigger----
+#uses Boyd et al. consumption estimate of a 4yr old male eating 3tonnes/year, or an average of 8kg/day
+
+quota = 31000
+seal_consumption = 0.008*90 #8kg per day for 90days, or between January 1st and March 31st each year
+number_seals = (quota/seal_consumption)
+number_seals
+
+
+catch_and_seals = catch %>%
+  dplyr::mutate(equivalent_AFS_n = TotalCatch/0.72)
