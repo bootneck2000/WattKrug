@@ -28,6 +28,7 @@ output:
     latex_engine: xelatex  # Optional: Use xelatex for better font handling if needed
     keep_tex: true  # Optional: Keep the .tex file for debugging
     fig_caption: FALSE
+    
 header-includes:
   - \usepackage{booktabs}
   - \usepackage{longtable}
