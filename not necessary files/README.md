@@ -9,5 +9,5 @@ Enclosed are two streams of analysis so far, that were presented to WG-EMM in 20
 3. The script "Javier_Review_Watters2020.R" is an examination of the relationships that underpin the interpretation of the model above, including the inter-relationship between krill length and season, egg weight and krill availability etc.
 
 
-The goal is to submit a manuscript back into Scientific Reports and have it published prior to WG-EMM 2026. The paper will only focus on the Watters et al. 2020, given the comprehensive demolishon done on the work of Kruger et al. in successive EMM meetings. 
+The goal is to submit a manuscript back into Scientific Reports and have it published prior to WG-EMM 2026. The paper will only focus on the Watters et al. 2020, given the comprehensive demolition done on the work of Kruger et al. in successive EMM meetings. 
 
