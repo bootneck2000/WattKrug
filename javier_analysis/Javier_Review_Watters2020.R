@@ -14,14 +14,14 @@ c1 <- read.csv("./Supplementary Files/c1.csv") # Krill catches
 cid <- read.csv("./Supplementary Files/cid.csv") # Clutch dates
 egg <- read.csv("./Supplementary Files/egg.csv") # Egg mass and volume
 fweight <- read.csv("./Supplementary Files/fweight.csv") # Fledgling mass
-lkb <- read_csv("./Supplementary Files/krillsurveywithjoinville.csv") # LKB
-massatlay <- read_csv("./Supplementary Files/massatlay.csv") # Adult penguin mass at laying
-oni <- read_csv("./Supplementary Files/oni.csv") # ONI
-recruitment <- read_csv("./Supplementary Files/recruitment.csv") # Cohort strength
-sam <- read_csv("./Supplementary Files/sam.csv") # SAM
-success <- read_csv("./Supplementary Files/success.csv") # Chick breeding success
-tripduration <- read_csv("./Supplementary Files/tripduration.csv") # Forging trip duration
-hr <- read_csv("./Supplementary Files/hr.csv") # Krill catches and LHR
+lkb <- read.csv("./Supplementary Files/krillsurveywithjoinville.csv") # LKB
+massatlay <- read.csv("./Supplementary Files/massatlay.csv") # Adult penguin mass at laying
+oni <- read.csv("./Supplementary Files/oni.csv") # ONI
+recruitment <- read.csv("./Supplementary Files/recruitment.csv") # Cohort strength
+sam <- read.csv("./Supplementary Files/sam.csv") # SAM
+success <- read.csv("./Supplementary Files/success.csv") # Chick breeding success
+tripduration <- read.csv("./Supplementary Files/tripduration.csv") # Forging trip duration
+hr <- read.csv("./Supplementary Files/hr.csv") # Krill catches and LHR
 
 ###############################
 # Relationship SAM and LKB ------------------------------------------------
