@@ -1,33 +1,27 @@
 # Analisis Watters et al 2020
 
-
-library(readr)
+# library(readr)
 library(ggplot2)
 library(tidyverse)
 library(reshape)
-library(dplyr)
-library(ggplot2)
+# library(dplyr)
 library(ggpubr)
 library(broom)
 library(AICcmodavg)
-library(tidyverse)
 library(stringr)
 
-
-S1 <- read_csv("./Supplementary Files/c1.csv") # Krill catches
-S2 <- read_csv("./Supplementary Files/cid.csv") # Clutch dates
-S3 <- read_csv("./Supplementary Files/egg.csv", col_types="ccccdddd") # Egg mass and volume
-S4 <- read_csv("./Supplementary Files/fweight.csv") # Fledgling mass
-S5 <- read_csv("./Supplementary Files/krillsurveywithjoinville.csv") # LKB
-S6 <- read_csv("./Supplementary Files/massatlay.csv") # Adult penguin mass at laying
-S7 <- read_csv("./Supplementary Files/oni.csv") # ONI
-S8 <- read_csv("./Supplementary Files/recruitment.csv") # Cohort strength
-S9 <- read_csv("./Supplementary Files/sam.csv") # SAM
-S10 <- read_csv("./Supplementary Files/success.csv") # Chick breeding success
-S11 <- read_csv("./Supplementary Files/tripduration.csv") # Forging trip duration
-S12 <- read_csv("./Supplementary Files/hr.csv") # Krill catches and LHR
-
-
+c1 <- read.csv("./Supplementary Files/c1.csv") # Krill catches
+cid <- read.csv("./Supplementary Files/cid.csv") # Clutch dates
+egg <- read.csv("./Supplementary Files/egg.csv") # Egg mass and volume
+fweight <- read.csv("./Supplementary Files/fweight.csv") # Fledgling mass
+lkb <- read_csv("./Supplementary Files/krillsurveywithjoinville.csv") # LKB
+massatlay <- read_csv("./Supplementary Files/massatlay.csv") # Adult penguin mass at laying
+oni <- read_csv("./Supplementary Files/oni.csv") # ONI
+recruitment <- read_csv("./Supplementary Files/recruitment.csv") # Cohort strength
+sam <- read_csv("./Supplementary Files/sam.csv") # SAM
+success <- read_csv("./Supplementary Files/success.csv") # Chick breeding success
+tripduration <- read_csv("./Supplementary Files/tripduration.csv") # Forging trip duration
+hr <- read_csv("./Supplementary Files/hr.csv") # Krill catches and LHR
 
 ###############################
 # Relationship SAM and LKB ------------------------------------------------
@@ -35,7 +29,6 @@ S12 <- read_csv("./Supplementary Files/hr.csv") # Krill catches and LHR
 
 # LKB vs ONI & SAM
 #Estimate Summer and Winter Indexes - ONI
-oni <- S7
 oni$yr<-ifelse(is.element(oni$SEAS,c("OND","NDJ")),oni$YR+1,oni$YR)
 oni$season<-ifelse(is.element(oni$SEAS,c("OND","NDJ","DJF","JFM")),"S",NA)
 oni$season<-ifelse(is.element(oni$SEAS,c("AMJ","MJJ","JJA","JAS")),"W",oni$season)
@@ -46,7 +39,6 @@ names(oni)<-c("Year","season","oni")
 
 
 #Estimate Summer and Winter Indexes - SAM
-sam <- S9
 names(sam)<-c("yr","mo","sam")
 sam$season<-ifelse(is.element(sam$mo,c(10:12,1:3)),"S","W")
 sam$Year<-ifelse(is.element(sam$mo,10:12),sam$yr+1,sam$yr)
@@ -55,7 +47,7 @@ sam<-data.frame(Year=rep(dimnames(sam)[[1]],2),season=rep(dimnames(sam)[[2]],eac
 
 
 # LKB 
-survey<-S5[S5$nmi.count>=50,] # remove extreme bad surveys
+survey<-lkb[lkb$nmi.count>=50,] # remove extreme bad surveys
 survey$biomass <- as.integer(survey$biomass)
 survey<-tapply(survey$biomass,list(survey$Year,survey$gSSMU),mean,na.rm=TRUE)
 survey<-data.frame(cal.yr=rep(dimnames(survey)[[1]],dim(survey)[2]),
@@ -214,7 +206,7 @@ ggplot(Survey, aes(x = Year, y = biomass, col = season)) +
 ##############################
 # fledge weight (fwt)
 # bigger indicates better summer
-fwt <- S4
+fwt <- fweight
 fwt$Year<-as.numeric(substr(fwt$YEAR,1,4))+1
 fwt<-tapply(fwt$WT,list(fwt$Year,fwt$PROJECT,fwt$SPECIES),mean)
 fwt<-data.frame(Year = rep(dimnames(fwt)[[1]],dim(fwt)[2]*dim(fwt)[3]),
@@ -242,7 +234,7 @@ fwt$Year <- as.integer(fwt$Year)
 
 # post-hatch success (phs) (numbers of chicks creched/numbers of chicks hatched)
 # bigger indicates better summer
-phs <- S10
+phs <- success
 phs$phs<-phs$N_CRECHE/phs$N_CHICKS
 phs$phs2<-log(phs$phs/(1-phs$phs))
 phs$matchme<-paste(phs$PROJECT,phs$SPECIES,sep="|")
@@ -262,7 +254,7 @@ phs$Year<-as.numeric(substr(phs$YEAR,1,4))+1
 
 # trip duration (td)
 # smaller indicates better summer (thus need to switch direction of index)
-td <- S11
+td <- tripduration
 td<-td[,c(1:3,8)]
 # next line is to make trip duration point in same direction as fwt and phs (max td is 59.95 for all trips)
 # call this "revtd" for "reversed" trip duration
@@ -297,7 +289,7 @@ td$season=rep("S",dim(td)[1])
 #
 # adult male mass at E1 lay (mml)
 # bigger indicates better winter
-ade1 <- S6
+ade1 <- massatlay
 mml<-ade1[,c(1:3,5)]
 # most winter indices (except rec) are relevant to the first year in the split-season designation
 mml$Year<-as.numeric(substr(mml$YEAR,1,4))
@@ -326,7 +318,7 @@ mml$season=rep("W",dim(mml)[1])
 
 # adult female mass at E1 lay (fml)
 # bigger indicates better winter
-ade1 <- S6
+ade1 <- massatlay
 fml<-ade1[,c(1:3,6)]
 # most winter indices (except rec) are relevant to the first year in the split-season designation
 fml$Year<-as.numeric(substr(fml$YEAR,1,4))
@@ -359,7 +351,7 @@ scale_this = function(x) {
   (x - mean(x, na.rm=TRUE)) / sd(x, na.rm=TRUE)
 }
 #create standardised centred index for egg density
-  egg = S3 %>%
+  egg = egg %>%
     dplyr::mutate(egg_den = c((E1_WT + E2_WT) / (E1_VOL + E2_VOL))) %>%
     dplyr::mutate(Year = as.numeric(str_sub(YEAR,1,4))) %>%
     drop_na() %>%
@@ -384,7 +376,7 @@ scale_this = function(x) {
 ####original EGG DENSITY code from Watters et al. (2020)----
   # avg egg density using both eggs (egg)
   # bigger indicates better winter
-  e1e2 <- S3
+  e1e2 <- egg
   egg<-e1e2[,c(1:3)]
   egg$egg<-(e1e2[,5]+e1e2[,7])/(e1e2[,6]+e1e2[,8])
   # most winter indices (except rec) are relevant to the first year in the split-season designation
@@ -412,7 +404,7 @@ scale_this = function(x) {
 # earlier indicates better winter
 library(lubridate)
 
-cid <- S2
+
 # most winter indices (except rec) are relevant to the first year in the split-season designation
 cid$Year<-as.numeric(substr(cid$YEAR,1,4))
 
@@ -438,7 +430,7 @@ cid$season=rep("W",dim(cid)[1])
 
 # cohort recruitment (rec)
 # bigger indicates better winter
-rec <- S8[,c(1:5)]
+rec <- recruitment[,c(1:5)]
 #names(rec)[5]<-"rec"
 rec$rec<-log(rec$RECRUITMENT/(1-rec$RECRUITMENT))
 rec$matchme<-paste(rec$PROJECT,rec$SPECIES,sep="|")
@@ -513,7 +505,6 @@ summary(two.way)
 # Relationship ONI and Penguin Indexes ------------------------------------
 
 #Estimate Summer and Winter Indexes - ONI
-oni <- S7
 oni$yr<-ifelse(is.element(oni$SEAS,c("OND","NDJ")),oni$YR+1,oni$YR)
 oni$season<-ifelse(is.element(oni$SEAS,c("OND","NDJ","DJF","JFM")),"S",NA)
 oni$season<-ifelse(is.element(oni$SEAS,c("AMJ","MJJ","JJA","JAS")),"W",oni$season)

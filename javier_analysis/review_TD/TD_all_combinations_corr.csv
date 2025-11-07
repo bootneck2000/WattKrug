@@ -1,0 +1,113 @@
+x_var,y_var,SPECIES,PROJECT,n_ok,lm_slope,lm_se,lm_t,lm_p,lm_R2,lm_significant,dw_stat,dw_p,acf1,pacf1,acf_sig_lags,autocorr_flag,gls_slope,gls_se,gls_t,gls_p,gls_rho,gls_AIC,used_gls,status,note
+cal.yr,DAYs_index,ADPE,COPA,8,0.2531129704707612,0.07912776378412757,3.1987883691657384,0.01862851262440224,0.6303654085199344,significant,1.809794104011397,0.20981053766944802,-0.10501796315132733,-0.1050179631513273,none,no_autocorr_detected,NA,NA,NA,NA,NA,NA,FALSE,ok,NA
+cal.yr,DAYs_index,CHPE,CS,19,0.052127913665139594,0.041203674868476294,1.2651277788093875,0.2228927386343853,0.08604844713087455,NS,2.0027691478886354,0.39732312421592536,-0.055919416462475884,-0.055919416462475884,none,no_autocorr_detected,NA,NA,NA,NA,NA,NA,FALSE,ok,NA
+cal.yr,DAYs_index,GEPE,COPA,5,0.42188985426301295,0.1348667124790957,3.12819854883321,0.05213839174441729,0.7653615112594833,NS,2.7361604777277053,0.6281158901929591,-0.5437367704687821,-0.5437367704687823,none,no_autocorr_detected,NA,NA,NA,NA,NA,NA,FALSE,ok,NA
+cal.yr,DAYs_index,GEPE,CS,5,0.06952919593149877,0.36293511399569933,0.19157472851282906,0.8603084763388162,0.012085772717199022,NS,2.8577750329078593,0.6964043847242576,-0.6356832801059097,-0.6356832801059097,none,no_autocorr_detected,NA,NA,NA,NA,NA,NA,FALSE,ok,NA
+cal.yr,WKs_index,ADPE,COPA,8,0.24934162441636487,0.08109885753696018,3.0745392967185676,0.021814912594588592,0.6117206493266933,significant,1.755109439104843,0.18527635455722719,-0.08321267237810054,-0.08321267237810054,none,no_autocorr_detected,NA,NA,NA,NA,NA,NA,FALSE,ok,NA
+cal.yr,WKs_index,CHPE,CS,19,0.055442819278326165,0.040948347060579156,1.3539696534344554,0.1934730527929828,0.09734036330175605,NS,2.0302886413385917,0.42123854429132834,-0.06819389234627875,-0.06819389234627875,none,no_autocorr_detected,NA,NA,NA,NA,NA,NA,FALSE,ok,NA
+cal.yr,WKs_index,GEPE,COPA,5,0.4237696587514229,0.13288769175074883,3.188930842039665,0.04975185130363371,0.7721971118168787,significant,2.9693153292764247,0.7525649617345038,-0.625399918420175,-0.625399918420175,none,no_autocorr_detected,NA,NA,NA,NA,NA,NA,FALSE,ok,NA
+cal.yr,WKs_index,GEPE,CS,5,0.06814051330185833,0.36302289663649495,0.18770307309318107,0.863087520465426,0.01160782388259905,NS,2.824095181612196,0.6788774172647496,-0.6227453586928712,-0.6227453586928712,none,no_autocorr_detected,NA,NA,NA,NA,NA,NA,FALSE,ok,NA
+cal.yr,REVtd_index,ADPE,COPA,8,-0.2762572610070525,0.06495552269344751,-4.253021907172188,0.005362265465005449,0.7509153377996061,significant,2.6369426758471084,0.6997991560454474,-0.4810140943222286,-0.48101409432222864,none,no_autocorr_detected,NA,NA,NA,NA,NA,NA,FALSE,ok,NA
+cal.yr,REVtd_index,CHPE,CS,19,0.02693325948820615,0.0426018136190592,0.6322092230401372,0.5356610512957345,0.022971014777536478,NS,1.543539578953692,0.09601575206299527,0.21324542181614906,0.21324542181614906,none,no_autocorr_detected,NA,NA,NA,NA,NA,NA,FALSE,ok,NA
+cal.yr,REVtd_index,GEPE,COPA,5,0.0134985990483128,0.27831392788154197,0.04850134217522227,0.964365036267383,7.835123579487774e-4,NS,2.657652580134172,0.5741813129430224,-0.4706401199701449,-0.4706401199701449,none,no_autocorr_detected,NA,NA,NA,NA,NA,NA,FALSE,ok,NA
+cal.yr,REVtd_index,GEPE,CS,5,0.11374271223183835,0.35919474542103197,0.3166602899452614,0.7722571689065143,0.032343511464629375,NS,2.5329625814312293,0.47215377694739225,-0.3744330893930496,-0.3744330893930496,none,no_autocorr_detected,NA,NA,NA,NA,NA,NA,FALSE,ok,NA
+cal.yr,mean_DAYs,ADPE,COPA,8,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+cal.yr,mean_DAYs,CHPE,CS,19,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+cal.yr,mean_DAYs,GEPE,COPA,5,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+cal.yr,mean_DAYs,GEPE,CS,5,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+cal.yr,mean_WKs,ADPE,COPA,8,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+cal.yr,mean_WKs,CHPE,CS,19,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+cal.yr,mean_WKs,GEPE,COPA,5,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+cal.yr,mean_WKs,GEPE,CS,5,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+cal.yr,mean_TD_ind,ADPE,COPA,8,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+cal.yr,mean_TD_ind,CHPE,CS,19,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+cal.yr,mean_TD_ind,GEPE,COPA,5,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+cal.yr,mean_TD_ind,GEPE,CS,5,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+cal.yr,mean_REVtd,ADPE,COPA,8,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+cal.yr,mean_REVtd,CHPE,CS,19,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+cal.yr,mean_REVtd,GEPE,COPA,5,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+cal.yr,mean_REVtd,GEPE,CS,5,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+DAYs_index,WKs_index,ADPE,COPA,8,0.9990193390446745,0.01807558304611467,55.268996662290945,2.356010302316287e-9,0.9980396397852581,significant,1.1945909529141938,0.04672943772186744,0.07595931278114987,0.07595931278114987,none,autocorr_detected,NA,NA,NA,NA,NA,NA,FALSE,ok,NA
+DAYs_index,WKs_index,CHPE,CS,19,0.9994918797024341,0.007730696676977601,129.28872021055628,6.90339420224287e-27,0.9989840175911056,significant,1.5570096078436977,0.15019858369514746,0.04737370764633414,0.04737370764633414,none,no_autocorr_detected,NA,NA,NA,NA,NA,NA,FALSE,ok,NA
+DAYs_index,WKs_index,GEPE,COPA,5,0.9973323651016389,0.04214322215481726,23.66530877581787,1.6532920817972425e-4,0.9946718464792291,significant,2.115547822672084,0.3235256413192501,-0.17859384934048508,-0.17859384934048508,none,no_autocorr_detected,NA,NA,NA,NA,NA,NA,FALSE,ok,NA
+DAYs_index,WKs_index,GEPE,CS,5,0.9998042095847532,0.011424279650630505,87.51573317181308,3.2885787306384107e-6,0.9996084575033926,significant,2.422746510047902,0.8876907856213936,-0.3232664118120194,-0.3232664118120194,none,no_autocorr_detected,NA,NA,NA,NA,NA,NA,FALSE,ok,NA
+DAYs_index,REVtd_index,ADPE,COPA,8,-0.8764426602014274,0.19657410111670584,-4.458586635892,0.004289499208257758,0.7681517366209545,significant,2.5211483443629303,0.7036311208065521,-0.2629611346524114,-0.2629611346524114,none,no_autocorr_detected,NA,NA,NA,NA,NA,NA,FALSE,ok,NA
+DAYs_index,REVtd_index,CHPE,CS,19,-0.04211529353277101,0.2423204371039996,-0.1738000064546594,0.8640754314901662,0.001773697949351462,NS,1.486645407151521,0.11501334520780468,0.23318027894338844,0.23318027894338844,none,no_autocorr_detected,NA,NA,NA,NA,NA,NA,FALSE,ok,NA
+DAYs_index,REVtd_index,GEPE,COPA,5,0.4611377255386568,0.5122993910091489,0.9001332690056264,0.4343902967430733,0.2126480019149655,NS,2.298096998790446,0.4254878076027907,-0.48271315527165265,-0.48271315527165265,none,no_autocorr_detected,NA,NA,NA,NA,NA,NA,FALSE,ok,NA
+DAYs_index,REVtd_index,GEPE,CS,5,0.018903346172491346,0.5772471058115647,0.032747407448521906,0.9759329456270636,3.57336496517037e-4,NS,2.5405624564336153,0.9482755245457545,-0.45414507963899425,-0.45414507963899425,none,no_autocorr_detected,NA,NA,NA,NA,NA,NA,FALSE,ok,NA
+DAYs_index,mean_DAYs,ADPE,COPA,8,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+DAYs_index,mean_DAYs,CHPE,CS,19,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+DAYs_index,mean_DAYs,GEPE,COPA,5,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+DAYs_index,mean_DAYs,GEPE,CS,5,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+DAYs_index,mean_WKs,ADPE,COPA,8,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+DAYs_index,mean_WKs,CHPE,CS,19,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+DAYs_index,mean_WKs,GEPE,COPA,5,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+DAYs_index,mean_WKs,GEPE,CS,5,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+DAYs_index,mean_TD_ind,ADPE,COPA,8,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+DAYs_index,mean_TD_ind,CHPE,CS,19,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+DAYs_index,mean_TD_ind,GEPE,COPA,5,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+DAYs_index,mean_TD_ind,GEPE,CS,5,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+DAYs_index,mean_REVtd,ADPE,COPA,8,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+DAYs_index,mean_REVtd,CHPE,CS,19,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+DAYs_index,mean_REVtd,GEPE,COPA,5,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+DAYs_index,mean_REVtd,GEPE,CS,5,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+WKs_index,REVtd_index,ADPE,COPA,8,-0.8737833090908523,0.19853745606066378,-4.4011005602079685,0.004562949580756999,0.76349727124576,significant,2.459341608618647,0.6658907481445053,-0.2302672681750392,-0.23026726817503923,none,no_autocorr_detected,NA,NA,NA,NA,NA,NA,FALSE,ok,NA
+WKs_index,REVtd_index,CHPE,CS,19,-0.023400634747488422,0.24246921093729368,-0.09650971625234592,0.9242443838971564,5.475897065853675e-4,NS,1.4972623159331184,0.11947237683693213,0.22826658685773202,0.22826658685773202,none,no_autocorr_detected,NA,NA,NA,NA,NA,NA,FALSE,ok,NA
+WKs_index,REVtd_index,GEPE,COPA,5,0.4451888317686462,0.5169806263515326,0.8611325242697393,0.4524919998304753,0.19819309593153167,NS,2.302995725445318,0.42677468176861133,-0.4814700016061056,-0.4814700016061056,none,no_autocorr_detected,NA,NA,NA,NA,NA,NA,FALSE,ok,NA
+WKs_index,REVtd_index,GEPE,CS,5,0.009962527882541483,0.5773216169052248,0.017256460854430413,0.9873155253675152,9.925196181041636e-5,NS,2.536903767527958,0.9411662215015436,-0.45340041817085586,-0.45340041817085586,none,no_autocorr_detected,NA,NA,NA,NA,NA,NA,FALSE,ok,NA
+WKs_index,mean_DAYs,ADPE,COPA,8,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+WKs_index,mean_DAYs,CHPE,CS,19,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+WKs_index,mean_DAYs,GEPE,COPA,5,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+WKs_index,mean_DAYs,GEPE,CS,5,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+WKs_index,mean_WKs,ADPE,COPA,8,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+WKs_index,mean_WKs,CHPE,CS,19,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+WKs_index,mean_WKs,GEPE,COPA,5,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+WKs_index,mean_WKs,GEPE,CS,5,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+WKs_index,mean_TD_ind,ADPE,COPA,8,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+WKs_index,mean_TD_ind,CHPE,CS,19,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+WKs_index,mean_TD_ind,GEPE,COPA,5,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+WKs_index,mean_TD_ind,GEPE,CS,5,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+WKs_index,mean_REVtd,ADPE,COPA,8,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+WKs_index,mean_REVtd,CHPE,CS,19,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+WKs_index,mean_REVtd,GEPE,COPA,5,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+WKs_index,mean_REVtd,GEPE,CS,5,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+REVtd_index,mean_DAYs,ADPE,COPA,8,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+REVtd_index,mean_DAYs,CHPE,CS,19,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+REVtd_index,mean_DAYs,GEPE,COPA,5,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+REVtd_index,mean_DAYs,GEPE,CS,5,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+REVtd_index,mean_WKs,ADPE,COPA,8,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+REVtd_index,mean_WKs,CHPE,CS,19,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+REVtd_index,mean_WKs,GEPE,COPA,5,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+REVtd_index,mean_WKs,GEPE,CS,5,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+REVtd_index,mean_TD_ind,ADPE,COPA,8,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+REVtd_index,mean_TD_ind,CHPE,CS,19,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+REVtd_index,mean_TD_ind,GEPE,COPA,5,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+REVtd_index,mean_TD_ind,GEPE,CS,5,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+REVtd_index,mean_REVtd,ADPE,COPA,8,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+REVtd_index,mean_REVtd,CHPE,CS,19,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+REVtd_index,mean_REVtd,GEPE,COPA,5,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+REVtd_index,mean_REVtd,GEPE,CS,5,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+mean_DAYs,mean_WKs,ADPE,COPA,8,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+mean_DAYs,mean_WKs,CHPE,CS,19,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+mean_DAYs,mean_WKs,GEPE,COPA,5,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+mean_DAYs,mean_WKs,GEPE,CS,5,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+mean_DAYs,mean_TD_ind,ADPE,COPA,8,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+mean_DAYs,mean_TD_ind,CHPE,CS,19,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+mean_DAYs,mean_TD_ind,GEPE,COPA,5,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+mean_DAYs,mean_TD_ind,GEPE,CS,5,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+mean_DAYs,mean_REVtd,ADPE,COPA,8,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+mean_DAYs,mean_REVtd,CHPE,CS,19,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+mean_DAYs,mean_REVtd,GEPE,COPA,5,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+mean_DAYs,mean_REVtd,GEPE,CS,5,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+mean_WKs,mean_TD_ind,ADPE,COPA,8,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+mean_WKs,mean_TD_ind,CHPE,CS,19,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+mean_WKs,mean_TD_ind,GEPE,COPA,5,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+mean_WKs,mean_TD_ind,GEPE,CS,5,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+mean_WKs,mean_REVtd,ADPE,COPA,8,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+mean_WKs,mean_REVtd,CHPE,CS,19,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+mean_WKs,mean_REVtd,GEPE,COPA,5,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+mean_WKs,mean_REVtd,GEPE,CS,5,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+mean_TD_ind,mean_REVtd,ADPE,COPA,8,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+mean_TD_ind,mean_REVtd,CHPE,CS,19,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+mean_TD_ind,mean_REVtd,GEPE,COPA,5,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y
+mean_TD_ind,mean_REVtd,GEPE,CS,5,NA,NA,NA,NA,NA,NS,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,insufficient pairs for correlation,zero variance in x or y

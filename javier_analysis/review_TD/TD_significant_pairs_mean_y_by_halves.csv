@@ -1,0 +1,7 @@
+SPECIES,PROJECT,x_var,y_var,first_year,mid_year,last_year,lm_slope,lm_p,n_first,n_second,mean_y_first,mean_y_second,sd_y_first,sd_y_second,Diff_range,CVdiff
+ADPE,COPA,DAYs_index,REVtd_index,2005,2009,2014,-0.8764,0.00429,4,4,0.769,-0.769,0.753,0.434,1.538,1.538
+ADPE,COPA,WKs_index,REVtd_index,2005,2009,2014,-0.8738,0.00456,4,4,0.769,-0.769,0.753,0.434,1.538,1.538
+ADPE,COPA,cal.yr,DAYs_index,2005,2009,2014,0.2531,0.0186,4,4,-0.55,0.55,1.1,0.563,-1.1,1.1
+ADPE,COPA,cal.yr,REVtd_index,2005,2009,2014,-0.2763,0.00536,4,4,0.769,-0.769,0.753,0.434,1.538,1.538
+ADPE,COPA,cal.yr,WKs_index,2005,2009,2014,0.2493,0.0218,4,4,-0.544,0.544,1.133,0.511,-1.088,1.088
+GEPE,COPA,cal.yr,WKs_index,2011,2013,2016,0.4238,0.0498,2,3,-0.92,0.613,0.394,0.716,-1.533,1.533

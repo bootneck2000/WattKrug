@@ -1,0 +1,490 @@
+##### Review Penguin indices
+##### generate WINTER INDICES
+##### Adult Mass at egg LAYing (mml & fml)
+
+
+## Watters Code  ## Do not change
+# adult male mass at E1 lay (mml)
+# bigger indicates better winter
+ade <- read.csv("./Supplementary Files/massatlay.csv") # Adult penguin mass at laying
+mml<-ade[,c(1:3,5)]
+mml<-tapply(mml$WT_MALE,list(mml$YEAR,mml$PROJECT,mml$SPECIES),mean,na.rm=TRUE)
+mml<-data.frame(YEAR=rep(dimnames(mml)[[1]],dim(mml)[2]*dim(mml)[3]),
+                PROJECT=rep(rep(dimnames(mml)[[2]],each=dim(mml)[1]),dim(mml)[3]),
+                SPECIES=rep(dimnames(mml)[[3]],each=dim(mml)[1]*dim(mml)[2]),
+                mml=c(mml),stringsAsFactors = FALSE)
+mml$matchme<-paste(mml$PROJECT,mml$SPECIES,sep="|")
+tt<-tapply(mml$mml,list(mml$matchme),mean,na.rm=TRUE)
+ttt<-tapply(mml$mml,list(mml$matchme),sd,na.rm=TRUE)
+mean.mml<-tt[match(mml$matchme,names(tt))]
+sd.mml<-ttt[match(mml$matchme,names(ttt))]
+mml$std.mean.mml<-(mml$mml-mean.mml)/sd.mml
+mml<-mml[,-c(4:5)]
+names(mml)[4]<-"index"
+#omits<-(mml$SPECIES=="ADPE"&mml$PROJECT=="CS")|(mml$SPECIES=="CHPE"&mml$PROJECT=="COPA")
+#mml<-mml[!omits,]
+mml$param=rep("MML",dim(mml)[1])
+mml$season=rep("W",dim(mml)[1])
+# most winter indices (except rec) are relevant to the first year in the split-season designation
+mml$cal.yr<-as.numeric(substr(mml$YEAR,1,4))
+# print(str(mml))
+
+#
+# adult female mass at E1 lay (fml)
+# bigger indicates better winter
+fml<-ade[,c(1:3,6)]
+fml<-tapply(fml$WT_FEMALE,list(fml$YEAR,fml$PROJECT,fml$SPECIES),mean,na.rm=TRUE)
+fml<-data.frame(YEAR=rep(dimnames(fml)[[1]],dim(fml)[2]*dim(fml)[3]),
+                PROJECT=rep(rep(dimnames(fml)[[2]],each=dim(fml)[1]),dim(fml)[3]),
+                SPECIES=rep(dimnames(fml)[[3]],each=dim(fml)[1]*dim(fml)[2]),
+                fml=c(fml),stringsAsFactors = FALSE)
+fml$matchme<-paste(fml$PROJECT,fml$SPECIES,sep="|")
+tt<-tapply(fml$fml,list(fml$matchme),mean,na.rm=TRUE)
+ttt<-tapply(fml$fml,list(fml$matchme),sd,na.rm=TRUE)
+mean.fml<-tt[match(fml$matchme,names(tt))]
+sd.fml<-ttt[match(fml$matchme,names(ttt))]
+fml$std.mean.fml<-(fml$fml-mean.fml)/sd.fml
+fml<-fml[,-c(4:5)]
+names(fml)[4]<-"index"
+#omits<-(fml$SPECIES=="ADPE"&fml$PROJECT=="CS")|(fml$SPECIES=="CHPE"&fml$PROJECT=="COPA")
+#fml<-fml[!omits,]
+fml$param=rep("FML",dim(fml)[1])
+fml$season=rep("W",dim(fml)[1])
+# most winter indices (except rec) are relevant to the first year in the split-season designation
+fml$cal.yr<-as.numeric(substr(fml$YEAR,1,4))
+# print(str(fml))
+
+## End of Watters Code ##
+
+
+# ==================== ANALYSIS  ====================
+
+# ==================== REPORT: Adult mass indices & sampling-bias checks ====================
+# Prereq: your colleague's code already executed and created `mml`, `fml`, and `ade`.
+
+suppressPackageStartupMessages({
+  library(dplyr)
+  library(tidyr)
+  library(ggplot2)
+  library(lubridate)
+  library(readr)
+  library(purrr)
+  library(rlang)
+  library(knitr)
+  library(officer)
+})
+suppressWarnings(RNGkind("default"))  # silence harmless RNG warnings on some R builds
+
+# --- Preconditions ----------------------------------------------------------------
+stopifnot(exists("mml"), exists("fml"))  # created by the Watters section
+
+# Reuse ade if present; else read the same source path used by the Watters code
+if (!exists("ade")) {
+  ade <- read.csv("./Supplementary Files/massatlay.csv")
+}
+
+# --- Output locations -------------------------------------------------------------
+out_dir <- "./javier_analysis/review_ADULT_MASS"
+dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
+
+# --- Prepare date fields on ade ---------------------------------------------------
+ade <- ade |>
+  mutate(
+    DATE        = suppressWarnings(lubridate::mdy(DATE)),
+    cal.yr      = as.integer(substr(YEAR, 1, 4)),
+    julian_days = lubridate::yday(DATE)
+  )
+
+# ==================== DATA PREP ===================================================
+# MALE
+ade_m <- ade %>% select(cal.yr, julian_days, PROJECT, SPECIES, WT_MALE)
+
+# Step 1: YEAR x PROJECT x SPECIES means
+male_stats1 <- ade_m %>%
+  filter(!is.na(WT_MALE)) %>%
+  group_by(cal.yr, PROJECT, SPECIES) %>%
+  summarise(
+    WTmean   = mean(WT_MALE, na.rm = TRUE),
+    WTsd     = sd(WT_MALE, na.rm = TRUE),
+    DAYmean  = mean(julian_days, na.rm = TRUE),
+    DAYsd = sd(julian_days, na.rm = TRUE), 
+    .groups  = "drop"
+  )
+
+# Step 2: Within PROJECT x SPECIES: global mean/sd and day mean
+male_stats2 <- male_stats1 %>%
+  group_by(PROJECT, SPECIES) %>%
+  summarise(
+    mean_WT = mean(WTmean, na.rm = TRUE),
+    sd_WT   = sd(WTmean, na.rm = TRUE),
+    day_mean= mean(DAYmean, na.rm = TRUE),
+    sd_day   = sd(DAYmean, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+# Step 3: Join & indices (guard against sd_WT == 0)
+MALE <- male_stats1 %>%
+  left_join(male_stats2, by = c("PROJECT","SPECIES")) %>%
+  mutate(
+    index     = ifelse(sd_WT > 0, (WTmean - mean_WT)/sd_WT, NA_real_),
+    DAY_index = ifelse(sd_day > 0, (DAYmean - day_mean)/sd_day, NA_real_)
+  ) %>%
+  arrange(SPECIES, PROJECT, cal.yr)
+
+# FEMALE
+ade_f <- ade %>% select(cal.yr, julian_days, PROJECT, SPECIES, WT_FEMALE)
+
+female_stats1 <- ade_f %>%
+  filter(!is.na(WT_FEMALE)) %>%
+  group_by(cal.yr, PROJECT, SPECIES) %>%
+  summarise(
+    WTmean   = mean(WT_FEMALE),
+    WTsd     = sd(WT_FEMALE),
+    DAYmean  = mean(julian_days),
+    DAYsd = sd(julian_days), 
+    .groups  = "drop"
+  )
+
+female_stats2 <- female_stats1 %>%
+  group_by(PROJECT, SPECIES) %>%
+  summarise(
+    mean_WT = mean(WTmean),
+    sd_WT   = sd(WTmean),
+    day_mean= mean(DAYmean),
+    sd_day   = sd(DAYmean),
+    .groups = "drop"
+  )
+
+FEMALE <- female_stats1 %>%
+  left_join(female_stats2, by = c("PROJECT","SPECIES")) %>%
+  mutate(
+    index     = ifelse(sd_WT > 0, (WTmean - mean_WT)/sd_WT, NA_real_),
+    DAY_index = ifelse(sd_day > 0, (DAYmean - day_mean)/sd_day, NA_real_)
+  ) %>%
+  arrange(SPECIES, PROJECT, cal.yr)
+
+# ==================== CORRELATIONS ================================================
+
+# Robust correlation-by-group helper with status flag
+source(file.path("./javier_analysis/corr_tbl_ts.R"))
+
+# Broad sweep across more variable pairs, if you want to keep:
+vars_to_test <- c("cal.yr","index","DAYmean","WTmean","DAY_index")
+vars_to_test <- intersect(vars_to_test, names(MALE))
+pairs <- combn(vars_to_test, 2, simplify = FALSE)
+
+run_corr_pair <- function(df, nm_x, nm_y) {
+  x_sym <- sym(nm_x); y_sym <- sym(nm_y)
+  corr_tbl_ts(df, !!x_sym, !!y_sym) %>% mutate(x_var=nm_x, y_var=nm_y, .before=1)
+}
+
+male_all_corrs   <- map_dfr(pairs, ~ run_corr_pair(MALE,   .x[1], .x[2]))
+female_all_corrs <- map_dfr(pairs, ~ run_corr_pair(FEMALE, .x[1], .x[2]))
+
+# Save CSVs
+write_csv(male_all_corrs,    file.path(out_dir, "MALE_all_combinations_corr_tbl_ts.csv"))
+write_csv(female_all_corrs,  file.path(out_dir, "FEMALE_all_combinations_corr_tbl_ts.csv"))
+
+# ==================== PLOTTING of SIGNIFICANT mml_cor / fml_cor ====================
+# Helper: facet plot for a given (x,y) using only SPECIES/PROJECT that are significant
+sanitize <- function(x) gsub("[^A-Za-z0-9._-]+", "-", x)
+
+# Make one plot per (x_var, y_var) pair that has ANY significant group
+# Include ALL SPECIES x PROJECT in the plot; mark significant panels with a ★
+save_pair_plots_all_groups <- function(corr_tbl, data_df, sex_label = "MALE") {
+  
+  # which pairs have at least one significant result?
+  sig_pairs <- corr_tbl %>%
+    filter(lm_significant == "significant") %>%
+    distinct(x_var, y_var)
+  
+  if (nrow(sig_pairs) == 0L) {
+    message("No significant pairs found for ", sex_label, ". Nothing to plot.")
+    return(invisible(NULL))
+  }
+  
+  pwalk(sig_pairs, function(x_var, y_var) {
+    
+    # build a panel-level significance flag for this pair
+    sig_flags <- corr_tbl %>%
+      filter(x_var == !!x_var, y_var == !!y_var, lm_R2 < 1) %>%
+      mutate(sig_flag = lm_significant == "significant") %>%
+      select(SPECIES, PROJECT, sig_flag) %>%
+      distinct()
+    
+    # Filter data to rows that have both variables available
+    dat <- data_df %>%
+      filter(is.finite(.data[[x_var]]), is.finite(.data[[y_var]])) %>%
+      # keep only groups that are present in corr table (optional, but tight)
+      inner_join(sig_flags %>% select(SPECIES, PROJECT) %>% distinct(),
+                 by = c("SPECIES", "PROJECT")) %>%
+      left_join(sig_flags, by = c("SPECIES", "PROJECT"))
+    
+    if (nrow(dat) == 0L) {
+      message(sprintf("Skipping %s — %s vs %s: no data rows.", sex_label, y_var, x_var))
+      return(invisible(NULL))
+    }
+    
+    # A tiny df to add facet-specific star in top-right corner
+    # We'll place label at the 97.5th percentile of each panel to avoid clipping.
+    label_df <- dat %>%
+      group_by(SPECIES, PROJECT) %>%
+      summarise(
+        x_pos = suppressWarnings(stats::quantile(.data[[x_var]], 0.97, na.rm = TRUE)),
+        y_pos = suppressWarnings(stats::quantile(.data[[y_var]], 0.97, na.rm = TRUE)),
+        sig_flag = any(sig_flag %in% TRUE),
+        .groups = "drop"
+      ) %>%
+      mutate(label = ifelse(sig_flag, "\u2605", "")) # ★
+    
+    p <- ggplot(dat, aes(x = .data[[x_var]], y = .data[[y_var]], color = SPECIES)) +
+      geom_point(alpha = 0.9, size = 1.8) +
+      geom_smooth(method = "lm", se = TRUE, alpha = 0.25) +
+      geom_smooth(method = "loess", se = TRUE, span = 0.75, color = "lightgreen", alpha = 0.15) +
+      geom_text(
+        data = label_df,
+        aes(x = x_pos, y = y_pos, label = label),
+        inherit.aes = FALSE,
+        fontface = "bold",
+        size = 5,
+        show.legend = FALSE
+      ) +
+      facet_grid(SPECIES ~ PROJECT, scales = "free_y") +
+      labs(
+        title = sprintf("%s — %s vs %s (all groups; ★ = significant)", sex_label, y_var, x_var),
+        x = x_var, y = y_var
+      ) +
+      theme_bw(base_size = 12) +
+      theme(
+        legend.position = "none",
+        panel.grid.minor = element_blank(),
+        strip.background = element_rect(fill = "lightgrey", color = "black"),
+        strip.text = element_text(face = "bold")
+      )
+    
+    fpath <- file.path(out_dir, paste0(sex_label, "_", sanitize(y_var), "_", sanitize(x_var), ".png"))
+    ggsave(fpath, p, width = 12, height = 8, dpi = 300, bg = "white")
+    message("Saved: ", fpath)
+  })
+}
+
+# ---- Run for MALE and FEMALE ----
+save_pair_plots_all_groups(male_all_corrs,   MALE,   sex_label = "MALE")
+save_pair_plots_all_groups(female_all_corrs, FEMALE, sex_label = "FEMALE")
+
+
+# ==================== Effect of Years on Y-value ====================
+# For each significant (x_var, y_var) within each SPECIES × PROJECT,
+# compute mean(y_var) over the exact rows used in the correlation
+# (i.e., rows where both x_var and y_var are finite).
+# Core worker: for a sex-specific corr table + data frame
+compute_sig_pair_half_means <- function(corr_df, data_df, sex_label) {
+  sig_pairs <- corr_df %>%
+    filter(lm_significant == "significant", lm_R2 <1) %>%
+    select(SPECIES, PROJECT, x_var, y_var, n_ok, lm_slope, lm_p) %>%
+    distinct()
+  
+  if (nrow(sig_pairs) == 0L) return(tibble())
+  
+  purrr::pmap_dfr(sig_pairs, function(SPECIES, PROJECT, x_var, y_var, n_ok, lm_slope, lm_p) {
+    dat <- data_df %>%
+      filter(SPECIES == !!SPECIES, PROJECT == !!PROJECT) %>%
+      filter(is.finite(.data[[x_var]]), is.finite(.data[[y_var]]))
+    
+    if (!nrow(dat)) return(tibble())
+    
+    first_year <- min(dat$cal.yr, na.rm = TRUE)
+    last_year  <- max(dat$cal.yr, na.rm = TRUE)
+    mid_year   <- floor((first_year + last_year) / 2)
+    
+    dat %>%
+      mutate(period = ifelse(cal.yr <= mid_year, "first_half", "second_half")) %>%
+      group_by(period) %>%
+      summarise(
+        sex        = sex_label,
+        SPECIES    = first(SPECIES),
+        PROJECT    = first(PROJECT),
+        x_var      = first(x_var),
+        y_var      = first(y_var),
+        n_used     = n(),
+        mean_y     = mean(.data[[y_var]], na.rm = TRUE),
+        sd_y       = sd(.data[[y_var]], na.rm = TRUE),
+        first_year = first_year,
+        last_year  = last_year,
+        mid_year   = mid_year,
+        lm_slope   = lm_slope,
+        lm_p       = lm_p,
+        .groups    = "drop"
+      )
+  })
+}
+
+# Run for both sexes
+male_halves   <- compute_sig_pair_half_means(male_all_corrs,   MALE,   "MALE")
+female_halves <- compute_sig_pair_half_means(female_all_corrs, FEMALE, "FEMALE")
+
+sig_pairs_mean_y_halves <- bind_rows(male_halves, female_halves)
+
+# Neat (wide) table: one row per significant pair with first/second-half columns
+sig_pairs_mean_y_neat <-
+  sig_pairs_mean_y_halves %>%
+  mutate(
+    lm_slope = round(lm_slope, 4),
+    lm_p     = signif(lm_p, 3),
+    mean_y   = round(mean_y, 3),
+    sd_y     = round(sd_y, 3)
+  ) %>%
+  select(
+    SPECIES, PROJECT, sex, x_var, y_var,
+    first_year, mid_year, last_year, lm_slope, lm_p,
+    period, n_used, mean_y, sd_y
+  ) %>%
+  pivot_wider(
+    names_from = period,
+    values_from = c(n_used, mean_y, sd_y),
+    names_sep = "_"
+  ) %>%
+  # rename for readability
+  rename(
+    n_first     = n_used_first_half,
+    n_second    = n_used_second_half,
+    mean_y_first  = mean_y_first_half,
+    mean_y_second = mean_y_second_half,
+    sd_y_first    = sd_y_first_half,
+    sd_y_second   = sd_y_second_half
+  ) %>%
+  arrange(SPECIES, PROJECT, sex, x_var, y_var) %>%
+  mutate(Diff_range = mean_y_first - mean_y_second)
+
+# Calculate Relative Difference (Normalized by Mean) and Coefficient of Variation–like Metric
+# Add Sex column to each dataset
+male_labeled   <- MALE   %>% mutate(sex = "MALE")
+female_labeled <- FEMALE %>% mutate(sex = "FEMALE")
+
+# Combine
+Datamean <- bind_rows(male_labeled, female_labeled) %>%
+  select(SPECIES, PROJECT, sex, mean_WT, sd_WT, day_mean, sd_day, index, DAY_index)
+
+# Summarise by group
+DatMean <- Datamean %>%
+  group_by(SPECIES, PROJECT, sex, mean_WT, sd_WT, day_mean, sd_day) %>%
+  summarise(
+    Index_mean     = mean(index, na.rm = TRUE),
+    Index_sd     = sd(index, na.rm = TRUE),
+    mean_DAY_index = mean(DAY_index, na.rm = TRUE),
+    sd_DAY_index = sd(DAY_index, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+# Left-join group averages into sig_pairs_mean_y_neat
+sig_pairs_with_group_means <- sig_pairs_mean_y_neat %>%
+  left_join(DatMean,
+            by = c("SPECIES", "PROJECT", "sex"))
+
+## Estimate Relative Difference (Normalized by Mean)
+#Simple, dimensionless.
+#Interpreted as “percentage of the mean.”
+#Sensitive if mean ≈ 0.
+sig_pairs_with_group_means <- sig_pairs_with_group_means %>%
+  mutate(
+    RD = case_when(
+      y_var == "DAY_index" ~ (Diff_range / mean_DAY_index),
+      y_var == "WTmean"    ~ (Diff_range / mean_WT),
+      y_var == "DAYmean"   ~ (Diff_range / day_mean),
+      y_var == "index"     ~ (Diff_range / Index_mean),
+      TRUE ~ NA_real_   # fallback for safety
+    )
+  )
+
+## Estimate Coefficient of Variation–like Metric
+#Normalizes by standard deviation of all values.
+#Interpreted as “how many SDs apart are these two values.”
+sig_pairs_with_group_means <- sig_pairs_with_group_means %>%
+  mutate(
+    CVdiff = case_when(
+      y_var == "DAY_index" ~ abs(Diff_range) / sd_DAY_index,
+      y_var == "WTmean"    ~ abs(Diff_range) / sd_WT,
+      y_var == "DAYmean"   ~ abs(Diff_range) / sd_day,
+      y_var == "index"     ~ abs(Diff_range) / Index_sd,
+      TRUE ~ NA_real_   # fallback for safety
+    )
+  )
+
+sig_pairs_with_group_means <- sig_pairs_with_group_means %>%
+  mutate(RD = round(RD,5)) %>%
+  mutate(CVdiff = round(CVdiff,3))
+
+sig_pairs_with_group_means <- sig_pairs_with_group_means %>%
+  select(-mean_WT, -sd_WT, -day_mean, -sd_day, -Index_mean, -Index_sd, 
+         -mean_DAY_index, -sd_DAY_index, -RD)
+
+# Save and pretty-print
+write_csv(sig_pairs_with_group_means, file.path(out_dir, "significant_pairs_mean_y_by_halves_neat.csv"))
+
+
+
+# ==================== WORD REPORT (OFFICER) =======================================
+docx_path <- file.path(out_dir, "Adult_Mass_Correlations_Report.docx")
+
+# Small helper to tidy numeric columns for Word
+round_numeric_cols <- function(df, digits = 3) {
+  dplyr::mutate(df, dplyr::across(where(is.numeric), ~round(.x, digits)))
+}
+
+# Build clean, compact tables for Word
+
+# tbl_mml <- male_all_corrs %>%
+#   dplyr::mutate(significant = lm_significant == "significant") %>%
+#   dplyr::arrange(dplyr::desc(significant), SPECIES, PROJECT, lm_p) %>%
+#   dplyr::select(SPECIES, PROJECT, n_ok, lm_slope, lm_p, lm_significant) %>%
+#   round_numeric_cols(3)
+# 
+# tbl_fml <- female_all_corrs %>%
+#   dplyr::mutate(significant = lm_significant == "significant") %>%
+#   dplyr::arrange(dplyr::desc(significant), SPECIES, PROJECT, lm_p) %>%
+#   dplyr::select(SPECIES, PROJECT, n_ok, lm_slope, lm_p, lm_significant) %>%
+#   round_numeric_cols(3)
+
+Comparisons <- sig_pairs_with_group_means %>%
+  dplyr::select(SPECIES, PROJECT, sex, x_var, y_var, lm_slope, lm_p, Diff_range, CVdiff) %>%
+  round_numeric_cols(3)
+
+# Create the Word document
+# 1) Create a landscape default section (you can tweak margins if you like)
+ps_landscape <- prop_section(
+  page_size   = page_size(orient = "landscape"),
+  page_margins = page_mar(top = 0.75, right = 0.75, bottom = 0.75, left = 0.75)
+)
+
+doc <- read_docx(path = system.file("template/template.docx", package = "officer"))
+doc <- body_set_default_section(doc, ps_landscape)
+
+# Title
+doc <- body_add_par(doc, "Penguin Adult Mass — Significant Correlations", style = "heading 1")
+
+# # MML table
+# doc <- body_add_par(doc, "MML: cal.yr ~ index (by SPECIES × PROJECT)", style = "heading 3")
+# # Use a built-in Word table style. If "Table Grid" looks too plain, try "Light List".
+# doc <- body_add_table(doc, value = tbl_mml, style = "Normal Table")
+
+# # FML table
+# doc <- body_add_par(doc, "FML: cal.yr ~ index (by SPECIES × PROJECT)", style = "heading 3")
+# doc <- body_add_table(doc, value = tbl_fml, style = "Normal Table")
+
+# # Significant correlations table.
+doc <- body_add_par(doc, "Significant correlation pairs and first/second half period comparison", 
+                    style = "heading 2")
+doc <- body_add_table(doc, value = Comparisons, style = "Normal Table")
+
+# Add the “all groups” pair-plot files if you generated them
+doc <- body_add_par(doc, "All groups for each significant pair (★ marks significant panels)", style = "heading 2")
+for (img in list.files(out_dir, pattern = "^(MALE|FEMALE)_.*\\.png$", full.names = TRUE)) {
+  doc <- body_add_img(doc, src = img, width = 7, height = 4.7)
+}
+
+# Save
+print(doc, target = docx_path)
+message("Word report saved at: ", normalizePath(docx_path, winslash = "/", mustWork = FALSE))
+
+
+
