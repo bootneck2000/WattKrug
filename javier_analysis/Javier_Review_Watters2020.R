@@ -1,4 +1,4 @@
-# Analisis Watters et al 2020
+# Analysis Watters et al 2020
 
 # library(readr)
 library(ggplot2)
@@ -9,6 +9,7 @@ library(ggpubr)
 library(broom)
 library(AICcmodavg)
 library(stringr)
+<<<<<<< HEAD
 
 c1 <- read.csv("./Supplementary Files/c1.csv") # Krill catches
 cid <- read.csv("./Supplementary Files/cid.csv") # Clutch dates
@@ -22,6 +23,25 @@ sam <- read.csv("./Supplementary Files/sam.csv") # SAM
 success <- read.csv("./Supplementary Files/success.csv") # Chick breeding success
 tripduration <- read.csv("./Supplementary Files/tripduration.csv") # Forging trip duration
 hr <- read.csv("./Supplementary Files/hr.csv") # Krill catches and LHR
+=======
+dir = '/Users/god/Documents/R workspace/WattKrug'
+setwd(dir)
+
+S1 <- read_csv("./Supplementary Files/c1.csv") # Krill catches
+S2 <- read_csv("./Supplementary Files/cid.csv") # Clutch dates
+S3 <- read_csv("./Supplementary Files/egg.csv", col_types="ccccdddd") # Egg mass and volume
+S4 <- read_csv("./Supplementary Files/fweight.csv") # Fledgling mass
+S5 <- read_csv("./Supplementary Files/krillsurveywithjoinville.csv") # LKB
+S6 <- read_csv("./Supplementary Files/massatlay.csv") # Adult penguin mass at laying
+S7 <- read_csv("./Supplementary Files/oni.csv") # ONI
+S8 <- read_csv("./Supplementary Files/recruitment.csv") # Cohort strength
+S9 <- read_csv("./Supplementary Files/sam.csv") # SAM
+S10 <- read_csv("./Supplementary Files/success.csv") # Chick breeding success
+S11 <- read_csv("./Supplementary Files/tripduration.csv") # Forging trip duration
+S12 <- read_csv("./Supplementary Files/hr.csv") # Krill catches and LHR
+
+
+>>>>>>> fd2700c8f75ad3cfbbf42875eb5e65ff8d5fa534
 
 ###############################
 # Relationship SAM and LKB ------------------------------------------------
@@ -379,10 +399,8 @@ scale_this = function(x) {
   e1e2 <- egg
   egg<-e1e2[,c(1:3)]
   egg$egg<-(e1e2[,5]+e1e2[,7])/(e1e2[,6]+e1e2[,8])
-  # most winter indices (except rec) are relevant to the first year in the split-season designation
-  egg$Year<-as.numeric(substr(egg$YEAR,1,4))
-  egg<-tapply(egg$egg,list(egg$Year,egg$PROJECT,egg$SPECIES),mean,na.rm=TRUE)
-  egg<-data.frame(Year=rep(dimnames(egg)[[1]],dim(egg)[2]*dim(egg)[3]),
+  egg<-tapply(egg$egg,list(egg$YEAR,egg$PROJECT,egg$SPECIES),mean,na.rm=TRUE)
+  egg<-data.frame(YEAR=rep(dimnames(egg)[[1]],dim(egg)[2]*dim(egg)[3]),
                   PROJECT=rep(rep(dimnames(egg)[[2]],each=dim(egg)[1]),dim(egg)[3]),
                   SPECIES=rep(dimnames(egg)[[3]],each=dim(egg)[1]*dim(egg)[2]),
                   egg=c(egg),stringsAsFactors = FALSE)
@@ -392,26 +410,35 @@ scale_this = function(x) {
   mean.egg<-tt[match(egg$matchme,names(tt))]
   sd.egg<-ttt[match(egg$matchme,names(ttt))]
   egg$std.mean.egg<-(egg$egg-mean.egg)/sd.egg
-  egg<-egg[,-c(5)]
-  names(egg)[5]<-"index1"
+  egg<-egg[,-c(4:5)]
+  names(egg)[4]<-"index"
   #omits<-(egg$SPECIES=="ADPE"&egg$PROJECT=="CS")|(egg$SPECIES=="CHPE"&egg$PROJECT=="COPA")
-  egg <- na.omit(egg)
-  egg$Year <- as.integer(egg$Year)
+  #egg<-egg[!omits,]
   egg$param=rep("EGG",dim(egg)[1])
   egg$season=rep("W",dim(egg)[1])
+  # most winter indices (except rec) are relevant to the first year in the split-season designation
+  egg$cal.yr<-as.numeric(substr(egg$YEAR,1,4))
   #print(str(egg))
 #### clutch initiation date (cid)----
 # earlier indicates better winter
 library(lubridate)
 
+<<<<<<< HEAD
 
+=======
+cid <- S2 %>%
+  dplyr::select(1:5)
+>>>>>>> fd2700c8f75ad3cfbbf42875eb5e65ff8d5fa534
 # most winter indices (except rec) are relevant to the first year in the split-season designation
 cid$Year<-as.numeric(substr(cid$YEAR,1,4))
 
 # next line is to make CID point in same direction as other indices where bigger indicates better conditions (take diff from Dec 31)
 # call this "revcid" for "reversed" CID
-cid$revcid <- as.vector(as.POSIXlt(paste(substr(cid$YEAR,1,4),"-12-31",sep=""))-strptime(cid[,4],"%m/%e/%Y"))
-cid$MEAN_CID <- as.Date(cid$MEAN_CID, tryFormats = c("%m/%d/%Y"))
+#cid$revcid <- as.vector(as.POSIXlt(paste(substr(cid$YEAR,1,4),"-12-31",sep=""))-strptime(cid[,4],"%m/%d/%Y"))
+
+#cid$Year2 = lubridate::ymd(paste(substr(cid$YEAR,1,4),"-12-31",sep=""))
+cid$revcid = as.numeric(lubridate::ymd(paste(substr(cid$YEAR,1,4),"-12-31",sep=""))- lubridate::mdy(cid$MEAN_CID))
+cid$MEAN_CID = lubridate::mdy(cid$MEAN_CID)
 cid$Julian <- lubridate::yday(cid$MEAN_CID)
 cid$matchme<-paste(cid$PROJECT,cid$SPECIES,sep="|")
 tt<-tapply(cid$revcid,list(cid$matchme),mean,na.rm=TRUE)
@@ -453,7 +480,7 @@ names(rec)[1] <- "Year"
 # Relationship KRILL size and Penguin Indexes -----------------------------
 
 #Krill size is only summer data; varies depending on Species and Location
-#krill.diet <- read.csv("Krill_size_Hinke2007.csv") 
+krill.diet <- read.csv("/Users/god/Documents/R workspace/WattKrug/Supplementary Files/Krill_size_Hinke2007.csv") 
 krill.diet$Location <- str_replace_all(krill.diet$Location, c(AB = "COPA"))
 names(krill.diet) <- c("Year", "ADPE", "CHPE", "GEPE", "PROJECT")
 krill.spp <- melt(krill.diet, id = c("Year", "PROJECT"))
@@ -561,7 +588,9 @@ model.set <- list(two.way1, two.way2, inter.way1, inter.way2)
 model.names <- c("two.way param", "two.way Species", "Inter.param", "Inter.Species")
 aictab(model.set, modnames = model.names)
 
-
+#column name fix on egg
+egg = egg %>%
+  dplyr::mutate(Year = cal.yr)
 # Winter Indexes
 oni.w <- oni %>% filter(season == "W")
 mml.oni <- merge(x = mml, y = oni.w, by = "Year", all.x = TRUE)

@@ -1,0 +1,64 @@
+GENERIC HEADER CONVENTIONS
+#############################
+SPECIES NAMES
+GEPE=GENTOO
+CHPE=CHINSTRAP
+ADPE=ADELIE
+AFS=ANTARCTIC FUR SEAL
+
+SITE
+CS=CAPE SHIRREFF, LIVINGSTON ISLAND (61.4624S, 60.7916W)
+COPA=COPACABANA FIELD CAMP, KING GEORGE ISLAND (62.2137S, 58.4206W)
+#############################
+
+FILE-SPECIFIC CONVENTINS
+#############################
+krill density.csv  - integrated krill density estimates along the US AMLR survey grid, 2009-2011
+#############################
+Longitude - midpoint of 1nm survey transect	
+Latitude - midpoint of 1nm survey transect	
+gm2 - mean krill density	
+Year - year of sampling (typically occurred Jan/Feb of that year)
+
+############################
+predator census - nest or pup counts for penguins and fur seals in 2009 and 2014
+############################ 
+SITE - field site of census data
+SPECIES	- species counted
+2009 - nest/pup count for the 2008/2009 austral breeding season
+2014 - nest/pup count for the 2013/14 austral breeding season
+
+############################
+satellite telemetry - raw location estimates for ARGOS PTT and GPS instruments 
+############################	
+Deployment - unique identifier for each deployment
+Type - type of satellite tag, either ARGOS PTT or GPS
+Latitude - decimal degree location estimate	
+Longitude - decimal degree location estimate
+Loc.Qual - ARGOS location quality code
+Date - Date of location estimate (M/D/Y)
+Time - Time of location estiamte (HH:MM:SS)
+Spp - Species monitored
+Site - field site where deployment was made
+
+############################
+SSMU3_krill_depth_density - depth-specific estiamtes of krill density offshore of Livingston Island
+############################
+DepthBin - depth strata 	
+Date - date (M/D/YYY)	
+Time - Time (HH:MM:SS)	
+Latitude - midpoint of 1nm survey transect
+Longitude - midpoint of 1nm survey transect	
+Year - 	year of sampling (typically occurred Jan/Feb of that year)
+gm2 - mean krill density
+
+
+
+############################
+tdr_data - maximum depth from each dive for penguins and fur seals, 2009-2014, Jan and Feb. 
+############################
+Spp - species 	
+Max.Depth - maximum dive depth acheived
+Date - date of dive (M/D/Y)
+Time - time of max depth (HH:MM:SS)
+
