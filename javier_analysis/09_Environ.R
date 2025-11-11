@@ -197,7 +197,7 @@ ggsave(filename = outfile, plot = fig3, width = 7, height = 7, dpi = 300, bg = "
 
 
 #### Statistical Analysis
-g1 <- ENV.LKB %>% filter(gSSMU == 1) %>% filter(survey > 0)
+g1 <- ENV.LKB %>% filter(gSSMU == 1) # %>% filter(survey > 0)
 coin::oneway_test(survey ~ sam.sign, data = g1, distribution = "approximate")
 # Z = -1.1643, p-value = 0.2639
 g1_summary <- g1 %>%
@@ -209,7 +209,7 @@ g1_summary <- g1 %>%
   )
 g1_summary
 
-g2 <- ENV.LKB %>% filter(gSSMU == 2) %>% filter(survey > 0)
+g2 <- ENV.LKB %>% filter(gSSMU == 2) # %>% filter(survey > 0)
 coin::oneway_test(survey ~ sam.sign, data = g2, distribution = "approximate")
 # Z = -1.9038, p-value = 0.0527
 g2_summary <- g2 %>%
