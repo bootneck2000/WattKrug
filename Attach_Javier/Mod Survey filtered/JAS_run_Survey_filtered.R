@@ -6,14 +6,18 @@
 
 library(tidyverse)
 library(lattice)
+
+# Jump to Step 3 if already ran steps 1 & 2
+
 #### First Step, load variables & Update 'survey' data ####
+setwd("C:/Users/javie/OneDrive/R-Git projects/WattKrug/Supplementary Files")
+
 make.localhr.data<-function(trim=1,plot.winter=FALSE){
   # generate the summer indices
   #
   # fledge weight (fwt)
   # bigger indicates better summer
-  # fwt<-read.csv("fweight.csv",header=TRUE,stringsAsFactors = FALSE) # replaced for line below
-  fwt <- read.csv("./Supplementary Files/fweight.csv", header=TRUE, stringsAsFactors = FALSE) # Fledgling mass
+  fwt<-read.csv("fweight.csv",header=TRUE,stringsAsFactors = FALSE)
   fwt<-tapply(fwt$WT,list(fwt$YEAR,fwt$PROJECT,fwt$SPECIES),mean)
   fwt<-data.frame(YEAR=rep(dimnames(fwt)[[1]],dim(fwt)[2]*dim(fwt)[3]),
                   PROJECT=rep(rep(dimnames(fwt)[[2]],each=dim(fwt)[1]),dim(fwt)[3]),
@@ -39,8 +43,7 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
 
   # post-hatch success (phs) (numbers of chicks creched/numbers of chicks hatched)
   # bigger indicates better summer
-  # phs<-read.csv("success.csv",header=TRUE,stringsAsFactors = FALSE) # replaced for line below
-  phs <- read.csv("./Supplementary Files/success.csv",header=TRUE,stringsAsFactors = FALSE) # post-hatch success
+  phs<-read.csv("success.csv",header=TRUE,stringsAsFactors = FALSE)
   phs$phs<-phs$N_CRECHE/phs$N_CHICKS
   phs$phs<-log(phs$phs/(1-phs$phs))
   phs$matchme<-paste(phs$PROJECT,phs$SPECIES,sep="|")
@@ -60,8 +63,7 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
 
   # trip duration (td)
   # smaller indicates better summer (thus need to switch direction of index)
-  # td<-read.csv("tripduration.csv",header=TRUE,stringsAsFactors = FALSE) # replaced for line below
-  td <- read.csv("./Supplementary Files/tripduration.csv",header=TRUE,stringsAsFactors = FALSE) # Forging trip duration
+  td<-read.csv("tripduration.csv",header=TRUE,stringsAsFactors = FALSE)
   td<-td[,c(1:3,8)]
   # next line is to make trip duration point in same direction as fwt and phs (max td is 59.95 for all trips)
   # call this "revtd" for "reversed" trip duration
@@ -93,8 +95,7 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
   #
   # adult male mass at E1 lay (mml)
   # bigger indicates better winter
-  # ade1<-read.csv("massatlay.csv",header=TRUE,stringsAsFactors = FALSE) # replaced with line below
-  ade1 <- read.csv("./Supplementary Files/massatlay.csv",header=TRUE,stringsAsFactors = FALSE) # Adult penguin mass at laying
+  ade1<-read.csv("massatlay.csv",header=TRUE,stringsAsFactors = FALSE)
   mml<-ade1[,c(1:3,5)]
   mml<-tapply(mml$WT_MALE,list(mml$YEAR,mml$PROJECT,mml$SPECIES),mean,na.rm=TRUE)
   mml<-data.frame(YEAR=rep(dimnames(mml)[[1]],dim(mml)[2]*dim(mml)[3]),
@@ -145,8 +146,7 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
   #
   # avg egg density using both eggs (egg)
   # bigger indicates better winter
-  # e1e2<-read.csv("egg.csv",header=TRUE,stringsAsFactors = FALSE) # replaced with line below
-  e1e2<-read.csv("./Supplementary Files/egg.csv",header=TRUE,stringsAsFactors = FALSE)
+  e1e2<-read.csv("egg.csv",header=TRUE,stringsAsFactors = FALSE)
   egg<-e1e2[,c(1:3)]
   egg$egg<-(e1e2[,5]+e1e2[,7])/(e1e2[,6]+e1e2[,8])
   egg<-tapply(egg$egg,list(egg$YEAR,egg$PROJECT,egg$SPECIES),mean,na.rm=TRUE)
@@ -173,8 +173,7 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
   #
   # clutch initiation date (cid)
   # earlier indicates better winter
-  # cid<-read.csv("cid.csv",header=TRUE,stringsAsFactors = FALSE)[,1:4] # replaced with line below
-  cid<-read.csv("./Supplementary Files/cid.csv",header=TRUE,stringsAsFactors = FALSE)[,1:4]
+  cid<-read.csv("cid.csv",header=TRUE,stringsAsFactors = FALSE)[,1:4]
   # next line is to make CID point in same direction as other indices where bigger indicates better conditions (take diff from Dec 31)
   # call this "revcid" for "reversed" CID
   cid[,4]<-as.vector(as.POSIXlt(paste(substr(cid$YEAR,1,4),"-12-31",sep=""))-strptime(cid[,4],"%m/%e/%Y"))
@@ -198,8 +197,7 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
   #
   # cohort recruitment (rec)
   # bigger indicates better winter
-  # rec<-read.csv("recruitment.csv",header=TRUE,stringsAsFactors = FALSE)[,1:4] # replaced with line below
-  rec<-read.csv("./Supplementary Files/recruitment.csv",header=TRUE,stringsAsFactors = FALSE)[,1:4]
+  rec<-read.csv("recruitment.csv",header=TRUE,stringsAsFactors = FALSE)[,1:4]
   names(rec)[4]<-"rec"
   rec$rec<-log(rec$rec/(1-rec$rec))
   rec$matchme<-paste(rec$PROJECT,rec$SPECIES,sep="|")
@@ -220,24 +218,13 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
   # read in the krill survey and fishery data
   #
   # krill survey biomass
-  # survey<-read.csv("krillsurveywithJoinville.csv",header=TRUE,stringsAsFactors = FALSE)
-  # survey<-read.csv("./Supplementary Files/krillsurveywithJoinville.csv",header=TRUE,stringsAsFactors = FALSE)
+  survey<-read.csv("krillsurveywithJoinville.csv",header=TRUE,stringsAsFactors = FALSE)
+
   # # use next line if want to filter acoustic data to have minimum number of miles (comment out if not desired)
   # # as per CSR, 80 nmi would be about equivalent of 2 tracklines in the Bransfield
   # #survey<-survey[survey$nmi.count>=80,]
-  # # could try changing "biomass" in following line to "mean.density.gm2" or "median.density.gm2" but haven't done that
-  # survey<-tapply(survey$biomass,list(survey$Year,survey$gSSMU),mean,na.rm=TRUE)
-  # survey<-data.frame(cal.yr=rep(dimnames(survey)[[1]],dim(survey)[2]),
-  #                    gSSMU=rep(dimnames(survey)[[2]],each=dim(survey)[1]),
-  #                    survey=c(survey),stringsAsFactors = FALSE)
-  # survey$season<-ifelse(survey$cal.yr<2012,"S","W")
-  # # use next line if want to remove winter survey data altogether (comment out if not desired)
-  # #survey<-survey[survey$season=="S",]
-  # survey$matchme<-paste(survey$cal.yr,survey$season,survey$gSSMU,sep="|")
-  # #print(str(survey))
 
-  # START changes --- Clean & aggregate survey data ---
-  survey<-read.csv("./Supplementary Files/krillsurveywithJoinville.csv",header=TRUE,stringsAsFactors = FALSE)
+### Introduced Change: 
   # Filter low transect coverage (<10th percentil)
   survey_filtered <- survey %>%
     filter(gSSMU %in% c(1, 2))
@@ -248,9 +235,11 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
   survey_low_nmi <- survey_filtered %>%
     left_join(percentiles, by = "gSSMU") %>%
     filter(nmi.count >= p10)
-  survey <- survey_low_nmi # %>%
-  #  select(Year, Leg, gSSMU, biomass, nmi.count)
-
+  survey <- survey_low_nmi
+  rm(percentiles, survey_filtered, survey_low_nmi)
+### END changes
+  
+  # # could try changing "biomass" in following line to "mean.density.gm2" or "median.density.gm2" but haven't done that
   survey<-tapply(survey$biomass,list(survey$Year,survey$gSSMU),mean,na.rm=TRUE)
   survey<-data.frame(cal.yr=rep(dimnames(survey)[[1]],dim(survey)[2]),
                      gSSMU=rep(dimnames(survey)[[2]],each=dim(survey)[1]),
@@ -259,23 +248,11 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
   # use next line if want to remove winter survey data altogether (comment out if not desired)
   #survey<-survey[survey$season=="S",]
   survey$matchme<-paste(survey$cal.yr,survey$season,survey$gSSMU,sep="|")
-  
-  # survey$season<-ifelse(survey$Year<2012,"S","W")
-  # survey <- survey %>% rename(cal.yr = Year)  # to match rest of script
-  # survey <- survey %>%
-  #   mutate(
-  #     gSSMU  = as.character(gSSMU),
-  #     season = toupper(season)
-  #   ) %>%
-  #   group_by(cal.yr, gSSMU, season) %>%
-  #   summarise(survey = mean(biomass, na.rm = TRUE), .groups = "drop")
-  rm(percentiles, survey_filtered, survey_low_nmi)
-  # END changes
+  # #print(str(survey))
   #
   #
   # krill fishery catches
-  # fishery<-read.csv("c1.csv",header=TRUE,stringsAsFactors = FALSE)
-  fishery<-read.csv("./Supplementary Files/c1.csv",header=TRUE,stringsAsFactors = FALSE)
+  fishery<-read.csv("c1.csv",header=TRUE,stringsAsFactors = FALSE)
   fishery$season<-ifelse(is.element(fishery$Month,c(10:12,1:3)),"S","W")
   gSSMU1<-c("APBSE","APBSW")
   gSSMU2<-c("APDPE","APDPW","APEI")
@@ -331,8 +308,7 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
   # pull in the environmental indices
   #
   # SOUTHERN ANNULAR MODE
-  # sam<-read.csv("sam.csv") # replaced with line below
-  sam<-read.csv("./Supplementary Files/sam.csv")
+  sam<-read.csv("sam.csv")
   names(sam)<-c("yr","mo","sam")
   sam$season<-ifelse(is.element(sam$mo,c(10:12,1:3)),"S","W")
   sam$YEAR<-ifelse(is.element(sam$mo,10:12),sam$yr+1,sam$yr)
@@ -342,8 +318,7 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
   out$sam.sign<-ifelse(out$sam<0,"Neg","Pos")
   #
   # OCEANIC NINO INDEX
-  # oni<-read.csv("oni.csv",stringsAsFactors = FALSE) # replaced with line below
-  oni<-read.csv("./Supplementary Files/oni.csv",stringsAsFactors = FALSE)
+  oni<-read.csv("oni.csv",stringsAsFactors = FALSE)
   oni$yr<-ifelse(is.element(oni$SEAS,c("OND","NDJ")),oni$YR+1,oni$YR)
   oni$season<-ifelse(is.element(oni$SEAS,c("OND","NDJ","DJF","JFM")),"S",NA)
   oni$season<-ifelse(is.element(oni$SEAS,c("AMJ","MJJ","JJA","JAS")),"W",oni$season)
@@ -378,6 +353,7 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
 junk<-make.localhr.data()
 
 #### Second - Run Model ####
+setwd("C:/Users/javie/OneDrive/R-Git projects/WattKrug/")
 out.dir <- "./Attach_Javier/Mod Survey filtered/"
 
 modelstring<-"
@@ -663,23 +639,6 @@ hr.derived<-c("index.new","mu.new","prob","prob.new")
 
 hr.imputed<-"hr"
 
-# write out the input (to check how we are doing)
-#write.csv(hr.data$index, file.path(out.dir, file = "index.csv"))
-#write.csv(hr.data$survey, file.path(out.dir, file = "survey.csv"))
-#write.csv(hr.data$catch, file.path(out.dir, file = "catch.csv"))
-#write.csv(hr.data$gssmu, file.path(out.dir, file = "gssmu.csv"))
-#write.csv(hr.data$oniclass, file.path(out.dir, file = "oniclass.csv"))
-#write.csv(hr.data$samclass, file.path(out.dir, file = "samclass.csv"))
-#write.csv(hr.data$summer, file.path(out.dir, file = "summer.csv"))
-#write.csv(hr.data$impute.me, file.path(out.dir, file = "imputeme.csv"))
-
-#write.csv(hr.data$meanlogsummer, file.path(out.dir, file = "meanlogsummer.csv"))
-#write.csv(hr.data$sdlogsummer, file.path(out.dir, file = "sdlogsummer.csv"))
-#write.csv(hr.data$nobs, file.path(out.dir, file = "nobs.csv"))
-#write.csv(hr.data$nsummerobs, file.path(out.dir, file = "nsummerobs.csv"))
-#write.csv(hr.data$predX, file.path(out.dir, file = "predX.csv"))
-
-
 # now do the analysis
 Sys.unsetenv("JAGS_HOME")  # let rjags auto-detect
 library(coda)
@@ -696,6 +655,16 @@ hr.derived.summ<-summary(hr.derived.post)
 hr.imputed.summ<-summary(hr.imputed.post)
 
 # write input/output
+saveRDS(hr.params.post, file.path(out.dir, file = "hr.params.post.rds"))
+saveRDS(hr.derived.post, file.path(out.dir, file = "hr.derived.post.rds"))
+saveRDS(hr.imputed.post, file.path(out.dir, file = "hr.imputed.post.rds"))
+
+saveRDS(hr.params.summ, file.path(out.dir, file = "hr.params.summ.rds"))
+saveRDS(hr.derived.summ, file.path(out.dir, file = "hr.derived.summ.rds"))
+saveRDS(hr.imputed.summ, file.path(out.dir, file = "hr.imputed.summ.rds"))
+
+saveRDS(junk, file.path(out.dir, file = "junk.rds"))
+
 # cat(capture.output(print(hr.params.post), file.path(out.dir, file="hr_params_post.txt")))
 sink(file.path(out.dir, file="hr_params.txt"))
 print(hr.params.post)
@@ -708,6 +677,22 @@ print(hr.imputed.summ)
 sink()
 
 
+#### Step 3: PLOTTING  ####
+
+out.dir <- "./Attach_Javier/Mod Survey filtered/"
+setwd(out.dir)
+
+# Read data files
+hr.params.post <- readRDS("hr.params.post.rds")
+hr.derived.post <- readRDS("hr.derived.post.rds")
+hr.imputed.post2 <- readRDS("hr.imputed.post.rds")
+junk <- readRDS("junk.rds")
+
+hr.params.summ <- readRDS("hr.params.summ.rds")
+hr.derived.summ <- readRDS("hr.derived.summ.rds")
+hr.imputed.summ2 <- readRDS("hr.imputed.summ.rds")
+
+# plot posterior expectations of marginal effects
 require(ggmcmc)
 hr.params.s<-ggs(hr.params.post)
 hr.derived.s<-ggs(hr.derived.post)
@@ -722,15 +707,13 @@ HR.labels<-data.frame(Parameter=dimnames(hr.params.post[[1]])[[2]],
 hr.params2.s<-ggs(hr.params.post,par_labels = HR.labels)
 hr.params2.s<-hr.params2.s[hr.params2.s$ParameterOriginal!="t.sd.index",]
 
-ggmcmc(hr.params.s, file.path(out.dir, file="diagnostics_hr_params_final.pdf"))
-ggmcmc(hr.derived.s, file.path(out.dir, file="diagnostics_hr_derived_final.pdf"))
+ggmcmc(hr.params.s, "diagnostics_hr_params_final.pdf")
+ggmcmc(hr.derived.s, "diagnostics_hr_derived_final.pdf")
 
-# plot posterior expectations of marginal effects
-
-## Figure 2
+## Figure 2 paper Watters et al. (2020).
 
 # reference (best case)
-png(file.path(out.dir, file="hr_boxplot.png"), width = 10, height = 7, units = "in", res = 300, pointsize = 10) # Added
+png("EP_summ_boxplot.png", width = 10, height = 7, units = "in", res = 300, pointsize = 10) # Added
 par(mar = c(6, 5, 2, 1))  # optional margins # Added
 boxplot(value~I(as.numeric(Parameter)),data=hr.derived.s,subset=(as.numeric(hr.derived.s$Parameter)==19),
         range=0,ylim=c(-2,2),xaxt="n",xlim=c(0.5,7.5),ylab="Expected performance",
@@ -750,30 +733,9 @@ boxplot(value~I(as.numeric(Parameter)),data=hr.derived.s,subset=(as.numeric(hr.d
 axis(1,at=1:7,labels=c("reference","-0.5 < ONI < 0.5","ONI >= 0.5","LKB > 1 Mt","0.01 < LHR < 0.10","LHR >= 0.10","worst case"))
 abline(h=mean(hr.derived.s$value[as.numeric(hr.derived.s$Parameter)==19]),lty=2)
 abline(h=0)
-# ADD BLUE LINE
-abline(h=-mean(hr.derived.s$value[as.numeric(hr.derived.s$Parameter)==19]),col="blue",lty=2)  # Added
+abline(h=-mean(hr.derived.s$value[as.numeric(hr.derived.s$Parameter)==19]),col="blue",lty=2)  # Added blue line
 dev.off() # Added
 
-write.csv(hr.derived.s, file.path(out.dir, file = "hr_derived_s.csv"))  
-
-# #  Added by Andy - plot all cases*
-# # reference (best case)
-png(file.path(out.dir, file="hr_boxplot_18.png"), width = 10, height = 7, units = "in", res = 300, pointsize = 10) # Added
-par(mar = c(6, 5, 2, 1))  # optional margins # Added
-boxplot(value~I(as.numeric(Parameter)),data=hr.derived.s,subset=(as.numeric(hr.derived.s$Parameter)==19),
-        range=0,ylim=c(-2,2),xaxt="n",xlim=c(0.5,18.5),ylab="expected performance",whisklty=1,boxwex=1,at=1)
-
-boxplot(value~I(as.numeric(Parameter)),data=hr.derived.s,subset=(is.element(as.numeric(hr.derived.s$Parameter),c(20:36))),
-        range=0,xaxt="n",yaxt="n",whisklty=1,boxwex=0.5,add=TRUE,at=2:18,col="gray80")
-
-axis(1,at=1:18,labels=c("1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18"))
-abline(h=mean(hr.derived.s$value[as.numeric(hr.derived.s$Parameter)==19]),lty=2)
-abline(h=0)
-# ADD BLUE LINE
-abline(h=-mean(hr.derived.s$value[as.numeric(hr.derived.s$Parameter)==19]),col="blue",lty=2)  # Added
-dev.off() # Added
-
-## ADD ACTUAL DATA TO THE PLOT ##
 
 ### Supplementary Figures
 
@@ -829,24 +791,61 @@ xx$case<-ifelse(xx$oni.class==1 & xx$kb.class==1 & xx$hr.class==1,1,
 saveRDS(xx, "Data_Fig_S7.rds")  # save the data
 ####
 
-
 # plot the data
+png("std_performance_boxplot.png", width = 10, height = 7, units = "in", res = 300, pointsize = 10) # Added
+par(mar = c(6, 5, 2, 1))  # optional margins # Added
 plot(jitter(xx$case[xx$impute.me==0],amount=0.25),xx$index[xx$impute.me==0],type="n",xlim=c(0.65,18.35),
      ylim=c(-3.5,3.5),
      xlab="case",xaxt="n",ylab="std performance index",pch=16)
 # add posterior predictive distributions as box plots
 for(i in 1:18){
   boxplot(value~I(as.numeric(Parameter)),data=hr.derived.s,subset=(as.numeric(hr.derived.s$Parameter)==i),
-          range=1.5,outline=FALSE,xaxt="n",whisklty=1,boxwex=1,at=i,add=TRUE)
+          range=0,outline=FALSE,xaxt="n",whisklty=1,boxwex=1,at=i,add=TRUE)
 }
 # plot the data
 points(jitter(xx$case[xx$impute.me==0&xx$season=="S"],amount=0.2),xx$index[xx$impute.me==0&xx$season=="S"],
-       cex=0.5,col="red",pch=16)
+       cex=0.8,col="red",pch=16)
 points(jitter(xx$case[xx$impute.me==0&xx$season=="W"],amount=0.2),xx$index[xx$impute.me==0&xx$season=="W"],
-       cex=0.5,col="blue",pch=16)
-points(jitter(xx$case[xx$impute.me==1],amount=0.2),xx$index[xx$impute.me==1],cex=0.5,col="red")
+       cex=0.8,col="blue",pch=16)
+points(jitter(xx$case[xx$impute.me==1],amount=0.2),xx$index[xx$impute.me==1],cex=1,col="red")
 axis(1,at=1:18)
+abline(h=mean(hr.derived.s$value[as.numeric(hr.derived.s$Parameter)==19]),lty=2)
 abline(h=0)
+abline(h=-mean(hr.derived.s$value[as.numeric(hr.derived.s$Parameter)==19]),col="blue",lty=2)  # Added
+dev.off() # Added
+
+
+
+### #  Added by Andy - plot all cases*
+
+png("Expected_Performance_18.png", width = 10, height = 7, units = "in", res = 300, pointsize = 10) # Added
+par(mar = c(6, 5, 2, 1))  # optional margins # Added
+
+# # reference (best case)
+boxplot(value~I(as.numeric(Parameter)),data=hr.derived.s,
+        subset=(as.numeric(hr.derived.s$Parameter)==19),
+        range=0,ylim=c(-2,2),xaxt="n",xlim=c(0.5,18.5),
+        ylab="Expected performance",xlab="Case scenario",
+        whisklty=1,boxwex=1,at=1)
+
+boxplot(value~I(as.numeric(Parameter)),data=hr.derived.s,subset=(is.element(as.numeric(hr.derived.s$Parameter),c(20:36))),
+        range=0,xaxt="n",yaxt="n",whisklty=1,boxwex=0.5,add=TRUE,at=2:18,col="gray80")
+
+# points added by Javier (from  S7)
+points(jitter(xx$case[xx$impute.me==0&xx$season=="S"],amount=0.2),xx$index[xx$impute.me==0&xx$season=="S"],
+       cex=0.8,col="red",pch=16)
+points(jitter(xx$case[xx$impute.me==0&xx$season=="W"],amount=0.2),xx$index[xx$impute.me==0&xx$season=="W"],
+       cex=0.8,col="blue",pch=16)
+points(jitter(xx$case[xx$impute.me==1],amount=0.2),xx$index[xx$impute.me==1],cex=1,col="red")
+##
+axis(1,at=1:18,labels=c("1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18"))
+abline(h=mean(hr.derived.s$value[as.numeric(hr.derived.s$Parameter)==19]),lty=2)
+abline(h=0)
+abline(h=-mean(hr.derived.s$value[as.numeric(hr.derived.s$Parameter)==19]),col="blue",lty=2)  # Added
+dev.off() # Added
+
+
+
 
 
 #### misc stuff ####
