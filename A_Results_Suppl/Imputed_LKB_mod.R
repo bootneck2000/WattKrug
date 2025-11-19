@@ -6,11 +6,26 @@
 library(dplyr)
 library(tidyverse)
 library(tibble)
+library(ggplot2)
+library(scales)
 
 #### First, import data from the model ####
 
 # krill survey biomass
 survey<-read.csv("./Supplementary Files/krillsurveywithJoinville.csv",header=TRUE,stringsAsFactors = FALSE)
+# Filter low transect coverage (<10th percentil)
+survey_filtered <- survey %>%
+  filter(gSSMU %in% c(1, 2))
+percentiles <- survey_filtered %>%
+  group_by(gSSMU) %>%
+  summarise(p10 = quantile(nmi.count, probs = 0.10, na.rm = TRUE))
+percentiles$p10 <- ceiling(percentiles$p10/10)*10
+survey_low_nmi <- survey_filtered %>%
+  left_join(percentiles, by = "gSSMU") %>%
+  filter(nmi.count >= p10)
+survey <- survey_low_nmi
+rm(percentiles, survey_filtered, survey_low_nmi)
+### END changes
 survey<-tapply(survey$biomass,list(survey$Year,survey$gSSMU),mean,na.rm=TRUE)
 survey<-data.frame(cal.yr=rep(dimnames(survey)[[1]],dim(survey)[2]),
                    gSSMU=rep(dimnames(survey)[[2]],each=dim(survey)[1]),
@@ -19,7 +34,7 @@ survey$season<-ifelse(survey$cal.yr<2012,"S","W")
 survey$matchme<-paste(survey$cal.yr,survey$season,survey$gSSMU,sep="|")
 
 survey <- survey %>% mutate(cal.yr = as.integer(cal.yr))
-survey <- survey %>% filter(season == "S")   # only imputed summer data
+# survey <- survey %>% filter(season == "S")   # only imputed summer data
 survey <- survey %>% mutate(gSSMU = as.integer(gSSMU))
 
 # Import SAM data
@@ -32,7 +47,7 @@ sam<-data.frame(cal.yr=rep(dimnames(sam)[[1]],2),season=rep(dimnames(sam)[[2]],e
 
 sam <- sam %>% mutate(cal.yr = as.integer(cal.yr))
 sam <- sam %>% filter(season == "S")   # only imputed summer data
-  
+
 
 # krill fishery catches
 fishery<-read.csv("./Supplementary Files/c1.csv",header=TRUE,stringsAsFactors = FALSE)
@@ -123,14 +138,144 @@ Table.01 <- tibble(
   "SAM+ sd"   = NA_real_
 )
 
-Table.01$`SAM- mean` <- meanLogS[,2]
-Table.01$`SAM+ mean` <- meanLogS[,1]
-Table.01$`SAM- sd` <- sdLogS[,2]
-Table.01$`SAM+ sd` <- sdLogS[,1]
+Table.01$`SAM- mean` <- exp(meanLogS[,2])
+Table.01$`SAM+ mean` <- exp(meanLogS[,1])
+Table.01$`SAM- sd` <- exp(sdLogS[,2])
+Table.01$`SAM+ sd` <- exp(sdLogS[,1])
 
-saveRDS(Table.01, "./javier_analysis/Watters_model_output1/Table0.1.rds")
+knitr::kable(Table.01, digits = 3)
 
-### Fig S2
+### Fig S2: survey LKB vs. imputed data gSSMU1 and 2
+FigS2_1 <- survey %>%
+  filter(gSSMU %in% c("1")) %>%
+  ggplot(aes(x = cal.yr, y = survey, color = season, group = season)) +
+  geom_line(alpha = 0.7) +
+  geom_point(shape = 20, size = 5) +
+  scale_color_manual(values = c("S" = "red", "W" = "blue"), breaks = c("S", "W")) +
+  facet_wrap(~ gSSMU, ncol = 1) + #
+  geom_point(data = filter(data, gSSMU == "1"),
+             aes(x = cal.yr, y = survey_imputed, col = season, group = season),
+             shape = 21,          # open circle
+             size  = 3.5,
+             na.rm = TRUE) +
+  scale_y_continuous(
+    labels = label_comma(),
+    breaks = seq(0, max(survey$survey, na.rm = TRUE), by = 1e6)) +  # e.g., 1,000,000 (no scientific)
+  labs(
+    title = "Krill Survey - BS",
+    x = "Year",
+    y = "Biomass (tons)",
+    color = "Season"
+  ) +
+  theme_minimal(base_size = 16) +
+  theme(
+    legend.position = "none",
+    strip.text = element_text(face = "bold", size = 12),
+    panel.grid.minor = element_blank()
+  ); FigS2_1
+
+FigS2_2 <- survey %>%
+  filter(gSSMU %in% c("2")) %>%
+  ggplot(aes(x = cal.yr, y = survey, color = season, group = season)) +
+  geom_line(alpha = 0.7) +
+  geom_point(shape = 20, size = 5) +
+  scale_color_manual(values = c("S" = "red", "W" = "blue"), breaks = c("S", "W")) +
+  facet_wrap(~ gSSMU, ncol = 1) + 
+  geom_point(data = filter(data, gSSMU == "2"),
+             aes(x = cal.yr, y = survey_imputed, col = season, group = season),
+             shape = 21,          # open circle
+             size  = 3.5,
+             na.rm = TRUE) +
+  scale_y_continuous(
+    labels = label_comma(),
+    breaks = seq(0, max(survey$survey, na.rm = TRUE), by = 1e6)) +  # e.g., 1,000,000 (no scientific)
+  labs(
+    title = "Krill Survey - SSIW + EI",
+    x = "Year",
+    y = "Biomass (tons)",
+    color = "Season"
+  ) +
+  theme_minimal(base_size = 16) +
+  theme(
+    legend.position = "none",
+    strip.text = element_text(face = "bold", size = 12),
+    panel.grid.minor = element_blank()
+  ); FigS2_2
+
+### Estimating Frequency distributions for LKB and imputed ####
+
+# Survey data
+LKB_survey <- data 
+params_ln <- data %>%
+  filter(!is.na(LnSurvey),
+         sam.sign %in% c("Neg", "Pos"),
+         gSSMU %in% c(1, 2)) %>%
+  group_by(sam.sign, gSSMU) %>%
+  summarise(
+    n       = n(),
+    mu_hat  = mean(LnSurvey),
+    sd_hat  = sd(LnSurvey),
+    .groups = "drop"
+  )
+params_ln
+
+# 1. Data for histograms
+hist_data <- data %>%
+  filter(!is.na(LnSurvey),
+         sam.sign %in% c("Neg", "Pos"),
+         gSSMU %in% c(1, 2)) %>%
+  mutate(
+    sam.sign = factor(sam.sign, levels = c("Neg", "Pos")),
+    gSSMU    = factor(gSSMU)
+  )
+
+# 2. Data for fitted normal curves, built only from params_ln
+curve_data <- params_ln %>%
+  mutate(
+    sam.sign = factor(sam.sign, levels = c("Neg", "Pos")),
+    gSSMU    = factor(gSSMU)
+  ) %>%
+  rowwise() %>%
+  mutate(
+    x = list(seq(mu_hat - 4 * sd_hat, mu_hat + 4 * sd_hat, length.out = 200))
+  ) %>%
+  unnest(x) %>%
+  mutate(
+    density = dnorm(x, mean = mu_hat, sd = sd_hat)
+  ) %>%
+  ungroup()
+
+# 3. Plot: histogram of data + normal line from params_ln
+x_min <- min(hist_data$LnSurvey, na.rm = TRUE)
+x_max <- max(hist_data$LnSurvey, na.rm = TRUE)
+survey_hist <- ggplot(hist_data, aes(x = LnSurvey)) +
+  geom_histogram(aes(y = ..density..),
+                 binwidth = 0.5,
+                 color = "black",
+                 fill  = "grey80") +
+  geom_line(data = curve_data,
+            aes(x = x, y = density),
+            linewidth = 1) +
+  facet_grid(sam.sign ~ gSSMU) +
+  scale_x_continuous(limits = c(x_min, x_max)) +
+  labs(x = "LnSurvey", y = "Density") +
+  theme_minimal()
+survey_hist
+
+
+
+ 
+## Figure S3: 
+ggplot(data) +
+  geom_density(aes(x = log(survey), color = "Original", group = sam.sign), linewidth = 1.2, alpha = 0.6) +
+  geom_density(aes(x = log(survey_imputed), color = "Imputed", group = sam.sign), linewidth = 1.2, alpha = 0.6) +
+  facet_wrap(~ gSSMU, ncol = 1, scales = "free_y") +
+  scale_color_manual(values = c("Original" = "steelblue", "Imputed" = "orange")) +
+  labs(title = "Survey vs Imputed survey distributions by gSSMU",
+       x = "Survey value",
+       y = "Density",
+       color = "Dataset") +
+  theme_minimal(base_size = 14)
 
 
 

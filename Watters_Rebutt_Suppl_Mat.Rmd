@@ -1,0 +1,115 @@
+---
+title: "A Rebuttal to Watters et al. (2020): Misinterpretation of Predator-Prey Dynamics leading to erroneous Precautionary Management in Antarctic Krill Fisheries"
+author:
+  - name: "Andrew Lowther"
+    affiliation: 1
+  - name: "Ulf Lindstrøm"
+    affiliation: 2
+  - name: "Bjørn Krafft"
+    affiliation: 3
+  - name: "Javier A. Arata"
+    affiliation: 4
+    
+affiliation:
+  - id: 1
+    name: "Norwegian Polar Institute, Department of Research, Tromsø, Norway"
+  - id: 2
+    name: "Institute of Marine Research, Tromsø, Norway"
+  - id: 3
+    name: "Institute of Marine Research, Bergen, Norway"
+  - id: 4
+    name: "Association of Responsible Krill harvesting companies, ARK, Margate, TAS, Australia"
+
+geometry: margin=3cm
+date: "`r Sys.Date()`"
+# bibliography: mylib.bib
+# linenumbers: true
+# numbersections: true
+# csl: elsarticle.cls
+
+output: word_document
+always_allow_html: true
+
+  # rticles::elsevier_article:
+  #   latex_engine: xelatex  # Optional: Use xelatex for better font handling if needed
+  #   keep_tex: true  # Optional: Keep the .tex file for debugging
+  #   fig_caption: FALSE
+    
+header-includes:
+  - \usepackage{booktabs}
+  - \usepackage{longtable}
+  - \usepackage{array}
+  - \usepackage{multirow}
+  - \usepackage{wrapfig}
+  - \usepackage{float}
+  - \floatplacement{figure}{H}
+  - \newcommand{\pandocbounded}[1]{#1}
+  - \usepackage{colortbl}
+  - \usepackage{pdflscape}
+  - \usepackage{tabu}
+  - \usepackage{threeparttable}
+  - \usepackage{threeparttablex}
+  - \usepackage[normalem]{ulem}
+  - \usepackage{makecell}
+  - \usepackage{xcolor}
+  - \usepackage{booktabs}
+  - \newcommand{\blandscape}{\begin{landscape}}
+  - \newcommand{\elandscape}{\end{landscape}}
+  - \usepackage{float} \floatplacement{figure}{H} 
+  - \newcommand{\beginsupplement}{\setcounter{table}{0}  \renewcommand{\thetable}{S\arabic{table}}     -   - \setcounter{figure}{0} \renewcommand{\thefigure}{S\arabic{figure}}}
+#output: html_document
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, comment=NA)
+#options(knitr.kable.NA = '\\-')
+library(trip)
+library(raster)
+#library(rgdal)
+library(lubridate)
+library(tidyverse)
+library(sf)
+library(raster)
+#options(kableExtra.latex.load_packages = FALSE)
+library(kableExtra)
+library(RefManageR)
+library(bibtex)
+#library(rbbt)
+library(pander)
+library(track2KBA)
+library(knitr)
+library(lmerTest)
+library(formatR)
+library(tinytex)
+library(patchwork)
+```
+
+# A. Analysis of Survey Coverage
+
+```{r Survey cover effort, fig.width=6.5, fig.asp=0.7, out.width="80%",fig.align="centre",fig.cap="Figure S1: Survey coverage (total transect length surveyed) by gSSMU and year (up). Frequency distribution of total transect length, including the 10th percentile (dashed line) is shown below.", echo=FALSE}
+
+# load script that produces fig_g1 and fig_g2
+source("./A_Results_Suppl/Figure_S1_Survey_analysis.R")
+
+print(fig_g1)
+
+print(fig_g2)
+
+# Combine plots and keep only one legend at the bottom
+#combined_fig <- (fig_g1 / fig_g2) + 
+#  plot_layout(guides = "collect", nrow = 2) &
+#  theme(legend.position = "bottom")
+
+#combined_fig
+```
+
+Figure S1. Survey coverage (total transect length surveyed) by gSSMU and year (up). Frequency distribution of total transect length, including the 10th percentile (dashed line) is shown below.
+
+# B. Imputed summer LKB values
+
+
+
+# Citations

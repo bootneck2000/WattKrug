@@ -1,0 +1,163 @@
+\documentclass[]{elsarticle} %review=doublespace preprint=single 5p=2 column
+%%% Begin My package additions %%%%%%%%%%%%%%%%%%%
+
+\usepackage[hyphens]{url}
+
+
+\usepackage{graphicx}
+%%%%%%%%%%%%%%%% end my additions to header
+
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+% TODO: Currently lineno needs to be loaded after amsmath because of conflict
+% https://github.com/latex-lineno/lineno/issues/5
+\usepackage{lineno} % add
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \usepackage{fontspec}
+  \ifxetex
+    \usepackage{xltxtra,xunicode}
+  \fi
+  \defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase}
+  \newcommand{\euro}{€}
+\fi
+% use microtype if available
+\IfFileExists{microtype.sty}{\usepackage{microtype}}{}
+\usepackage[margin=3cm]{geometry}
+\usepackage[]{natbib}
+\bibliographystyle{plainnat}
+
+\ifxetex
+  \usepackage[setpagesize=false, % page size defined by xetex
+              unicode=false, % unicode breaks when used with xetex
+              xetex]{hyperref}
+\else
+  \usepackage[unicode=true]{hyperref}
+\fi
+\hypersetup{breaklinks=true,
+            bookmarks=true,
+            pdfauthor={},
+            pdftitle={},
+            colorlinks=false,
+            urlcolor=blue,
+            linkcolor=magenta,
+            pdfborder={0 0 0}}
+
+\setcounter{secnumdepth}{0}
+% Pandoc toggle for numbering sections (defaults to be off)
+\setcounter{secnumdepth}{0}
+
+
+% tightlist command for lists without linebreak
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+
+
+
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\floatplacement{figure}{H}
+\newcommand{\pandocbounded}[1]{#1}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\newcommand{\blandscape}{\begin{landscape}}
+\newcommand{\elandscape}{\end{landscape}}
+\usepackage{float} \floatplacement{figure}{H}
+\newcommand{\beginsupplement}{\setcounter{table}{0}  \renewcommand{\thetable}{S\arabic{table}}     -   - \setcounter{figure}{0} \renewcommand{\thefigure}{S\arabic{figure}}}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
+
+
+
+\begin{document}
+
+
+\begin{frontmatter}
+
+  \title{}
+    \author[1]{Andrew Lowther%
+  %
+  }
+  
+    \author[2]{Ulf Lindstrøm%
+  %
+  }
+  
+    \author[3]{Bjørn Krafft%
+  %
+  }
+  
+    \author[4]{Javier A. Arata%
+  %
+  }
+  
+      \cortext[cor1]{Corresponding author}
+  
+  \begin{abstract}
+  
+  \end{abstract}
+  
+ \end{frontmatter}
+
+\begin{verbatim}
+
+Attaching package: 'patchwork'
+\end{verbatim}
+
+\begin{verbatim}
+The following object is masked from 'package:raster':
+
+    area
+\end{verbatim}
+
+\begin{figure}
+\includegraphics[width=0.65\linewidth]{Watters_Rebutt_Suppl_Mat_files/figure-latex/Survey cover effort-1} \caption{Figure S1: Survey coverage (total transect length surveyed) by gSSMU and year (up). Frequency distribution of total transect length, including the 10th percentile (dashed line) is shown below.}\label{fig:Survey cover effort-1}
+\end{figure}
+\begin{figure}
+\includegraphics[width=0.65\linewidth]{Watters_Rebutt_Suppl_Mat_files/figure-latex/Survey cover effort-2} \caption{Figure S1: Survey coverage (total transect length surveyed) by gSSMU and year (up). Frequency distribution of total transect length, including the 10th percentile (dashed line) is shown below.}\label{fig:Survey cover effort-2}
+\end{figure}
+
+Figure S1.
+
+\hypertarget{figures}{%
+\subsection{Figures}\label{figures}}
+
+\begin{verbatim}
+• Figure 1: Impact of Spatial and Temporal Adjustments on Expected Penguin Performance. Illustrate the combined effect of spatial and temporal corrections on model outputs. Highlight that LHR impacts are overestimated in the original model.
+\end{verbatim}
+
+\renewcommand\refname{Citations}
+\bibliography{mylib.bib}
+
+
+\end{document}
