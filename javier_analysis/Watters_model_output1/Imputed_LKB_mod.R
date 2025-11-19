@@ -80,14 +80,14 @@ data.neg <- data %>% filter(sam.sign == "Neg")
 for(i in 1:2) {
   gS <- data.neg %>% filter(!is.na(survey)) %>% 
     filter(gSSMU == i) %>% filter(season == "S")
-  meanLogS[i,1] <- mean(gS$LnSurvey)
-  sdLogS[i,1] <- sd(gS$LnSurvey)
+  meanLogS[i,"SAM.neg"] <- mean(gS$LnSurvey)
+  sdLogS[i, "SAM.neg"] <- sd(gS$LnSurvey)
 }
 for(i in 1:2) {
   gS <- data.pos %>% filter(!is.na(survey)) %>% 
     filter(gSSMU == i) %>% filter(season == "S")
-  meanLogS[i,2] <- mean(gS$LnSurvey)
-  sdLogS[i,2] <- sd(gS$LnSurvey)
+  meanLogS[i, "SAM.pos"] <- mean(gS$LnSurvey)
+  sdLogS[i,"SAM.pos"] <- sd(gS$LnSurvey)
 }
 
 
@@ -99,10 +99,12 @@ data <- data %>%
     
     # fill log survey
     LogSurvey_imputed = case_when(
-      impute.me == 1L & gSSMU == 1 ~ meanLogS[1, "mean"],
-      impute.me == 1L & gSSMU == 2 ~ meanLogS[2, "mean"],
-      impute.me == 0L              ~ LnSurvey,          # or log(survey)
-      TRUE                         ~ NA_real_
+      impute.me == 1 & gSSMU == 1  & sam.sign == "Neg" ~ meanLogS[1, "SAM.neg"],
+      impute.me == 1 & gSSMU == 1  & sam.sign == "Pos" ~ meanLogS[1, "SAM.pos"],
+      impute.me == 1 & gSSMU == 2  & sam.sign == "Neg" ~ meanLogS[2, "SAM.neg"],
+      impute.me == 1 & gSSMU == 2  & sam.sign == "Pos" ~ meanLogS[2, "SAM.pos"],
+      impute.me == 0 ~ LnSurvey, # or log(survey)
+      TRUE ~ NA_real_
     ),
     
     # back-transform
@@ -110,11 +112,9 @@ data <- data %>%
   )
 
 
-mulogsummer <- matrix(NA_real_, nrow = 2, ncol = 2)
 
-mulogsummer
 
-K <- data.frame()
+
 
 ## ---- Priors -----------------------------------------------------------
 # mulogsummer[i,j] ~ dunif(0.1 * meanlogsummer[i,j], 10 * meanlogsummer[i,j])
