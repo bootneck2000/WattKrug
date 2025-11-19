@@ -11,14 +11,14 @@ library(lattice)
 # Jump to Step 3 if already ran steps 1 & 2
 
 #### First Step, load variables & Update 'survey' data ####
-setwd("C:/Users/javie/OneDrive/R-Git projects/WattKrug/Supplementary Files")
+read_dir <- "./Supplementary Files/"
 
 make.localhr.data<-function(trim=1,plot.winter=FALSE){
   # generate the summer indices
   #
   # fledge weight (fwt)
   # bigger indicates better summer
-  fwt<-read.csv("fweight.csv",header=TRUE,stringsAsFactors = FALSE)
+  fwt<-read.csv(file.path(read_dir, "fweight.csv"),header=TRUE,stringsAsFactors = FALSE)
   fwt<-tapply(fwt$WT,list(fwt$YEAR,fwt$PROJECT,fwt$SPECIES),mean)
   fwt<-data.frame(YEAR=rep(dimnames(fwt)[[1]],dim(fwt)[2]*dim(fwt)[3]),
                   PROJECT=rep(rep(dimnames(fwt)[[2]],each=dim(fwt)[1]),dim(fwt)[3]),
@@ -44,7 +44,7 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
 
   # post-hatch success (phs) (numbers of chicks creched/numbers of chicks hatched)
   # bigger indicates better summer
-  phs<-read.csv("success.csv",header=TRUE,stringsAsFactors = FALSE)
+  phs<-read.csv(file.path(read_dir, "success.csv"),header=TRUE,stringsAsFactors = FALSE)
   phs$phs<-phs$N_CRECHE/phs$N_CHICKS
   phs$phs<-log(phs$phs/(1-phs$phs))
   phs$matchme<-paste(phs$PROJECT,phs$SPECIES,sep="|")
@@ -64,7 +64,7 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
 
   # trip duration (td)
   # smaller indicates better summer (thus need to switch direction of index)
-  td<-read.csv("tripduration.csv",header=TRUE,stringsAsFactors = FALSE)
+  td<-read.csv(file.path(read_dir, "tripduration.csv"),header=TRUE,stringsAsFactors = FALSE)
   td<-td[,c(1:3,8)]
   # next line is to make trip duration point in same direction as fwt and phs (max td is 59.95 for all trips)
   # call this "revtd" for "reversed" trip duration
@@ -96,7 +96,7 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
   #
   # adult male mass at E1 lay (mml)
   # bigger indicates better winter
-  ade1<-read.csv("massatlay.csv",header=TRUE,stringsAsFactors = FALSE)
+  ade1<-read.csv(file.path(read_dir, "massatlay.csv"),header=TRUE,stringsAsFactors = FALSE)
   mml<-ade1[,c(1:3,5)]
   mml<-tapply(mml$WT_MALE,list(mml$YEAR,mml$PROJECT,mml$SPECIES),mean,na.rm=TRUE)
   mml<-data.frame(YEAR=rep(dimnames(mml)[[1]],dim(mml)[2]*dim(mml)[3]),
@@ -147,7 +147,7 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
   #
   # avg egg density using both eggs (egg)
   # bigger indicates better winter
-  e1e2<-read.csv("egg.csv",header=TRUE,stringsAsFactors = FALSE)
+  e1e2<-read.csv(file.path(read_dir, "egg.csv"),header=TRUE,stringsAsFactors = FALSE)
   egg<-e1e2[,c(1:3)]
   egg$egg<-(e1e2[,5]+e1e2[,7])/(e1e2[,6]+e1e2[,8])
   egg<-tapply(egg$egg,list(egg$YEAR,egg$PROJECT,egg$SPECIES),mean,na.rm=TRUE)
@@ -174,7 +174,7 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
   #
   # clutch initiation date (cid)
   # earlier indicates better winter
-  cid<-read.csv("cid.csv",header=TRUE,stringsAsFactors = FALSE)[,1:4]
+  cid<-read.csv(file.path(read_dir, "cid.csv"),header=TRUE,stringsAsFactors = FALSE)[,1:4]
   # next line is to make CID point in same direction as other indices where bigger indicates better conditions (take diff from Dec 31)
   # call this "revcid" for "reversed" CID
   cid[,4]<-as.vector(as.POSIXlt(paste(substr(cid$YEAR,1,4),"-12-31",sep=""))-strptime(cid[,4],"%m/%e/%Y"))
@@ -198,7 +198,7 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
   #
   # cohort recruitment (rec)
   # bigger indicates better winter
-  rec<-read.csv("recruitment.csv",header=TRUE,stringsAsFactors = FALSE)[,1:4]
+  rec<-read.csv(file.path(read_dir, "recruitment.csv"),header=TRUE,stringsAsFactors = FALSE)[,1:4]
   names(rec)[4]<-"rec"
   rec$rec<-log(rec$rec/(1-rec$rec))
   rec$matchme<-paste(rec$PROJECT,rec$SPECIES,sep="|")
@@ -219,7 +219,8 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
   # read in the krill survey and fishery data
   #
   # krill survey biomass
-  survey<-read.csv("krillsurveywithJoinville.csv",header=TRUE,stringsAsFactors = FALSE)
+  survey<-read.csv(file.path(read_dir, "krillsurveywithJoinville.csv"),
+                   header=TRUE,stringsAsFactors = FALSE)
 
   # # use next line if want to filter acoustic data to have minimum number of miles (comment out if not desired)
   # # as per CSR, 80 nmi would be about equivalent of 2 tracklines in the Bransfield
@@ -283,7 +284,7 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
   #
   #
   # krill fishery catches
-  fishery<-read.csv("c1.csv",header=TRUE,stringsAsFactors = FALSE)
+  fishery<-read.csv(file.path(read_dir, "c1.csv"),header=TRUE,stringsAsFactors = FALSE)
   fishery$season<-ifelse(is.element(fishery$Month,c(10:12,1:3)),"S","W")
   gSSMU1<-c("APBSE","APBSW")
   gSSMU2<-c("APDPE","APDPW","APEI")
@@ -339,7 +340,7 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
   # pull in the environmental indices
   #
   # SOUTHERN ANNULAR MODE
-  sam<-read.csv("sam.csv")
+  sam<-read.csv(file.path(read_dir, "sam.csv"))
   names(sam)<-c("yr","mo","sam")
   sam$season<-ifelse(is.element(sam$mo,c(10:12,1:3)),"S","W")
   sam$YEAR<-ifelse(is.element(sam$mo,10:12),sam$yr+1,sam$yr)
@@ -349,7 +350,7 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
   out$sam.sign<-ifelse(out$sam<0,"Neg","Pos")
   #
   # OCEANIC NINO INDEX
-  oni<-read.csv("oni.csv",stringsAsFactors = FALSE)
+  oni<-read.csv(file.path(read_dir, "oni.csv"),stringsAsFactors = FALSE)
   oni$yr<-ifelse(is.element(oni$SEAS,c("OND","NDJ")),oni$YR+1,oni$YR)
   oni$season<-ifelse(is.element(oni$SEAS,c("OND","NDJ","DJF","JFM")),"S",NA)
   oni$season<-ifelse(is.element(oni$SEAS,c("AMJ","MJJ","JJA","JAS")),"W",oni$season)
@@ -384,8 +385,8 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
 junk<-make.localhr.data()
 
 #### Second - Run Model ####
-setwd("C:/Users/javie/OneDrive/R-Git projects/WattKrug/")
 out.dir <- "./A_Results_Suppl/Mod3 SF Chinese_data1/"
+dir.create(out.dir, showWarnings = FALSE, recursive = TRUE)
 
 modelstring<-"
  
@@ -709,19 +710,17 @@ sink()
 
 
 #### Step 3: PLOTTING  ####
-
 out.dir <- "./A_Results_Suppl/Mod3 SF Chinese_data1/"
-setwd(out.dir)
 
 # Read data files
-hr.params.post <- readRDS("hr.params.post.rds")
-hr.derived.post <- readRDS("hr.derived.post.rds")
-hr.imputed.post2 <- readRDS("hr.imputed.post.rds")
-junk <- readRDS("junk.rds")
+hr.params.post <- readRDS(file.path(out.dir, "hr.params.post.rds"))
+hr.derived.post <- readRDS(file.path(out.dir, "hr.derived.post.rds"))
+hr.imputed.post2 <- readRDS(file.path(out.dir, "hr.imputed.post.rds"))
+junk <- readRDS(file.path(out.dir, "junk.rds"))
 
-hr.params.summ <- readRDS("hr.params.summ.rds")
-hr.derived.summ <- readRDS("hr.derived.summ.rds")
-hr.imputed.summ2 <- readRDS("hr.imputed.summ.rds")
+hr.params.summ <- readRDS(file.path(out.dir, "hr.params.summ.rds"))
+hr.derived.summ <- readRDS(file.path(out.dir, "hr.derived.summ.rds"))
+hr.imputed.summ2 <- readRDS(file.path(out.dir, "hr.imputed.summ.rds"))
 
 # plot posterior expectations of marginal effects
 require(ggmcmc)
@@ -738,13 +737,13 @@ HR.labels<-data.frame(Parameter=dimnames(hr.params.post[[1]])[[2]],
 hr.params2.s<-ggs(hr.params.post,par_labels = HR.labels)
 hr.params2.s<-hr.params2.s[hr.params2.s$ParameterOriginal!="t.sd.index",]
 
-ggmcmc(hr.params.s, "diagnostics_hr_params_final.pdf")
-ggmcmc(hr.derived.s, "diagnostics_hr_derived_final.pdf")
+ggmcmc(hr.params.s, file.path(out.dir, "diagnostics_hr_params_final.pdf"))
+ggmcmc(hr.derived.s, file.path(out.dir, "diagnostics_hr_derived_final.pdf"))
 
 ## Figure 2 paper Watters et al. (2020).
 
 # reference (best case)
-png("EP_summ_boxplot.png", width = 10, height = 7, units = "in", res = 300, pointsize = 10) # Added
+png(file.path(out.dir, "EP_summ_boxplot.png"), width = 10, height = 7, units = "in", res = 300, pointsize = 10) # Added
 par(mar = c(6, 5, 2, 1))  # optional margins # Added
 boxplot(value~I(as.numeric(Parameter)),data=hr.derived.s,subset=(as.numeric(hr.derived.s$Parameter)==19),
         range=0,ylim=c(-2,2),xaxt="n",xlim=c(0.5,7.5),ylab="Expected performance",
@@ -819,11 +818,11 @@ xx$case<-ifelse(xx$oni.class==1 & xx$kb.class==1 & xx$hr.class==1,1,
                                ifelse(xx$oni.class==3 & xx$kb.class==1 & xx$hr.class==3,17,18)))))))))))))))))
 
 #### Save xx
-saveRDS(xx, "Data_Fig_S7.rds")  # save the data
+saveRDS(xx, file.path(out.dir, "Data_Fig_S7.rds"))  # save the data
 ####
 
 # plot the data
-png("std_performance_boxplot.png", width = 10, height = 7, units = "in", res = 300, pointsize = 10) # Added
+png(file.path(out.dir, "std_performance_boxplot.png"), width = 10, height = 7, units = "in", res = 300, pointsize = 10) # Added
 par(mar = c(6, 5, 2, 1))  # optional margins # Added
 plot(jitter(xx$case[xx$impute.me==0],amount=0.25),xx$index[xx$impute.me==0],type="n",xlim=c(0.65,18.35),
      ylim=c(-3.5,3.5),
@@ -849,7 +848,7 @@ dev.off() # Added
 
 ### #  Added by Andy - plot all cases*
 
-png("Expected_Performance_18.png", width = 10, height = 7, units = "in", res = 300, pointsize = 10) # Added
+png(file.path(out.dir, "Expected_Performance_18.png"), width = 10, height = 7, units = "in", res = 300, pointsize = 10) # Added
 par(mar = c(6, 5, 2, 1))  # optional margins # Added
 
 # # reference (best case)
@@ -898,7 +897,7 @@ rm(LKB_imputed_gSSM1,LKB_imputed_gSSM2)
 
 
 # Separate figures for gSSMU1 and 2
-png("Survey_data_gSSMU1.png", width = 10, height = 7, units = "in", res = 300, pointsize = 10) # Added
+png(file.path(out.dir, "Survey_data_gSSMU1.png"), width = 10, height = 7, units = "in", res = 300, pointsize = 10) # Added
 par(mar = c(6, 5, 2, 1))  # optional margins # Added
 p <- survey %>%
   filter(gSSMU %in% c("1")) %>%
@@ -928,7 +927,7 @@ p <- survey %>%
 dev.off() # Added
 
 
-png("Survey_data_gSSMU2.png", width = 10, height = 7, units = "in", res = 300, pointsize = 10) # Added
+png(file.path(out.dir, "Survey_data_gSSMU2.png"), width = 10, height = 7, units = "in", res = 300, pointsize = 10) # Added
 par(mar = c(6, 5, 2, 1))  # optional margins # Added
 p <- survey %>%
   filter(gSSMU %in% c("2")) %>%
@@ -1020,7 +1019,7 @@ jj<-jj[jj$calendar.year!=2016,]
 write.csv(jj[order(jj[,1],jj[,2],jj[,3]),],file="hr.csv",row.names = FALSE)
 
 # variation in catch by season and decade (panel for Fig 3)
-tt<-read.csv("c1.csv",header=TRUE,stringsAsFactors = FALSE)
+tt<-read.csv(file.path(read_dir, "c1.csv"),header=TRUE,stringsAsFactors = FALSE)
 tt<-tt[is.element(tt$AssignedSSMU,c("APBSE","APBSW","APDPE","APDPW","APE","APEI","APPA","APW")),]
 tt$FishingSeason<-ifelse(tt$Month==12,tt$CalendarYear+1,tt$CalendarYear)
 tt$season<-ifelse(is.element(tt$Month,c(10:12,1:3)),"S","W")
@@ -1034,6 +1033,3 @@ tt<-data.frame(catch=as.numeric(tt),decade=rep(dimnames(tt)[[1]],dim(tt)[2]),sea
 tt$decade<-ordered(tt$decade,levels=c("before 1990","1990-1999","2000-2009","after 2009"))
 #
 barchart(I(catch/1000)~season|decade,data=tt,layout=c(4,1),aspect=1,xlab="Season",ylab="Total catch (1000 t)")
-
-           
-
