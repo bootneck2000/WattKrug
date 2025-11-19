@@ -6,6 +6,7 @@ source("./javier_analysis/Watters_Function.R")
 
 
 junk<-make.localhr.data()
+saveRDS(junk, "./javier_analysis/Watters_model_output1/junk.rds")
 
 
 ##################################################################################################
