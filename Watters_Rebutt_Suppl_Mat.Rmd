@@ -98,18 +98,45 @@ print(fig_g1)
 
 print(fig_g2)
 
-# Combine plots and keep only one legend at the bottom
-#combined_fig <- (fig_g1 / fig_g2) + 
-#  plot_layout(guides = "collect", nrow = 2) &
-#  theme(legend.position = "bottom")
-
-#combined_fig
 ```
 
 Figure S1. Survey coverage (total transect length surveyed) by gSSMU and year (up). Frequency distribution of total transect length, including the 10th percentile (dashed line) is shown below.
 
 # B. Imputed summer LKB values
 
+
+Table S1: Estimations of mean and sd of Ln(LKB), as per Equation (2) (Watters et al. 2020).  
+
+```{r Table.01, results='asis', warning=FALSE, echo=FALSE}
+
+# load script that produces Table S1, and Figures S2-S4
+source("./A_Results_Suppl/Figure_S2_S4_Table_S1_Imputed_LKB_mod.R")
+
+Table.01 %>% 
+    kbl(
+    # caption = "Table S1. Local krill biomass (LKB) by area and SAM phase.",
+    col.names = c("Area", "SAM", "Mean LKB", "SD LKB", "p-value"),
+    booktabs = TRUE,
+    align = c("l", "l", "r", "r", "r"),
+    na = ""
+  ) %>% 
+  kable_styling(
+    full_width = FALSE,
+    position   = "center",
+    font_size  = 11
+  )
+
+```
+
+
+```{r Survey cover effort, fig.width=6.5, fig.asp=0.7, out.width="80%",fig.align="centre", warning=FALSE, echo=FALSE}
+
+print(FigS2_2)
+
+print(FigS2_1)
+
+```
+Figure S2. Krill survey estimates (LKB) for the study period. Top: gSSMU #2 (SSIW-EI); Bottm:gSSMU #1 (BS). Filled circles: Survey data from Watters et al. (2020); Open circles: mean imputed LKB-value for -/+ SAM; filled triangles: survey data from Wang et al. (2025).
 
 
 # Citations
