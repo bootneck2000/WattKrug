@@ -13,6 +13,7 @@ library(scales)
 
 # krill survey biomass
 survey<-read.csv("./Supplementary Files/krillsurveywithJoinville.csv",header=TRUE,stringsAsFactors = FALSE)
+
 # Filter low transect coverage (<10th percentil)
 survey_filtered <- survey %>%
   filter(gSSMU %in% c(1, 2))
@@ -26,6 +27,7 @@ survey_low_nmi <- survey_filtered %>%
 survey <- survey_low_nmi
 rm(percentiles, survey_filtered, survey_low_nmi)
 ### END changes
+
 survey<-tapply(survey$biomass,list(survey$Year,survey$gSSMU),mean,na.rm=TRUE)
 survey<-data.frame(cal.yr=rep(dimnames(survey)[[1]],dim(survey)[2]),
                    gSSMU=rep(dimnames(survey)[[2]],each=dim(survey)[1]),
@@ -33,9 +35,35 @@ survey<-data.frame(cal.yr=rep(dimnames(survey)[[1]],dim(survey)[2]),
 survey$season<-ifelse(survey$cal.yr<2012,"S","W")
 survey$matchme<-paste(survey$cal.yr,survey$season,survey$gSSMU,sep="|")
 
+## Adding Chinese survey data from Wang et al. 2025. ICES J Mar Sci, 82(8)
+# Create dataframe 'Chinese_north' (gSSMU2)
+Chinese_SSIW <- data.frame(
+  cal.yr  = c("2013", "2015", "2016"),
+  gSSMU   = rep("2", 3),
+  survey    = c(418000, 400000, 896000),
+  season  = rep("S", 3),
+  stringsAsFactors = FALSE)
+
+Chinese_BS <- data.frame(
+  cal.yr  = c("2013", "2015", "2016"),
+  gSSMU   = rep("1", 3),
+  survey    = c(563000, 395000, 1035000),
+  season  = rep("S", 3),
+  stringsAsFactors = FALSE)
+
+Chinese_survey <- rbind(Chinese_SSIW, Chinese_BS) 
+Chinese_survey$matchme <- paste(Chinese_survey$cal.yr, Chinese_survey$season,
+                                Chinese_survey$gSSMU,sep="|")
+### Add Chinese survey data into 'survey'
+survey <- rbind(survey, Chinese_survey) 
+
+rm(Chinese_BS, Chinese_SSIW, Chinese_survey)
+### END changes
+
 survey <- survey %>% mutate(cal.yr = as.integer(cal.yr))
 # survey <- survey %>% filter(season == "S")   # only imputed summer data
 survey <- survey %>% mutate(gSSMU = as.integer(gSSMU))
+
 
 # Import SAM data
 sam<-read.csv("./Supplementary Files/sam.csv")
@@ -88,39 +116,40 @@ data <- data %>% mutate(sam.sign = (ifelse(sam<0, "Neg", "Pos")))
 # Estimating mean(logLKB) for survey data
 data$LnSurvey <- log(data$survey)
 
-meanLogS <- data.frame(SAM.pos = numeric(2), SAM.neg = numeric(2))
-sdLogS <- data.frame(SAM.pos = numeric(2), SAM.neg = numeric(2))
+meanLogS <- data.frame(SAM.neg = numeric(2), SAM.pos = numeric(2))
+sdLogS <- data.frame(SAM.neg = numeric(2), SAM.pos = numeric(2))
 
 data.pos <- data %>% filter(sam.sign == "Pos")
 data.neg <- data %>% filter(sam.sign == "Neg")
 
 for(i in 1:2) {
   gS <- data.neg %>% filter(!is.na(survey)) %>% 
-    filter(gSSMU == i) %>% filter(season == "S")
+    filter(gSSMU == i) %>% filter(season == "S") %>%
+    filter(cal.yr<2012)   # Estimate Mean/SD only with original data
   meanLogS[i,"SAM.neg"] <- mean(gS$LnSurvey)
   sdLogS[i, "SAM.neg"] <- sd(gS$LnSurvey)
 }
 for(i in 1:2) {
   gS <- data.pos %>% filter(!is.na(survey)) %>% 
-    filter(gSSMU == i) %>% filter(season == "S")
+    filter(gSSMU == i) %>% filter(season == "S") %>%
+    filter(cal.yr<2012)   # Estimate Mean/SD only with original data
   meanLogS[i, "SAM.pos"] <- mean(gS$LnSurvey)
   sdLogS[i,"SAM.pos"] <- sd(gS$LnSurvey)
 }
-rm(gS)
+rm(gs)
 
 # Imputing missing data
 data <- data %>%
   mutate(
     # 0 if survey available, 1 if missing
-    impute.me = if_else(is.na(survey), 1, 0),
+    # impute.me = 1 # if_else(is.na(survey), 1, 0),  #Impute the whole series, for comparison
     
     # fill log survey
     LogSurvey_imputed = case_when(
-      impute.me == 1 & gSSMU == 1  & sam.sign == "Neg" ~ meanLogS[1, "SAM.neg"],
-      impute.me == 1 & gSSMU == 1  & sam.sign == "Pos" ~ meanLogS[1, "SAM.pos"],
-      impute.me == 1 & gSSMU == 2  & sam.sign == "Neg" ~ meanLogS[2, "SAM.neg"],
-      impute.me == 1 & gSSMU == 2  & sam.sign == "Pos" ~ meanLogS[2, "SAM.pos"],
-      impute.me == 0 ~ LnSurvey, # or log(survey)
+      gSSMU == 1  & sam.sign == "Neg" ~ meanLogS[1, "SAM.neg"],  # remove from begining: 'impute.me == 1 &' 
+      gSSMU == 1  & sam.sign == "Pos" ~ meanLogS[1, "SAM.pos"],
+      gSSMU == 2  & sam.sign == "Neg" ~ meanLogS[2, "SAM.neg"],
+      gSSMU == 2  & sam.sign == "Pos" ~ meanLogS[2, "SAM.pos"],
       TRUE ~ NA_real_
     ),
     
@@ -128,45 +157,72 @@ data <- data %>%
     survey_imputed = exp(LogSurvey_imputed)
   )
 
+#### Statistics and Plots  ####
+
+### Statistical Analysis 
+library(coin)
+
+g1 <- data %>% filter(!is.na(survey)) %>% 
+  filter(gSSMU == 1) %>% filter(cal.yr<2012)
+g1 <- g1 %>% mutate(sam.sign = as.factor(sam.sign))
+g1.stat <- coin::oneway_test(LnSurvey ~ sam.sign, data = g1, distribution = "approximate")
+
+g2 <- data %>% filter(!is.na(survey)) %>% 
+  filter(gSSMU == 2) %>% filter(cal.yr<2012)
+g2 <- g2 %>% mutate(sam.sign = as.factor(sam.sign))
+g2.stat <- coin::oneway_test(LnSurvey ~ sam.sign, data = g2, distribution = "approximate")
+
 #### Table 1 
 
 Table.01 <- tibble(
-  row = c("gSSMU1", "gSSMU2"),
-  "SAM- mean" = NA_real_,
-  "SAM- sd"   = NA_real_,
-  "SAM+ mean" = NA_real_,
-  "SAM+ sd"   = NA_real_
+  "Area" = c("gSSMU1", "gSSMU1", "gSSMU2", "gSSMU2"),
+  "SAM" = c("Negative", "Positive", "Negative", "Positive"),
+  "Mean(LKB)" = NA_real_,
+  "SD(LKB)"   = NA_real_,
+  "p-value" = NA_real_
 )
 
-Table.01$`SAM- mean` <- exp(meanLogS[,2])
-Table.01$`SAM+ mean` <- exp(meanLogS[,1])
-Table.01$`SAM- sd` <- exp(sdLogS[,2])
-Table.01$`SAM+ sd` <- exp(sdLogS[,1])
+Table.01$`Mean(LKB)`[1] <- exp(meanLogS[1,1])
+Table.01$`Mean(LKB)`[2] <- exp(meanLogS[1,2])
+Table.01$`Mean(LKB)`[3] <- exp(meanLogS[2,1])
+Table.01$`Mean(LKB)`[4] <- exp(meanLogS[2,2])
+
+Table.01$`SD(LKB)`[1] <- exp(sdLogS[1,1])
+Table.01$`SD(LKB)`[2] <- exp(sdLogS[1,2])
+Table.01$`SD(LKB)`[3] <- exp(sdLogS[2,1])
+Table.01$`SD(LKB)`[4] <- exp(sdLogS[2,2])
+
+Table.01$`p-value`[1] <- pvalue(g1.stat)
+Table.01$`p-value`[3] <- pvalue(g2.stat)
 
 knitr::kable(Table.01, digits = 3)
 
+
+### Plots
+
+
+
 ### Fig S2: survey LKB vs. imputed data gSSMU1 and 2
+Chinese <- survey %>% filter(cal.yr > 2012) %>% filter(season == "S") 
 FigS2_1 <- survey %>%
-  filter(gSSMU %in% c("1")) %>%
+  filter(gSSMU == "1") %>%
   ggplot(aes(x = cal.yr, y = survey, color = season, group = season)) +
   geom_line(alpha = 0.7) +
-  geom_point(shape = 20, size = 5) +
-  scale_color_manual(values = c("S" = "red", "W" = "blue"), breaks = c("S", "W")) +
-  facet_wrap(~ gSSMU, ncol = 1) + #
+  geom_point(data = filter(survey, gSSMU == "1", cal.yr <= 2012),
+             shape = 16, size = 5) +   # filled circles
+  geom_point(data = filter(survey, gSSMU == "1", season == "W"),
+             shape = 16, size = 5) +
+  scale_color_manual(values = c("S" = "red", "W" = "blue")) +
+  facet_wrap(~ gSSMU, ncol = 1) +
   geom_point(data = filter(data, gSSMU == "1"),
-             aes(x = cal.yr, y = survey_imputed, col = season, group = season),
-             shape = 21,          # open circle
-             size  = 3.5,
-             na.rm = TRUE) +
-  scale_y_continuous(
-    labels = label_comma(),
-    breaks = seq(0, max(survey$survey, na.rm = TRUE), by = 1e6)) +  # e.g., 1,000,000 (no scientific)
-  labs(
-    title = "Krill Survey - BS",
-    x = "Year",
-    y = "Biomass (tons)",
-    color = "Season"
-  ) +
+             aes(x = cal.yr, y = survey_imputed, color = season, group = season),
+             shape = 21, size = 3.5, na.rm = TRUE) +
+  geom_point(data = filter(Chinese, gSSMU == "1"),
+             shape = 17, size = 5, color = "red") +   # filled triangles
+  scale_y_continuous(labels = scales::label_comma(),
+                     breaks = seq(0, max(survey$survey, na.rm = TRUE), by = 1e6)) +
+  labs(title = "Krill Survey - BS",
+       x = "Year", y = "Biomass (tons)", color = "Season") +
   theme_minimal(base_size = 16) +
   theme(
     legend.position = "none",
@@ -174,33 +230,34 @@ FigS2_1 <- survey %>%
     panel.grid.minor = element_blank()
   ); FigS2_1
 
+
 FigS2_2 <- survey %>%
-  filter(gSSMU %in% c("2")) %>%
+  filter(gSSMU == "2") %>%
   ggplot(aes(x = cal.yr, y = survey, color = season, group = season)) +
   geom_line(alpha = 0.7) +
-  geom_point(shape = 20, size = 5) +
-  scale_color_manual(values = c("S" = "red", "W" = "blue"), breaks = c("S", "W")) +
-  facet_wrap(~ gSSMU, ncol = 1) + 
+  geom_point(data = filter(survey, gSSMU == "2", cal.yr <= 2012),
+             shape = 16, size = 5) +   # filled circles
+  geom_point(data = filter(survey, gSSMU == "2", season == "W"),
+             shape = 16, size = 5) +
+  scale_color_manual(values = c("S" = "red", "W" = "blue")) +
+  facet_wrap(~ gSSMU, ncol = 1) +
   geom_point(data = filter(data, gSSMU == "2"),
-             aes(x = cal.yr, y = survey_imputed, col = season, group = season),
-             shape = 21,          # open circle
-             size  = 3.5,
-             na.rm = TRUE) +
-  scale_y_continuous(
-    labels = label_comma(),
-    breaks = seq(0, max(survey$survey, na.rm = TRUE), by = 1e6)) +  # e.g., 1,000,000 (no scientific)
-  labs(
-    title = "Krill Survey - SSIW + EI",
-    x = "Year",
-    y = "Biomass (tons)",
-    color = "Season"
-  ) +
+             aes(x = cal.yr, y = survey_imputed, color = season, group = season),
+             shape = 21, size = 3.5, na.rm = TRUE) +
+  geom_point(data = filter(Chinese, gSSMU == "2"),
+             shape = 17, size = 5, color = "red") +   # filled triangles
+  scale_y_continuous(labels = scales::label_comma(),
+                     breaks = seq(0, max(survey$survey, na.rm = TRUE), by = 1e6)) +
+  labs(title = "Krill Survey - SSWI-EI",
+       x = "Year", y = "Biomass (tons)", color = "Season") +
   theme_minimal(base_size = 16) +
   theme(
     legend.position = "none",
     strip.text = element_text(face = "bold", size = 12),
     panel.grid.minor = element_blank()
   ); FigS2_2
+
+
 
 ### Estimating Frequency distributions for LKB and imputed ####
 
@@ -280,69 +337,30 @@ ggplot(data) +
 
 
 ## ---- Priors -----------------------------------------------------------
-# mulogsummer[i,j] ~ dunif(0.1 * meanlogsummer[i,j], 10 * meanlogsummer[i,j])
-mulogsummer <- matrix(NA_real_, nrow = 2, ncol = 2)
-for (i in 1:2) {
-  for (j in 1:2) {
-    mulogsummer[i, j] <- runif(
-      n   = 1,
-      min = 0.1 * meanlogsummer[i, j],
-      max = 10  * meanlogsummer[i, j]
-    )
-  }
-}
-
-# sigmalogsummer ~ dunif(0.1 * sdlogsummer, 10 * sdlogsummer)
-sigmalogsummer <- runif(
-  n   = 1,
-  min = 0.1 * sdlogsummer,
-  max = 10  * sdlogsummer
-)
-taulogsummer <- sigmalogsummer^(-2)
-
-
-
-for(i in nrow(missLKB)) {
-  
-}
-
-
-### Waters original Model script ####
-
-# likelihood
-for(i in 1:nsummerobs){
-  # I think this structure will only work if the data are arranged such that all summer data are first followed by winter data
-  # have never observed gSSMU-scale biomass < 10,000t or > 100,000,000t
-  # catches at gSSMU scale have ranged from 0t to about 117,000t (during period of study)
-  # assume catch has never been greater than biomass so truncate distribution of summer biomasses as follows
-  # lower bound of max(10000t, catch in year i) and upper bound of 100000000t
-  lower[i]<-max(10000,catch[i])
-  summer[i]~dlnorm(mulogsummer[gssmu[i],samclass[i]],taulogsummer) T(lower[i],100000000)
-}
-
-# priors
-# this prior specification patterned after http://doingbayesiandataanalysis.blogspot.com/2016/04/bayesian-estimation-of-log-normal.html
-for(i in 1:2){ # two gSSMUs
-  for(j in 1:2){ # two SAM classes
-    mulogsummer[i,j]~dunif(0.1*meanlogsummer[i,j],10*meanlogsummer[i,j])
-  }
-}
-taulogsummer<-pow(sigmalogsummer,-2)
-sigmalogsummer~dunif(0.1*sdlogsummer,10*sdlogsummer)
-
-# substitute imputed harvest rates
-for(i in 1:nsummerobs){
-  hr.summer[i]<-ifelse(impute.me[i]==1,catch[i]/summer[i],1)
-  bmass.summer[i]<-ifelse(impute.me[i]==1,summer[i],1)
-}
-for(i in (nsummerobs+1):nobs){
-  hr.summer[i]<-0
-  bmass.summer[i]<-0
-}
-
-for(i in 1:nobs){
-  hr[i]<-ifelse(impute.me[i]==1,hr.summer[i],catch[i]/survey[i])
-  hrclass[i]<-ifelse(hr[i]<=0.01,1,ifelse(hr[i]>=0.1,3,2))
-  bmass[i]<-ifelse(impute.me[i]==1,bmass.summer[i],survey[i])
-  bclass[i]<-ifelse(bmass[i]<=1000000,1,2)
-}
+# # mulogsummer[i,j] ~ dunif(0.1 * meanlogsummer[i,j], 10 * meanlogsummer[i,j])
+# mulogsummer <- matrix(NA_real_, nrow = 2, ncol = 2)
+# for (i in 1:2) {
+#   for (j in 1:2) {
+#     mulogsummer[i, j] <- runif(
+#       n   = 1,
+#       min = 0.1 * meanLogS[i, j],
+#       max = 10  * meanLogS[i, j]
+#     )
+#   }
+# }
+# 
+# # sigmalogsummer ~ dunif(0.1 * sdlogsummer, 10 * sdlogsummer)
+# sigmalogsummer <- runif(
+#   n   = 1,
+#   min = 0.1 * sdLogS,
+#   max = 10  * sdLogS
+# )
+# taulogsummer <- sigmalogsummer^(-2)
+# 
+# 
+# 
+# for(i in nrow(missLKB)) {
+#   
+# }
+# 
+# 

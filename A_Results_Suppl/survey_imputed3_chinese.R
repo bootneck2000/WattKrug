@@ -1,5 +1,5 @@
 ### Imputing LKB data based on SAM + Wang et al. 2025. ICES J Mar Sci, 82(8)
-## Density extraplated to SSMUs area
+## Density extrapolated to SSMUs area
 
 library(dplyr)
 
@@ -48,7 +48,7 @@ Chinese_BS <- data.frame(
   stringsAsFactors = FALSE)
 
 Chinese_survey <- rbind(Chinese_SSIW, Chinese_BS) 
-
+rm(Chinese_SSIW, Chinese_BS)
 ### Run only first time
 # # Obtain area for each SSMU:
 # library(CCAMLRGIS)
