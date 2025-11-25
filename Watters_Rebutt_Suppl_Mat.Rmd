@@ -136,7 +136,9 @@ print(FigS2_2)
 print(FigS2_1)
 
 ```
-Figure S2. Krill survey estimates (LKB) for the study period. Top: gSSMU #2 (SSIW-EI); Bottm:gSSMU #1 (BS). Filled circles: Survey data from Watters et al. (2020); Open circles: mean imputed LKB-value for -/+ SAM; filled triangles: survey data from Wang et al. (2025).
+Figure S2. Krill survey estimates (LKB) for the study period. Top: gSSMU #2 (SSIW-EI); Bottm:gSSMU #1 (BS). Filled circles: Survey data from Watters et al. (2020); Open circles: mean imputed median LKB-value for -/+ SAM; filled triangles: survey data from Wang et al. (2025).
+
+
 
 
 # Citations
