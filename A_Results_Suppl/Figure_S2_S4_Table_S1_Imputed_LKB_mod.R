@@ -113,30 +113,25 @@ data <- data %>% filter(gSSMU %in% c(1,2))
 data <- left_join(data, sam, by = c("cal.yr", "season")) 
 data <- data %>% mutate(sam.sign = (ifelse(sam<0, "Neg", "Pos")))
 
-# Estimating mean(logLKB) for survey data
+## Estimating mean(logLKB) for survey data
 data$LnSurvey <- log(data$survey)
 
-meanLogS <- data.frame(SAM.neg = numeric(2), SAM.pos = numeric(2))
-sdLogS <- data.frame(SAM.neg = numeric(2), SAM.pos = numeric(2))
+# Survey data
+#LKB_survey <- data 
+Table.01 <- data %>%
+  filter(!is.na(LnSurvey),
+         gSSMU %in% c(1, 2),
+         sam.sign %in% c("Neg", "Pos"),
+         cal.yr < 2012) %>%
+  group_by(gSSMU,sam.sign) %>%
+  summarise(
+    n       = n(),
+    mu  = mean(LnSurvey),
+    sd  = sd(LnSurvey),
+    .groups = "drop"
+  )
+knitr::kable(Table.01, digits = 3)
 
-data.pos <- data %>% filter(sam.sign == "Pos")
-data.neg <- data %>% filter(sam.sign == "Neg")
-
-for(i in 1:2) {
-  gS <- data.neg %>% filter(!is.na(survey)) %>% 
-    filter(gSSMU == i) %>% filter(season == "S") %>%
-    filter(cal.yr<2012)   # Estimate Mean/SD only with original data
-  meanLogS[i,"SAM.neg"] <- mean(gS$LnSurvey)
-  sdLogS[i, "SAM.neg"] <- sd(gS$LnSurvey)
-}
-for(i in 1:2) {
-  gS <- data.pos %>% filter(!is.na(survey)) %>% 
-    filter(gSSMU == i) %>% filter(season == "S") %>%
-    filter(cal.yr<2012)   # Estimate Mean/SD only with original data
-  meanLogS[i, "SAM.pos"] <- mean(gS$LnSurvey)
-  sdLogS[i,"SAM.pos"] <- sd(gS$LnSurvey)
-}
-rm(gs)
 
 # Imputing missing data
 data <- data %>%
@@ -146,10 +141,10 @@ data <- data %>%
     
     # fill log survey
     LogSurvey_imputed = case_when(
-      gSSMU == 1  & sam.sign == "Neg" ~ meanLogS[1, "SAM.neg"],  # remove from begining: 'impute.me == 1 &' 
-      gSSMU == 1  & sam.sign == "Pos" ~ meanLogS[1, "SAM.pos"],
-      gSSMU == 2  & sam.sign == "Neg" ~ meanLogS[2, "SAM.neg"],
-      gSSMU == 2  & sam.sign == "Pos" ~ meanLogS[2, "SAM.pos"],
+      gSSMU == 1  & sam.sign == "Neg" ~ as.numeric(Table.01[1, 4]),  # remove from beggining: 'impute.me == 1 &' 
+      gSSMU == 1  & sam.sign == "Pos" ~ as.numeric(Table.01[2, 4]),
+      gSSMU == 2  & sam.sign == "Neg" ~ as.numeric(Table.01[3, 4]),
+      gSSMU == 2  & sam.sign == "Pos" ~ as.numeric(Table.01[4, 4]),
       TRUE ~ NA_real_
     ),
     
@@ -174,24 +169,7 @@ g2.stat <- coin::oneway_test(LnSurvey ~ sam.sign, data = g2, distribution = "app
 
 #### Table 1 
 
-Table.01 <- tibble(
-  "Area" = c("gSSMU1", "gSSMU1", "gSSMU2", "gSSMU2"),
-  "SAM" = c("Negative", "Positive", "Negative", "Positive"),
-  "Mean(LKB)" = NA_real_,
-  "SD(LKB)"   = NA_real_,
-  "p-value" = NA_real_
-)
-
-Table.01$`Mean(LKB)`[1] <- exp(meanLogS[1,1])
-Table.01$`Mean(LKB)`[2] <- exp(meanLogS[1,2])
-Table.01$`Mean(LKB)`[3] <- exp(meanLogS[2,1])
-Table.01$`Mean(LKB)`[4] <- exp(meanLogS[2,2])
-
-Table.01$`SD(LKB)`[1] <- exp(sdLogS[1,1])
-Table.01$`SD(LKB)`[2] <- exp(sdLogS[1,2])
-Table.01$`SD(LKB)`[3] <- exp(sdLogS[2,1])
-Table.01$`SD(LKB)`[4] <- exp(sdLogS[2,2])
-
+Table.01$'p-value' <- NA
 Table.01$`p-value`[1] <- pvalue(g1.stat)
 Table.01$`p-value`[3] <- pvalue(g2.stat)
 
@@ -262,19 +240,20 @@ FigS2_2 <- survey %>%
 ### Estimating Frequency distributions for LKB and imputed ####
 
 # Survey data
-LKB_survey <- data 
-params_ln <- data %>%
-  filter(!is.na(LnSurvey),
-         sam.sign %in% c("Neg", "Pos"),
-         gSSMU %in% c(1, 2)) %>%
-  group_by(sam.sign, gSSMU) %>%
-  summarise(
-    n       = n(),
-    mu_hat  = mean(LnSurvey),
-    sd_hat  = sd(LnSurvey),
-    .groups = "drop"
-  )
-params_ln
+# LKB_survey <- data 
+# params_ln <- data %>%
+#   filter(!is.na(LnSurvey),
+#          sam.sign %in% c("Neg", "Pos"),
+#          gSSMU %in% c(1, 2),
+#          cal.yr < 2012) %>%
+#   group_by(sam.sign, gSSMU) %>%
+#   summarise(
+#     n       = n(),
+#     mu_hat  = mean(LnSurvey),
+#     sd_hat  = sd(LnSurvey),
+#     .groups = "drop"
+#   )
+# params_ln
 
 # 1. Data for histograms
 hist_data <- data %>%
@@ -287,24 +266,26 @@ hist_data <- data %>%
   )
 
 # 2. Data for fitted normal curves, built only from params_ln
-curve_data <- params_ln %>%
+curve_data <- Table.01 %>%
   mutate(
     sam.sign = factor(sam.sign, levels = c("Neg", "Pos")),
     gSSMU    = factor(gSSMU)
   ) %>%
   rowwise() %>%
   mutate(
-    x = list(seq(mu_hat - 4 * sd_hat, mu_hat + 4 * sd_hat, length.out = 200))
+    x = list(seq(mu - 4*sd, mu + 4*sd, length.out = 200))
   ) %>%
   unnest(x) %>%
   mutate(
-    density = dnorm(x, mean = mu_hat, sd = sd_hat)
+    density = dnorm(x, mean = mu, sd = sd)
   ) %>%
   ungroup()
 
+
 # 3. Plot: histogram of data + normal line from params_ln
-x_min <- min(hist_data$LnSurvey, na.rm = TRUE)
-x_max <- max(hist_data$LnSurvey, na.rm = TRUE)
+x_min <- floor(min(hist_data$LnSurvey, na.rm = TRUE))
+x_max <- ceiling(max(hist_data$LnSurvey, na.rm = TRUE))
+x_ll <- seq(x_min, x_max, 0.5)
 survey_hist <- ggplot(hist_data, aes(x = LnSurvey)) +
   geom_histogram(aes(y = ..density..),
                  binwidth = 0.5,
@@ -314,25 +295,42 @@ survey_hist <- ggplot(hist_data, aes(x = LnSurvey)) +
             aes(x = x, y = density),
             linewidth = 1) +
   facet_grid(sam.sign ~ gSSMU) +
-  scale_x_continuous(limits = c(x_min, x_max)) +
+  scale_x_continuous(limits = c(x_min, x_max),
+                     breaks = x_ll, 
+                     labels = x_ll) +
   labs(x = "LnSurvey", y = "Density") +
   theme_minimal()
 survey_hist
 
 
+### LKB imputed data, using Equation (1) and (2) (Waters et al. 2020)
 
- 
-## Figure S3: 
-ggplot(data) +
-  geom_density(aes(x = log(survey), color = "Original", group = sam.sign), linewidth = 1.2, alpha = 0.6) +
-  geom_density(aes(x = log(survey_imputed), color = "Imputed", group = sam.sign), linewidth = 1.2, alpha = 0.6) +
-  facet_wrap(~ gSSMU, ncol = 1, scales = "free_y") +
-  scale_color_manual(values = c("Original" = "steelblue", "Imputed" = "orange")) +
-  labs(title = "Survey vs Imputed survey distributions by gSSMU",
-       x = "Survey value",
-       y = "Density",
-       color = "Dataset") +
-  theme_minimal(base_size = 14)
+## Equation (2)
+# K = U(0.1k, 10k); k = mean(log(LKB)), by SAM sign
+# sigma = U(0.1s, 10s); s = sd(log(LKB)), by SAM sign
+
+meanlogsummer <- 
+
+
+for (i in 1:2) {                    # two gSSMUs
+  for (j in 1:2) {                  # two SAM classes
+    mulogsummer[i,j] ~ dunif(0.1*meanlogsummer[i,j],10*meanlogsummer[i,j])
+    sigmalogsummer~dunif(0.1*sdlogsummer,10*sdlogsummer)
+    mulogsummer[i, j] <- runif(
+      n   = 1,
+      min = 0.1 * meanLogS[i, j],
+      max = 10  * meanLogS[i, j]
+    )
+  }
+}
+
+# sigmalogsummer ~ dunif(0.1 * sdlogsummer, 10 * sdlogsummer)
+sigmalogsummer <- runif(
+  n   = 1,
+  min = 0.1 * sdLogS,
+  max = 10  * sdLogS
+)
+taulogsummer <- sigmalogsummer^(-2)
 
 
 
