@@ -309,18 +309,41 @@ survey_hist
 # K = U(0.1k, 10k); k = mean(log(LKB)), by SAM sign
 # sigma = U(0.1s, 10s); s = sd(log(LKB)), by SAM sign
 
-meanlogsummer <- 
+# First, creating mean(k) and sd(k) matrix
+meanlogsummer <- matrix(
+  nrow = 2,
+  ncol = 2,
+  byrow = TRUE,
+  dimnames = list(
+    c("gSSMU1", "gSSMU2"),
+    c("Neg", "Pos")
+  )
+)
+meanlogsummer[1,] <- Table.01$mu[1:2] 
+meanlogsummer[2,] <- Table.01$mu[3:4] 
+
+sdlogsummer <- matrix(
+  nrow = 2,
+  ncol = 2,
+  byrow = TRUE,
+  dimnames = list(
+    c("gSSMU1", "gSSMU2"),
+    c("Neg", "Pos")
+  )
+)
+sdlogsummer[1,] <- Table.01$sd[1:2] 
+sdlogsummer[2,] <- Table.01$sd[3:4] 
 
 
 for (i in 1:2) {                    # two gSSMUs
   for (j in 1:2) {                  # two SAM classes
-    mulogsummer[i,j] ~ dunif(0.1*meanlogsummer[i,j],10*meanlogsummer[i,j])
-    sigmalogsummer~dunif(0.1*sdlogsummer,10*sdlogsummer)
-    mulogsummer[i, j] <- runif(
-      n   = 1,
-      min = 0.1 * meanLogS[i, j],
-      max = 10  * meanLogS[i, j]
-    )
+    mulogsummer[i,j] <- dunif(0.1*meanlogsummer[i,j],10*meanlogsummer[i,j])
+    sigmalogsummer <- dunif(0.1*sdlogsummer,10*sdlogsummer)
+    # mulogsummer[i, j] <- runif(
+    #   n   = 1,
+    #   min = 0.1 * meanLogS[i, j],
+    #   max = 10  * meanLogS[i, j]
+    # )
   }
 }
 
