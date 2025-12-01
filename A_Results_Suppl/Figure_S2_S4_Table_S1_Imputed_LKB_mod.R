@@ -8,6 +8,7 @@ library(tidyverse)
 library(tibble)
 library(ggplot2)
 library(scales)
+library(stringr)
 
 #### First, import data from the model ####
 
@@ -152,7 +153,7 @@ data <- data %>%
     survey_imputed = exp(LogSurvey_imputed)
   )
 
-#### Statistics and Plots  ####
+#### Statistics ####
 
 ### Statistical Analysis 
 library(coin)
@@ -176,9 +177,7 @@ Table.01$`p-value`[3] <- pvalue(g2.stat)
 knitr::kable(Table.01, digits = 3)
 
 
-### Plots
-
-
+### Plots: Survey data ####
 
 ### Fig S2: survey LKB vs. imputed data gSSMU1 and 2
 Chinese <- survey %>% filter(cal.yr > 2012) %>% filter(season == "S") 
@@ -237,23 +236,8 @@ FigS2_2 <- survey %>%
 
 
 
-### Estimating Frequency distributions for LKB and imputed ####
 
-# Survey data
-# LKB_survey <- data 
-# params_ln <- data %>%
-#   filter(!is.na(LnSurvey),
-#          sam.sign %in% c("Neg", "Pos"),
-#          gSSMU %in% c(1, 2),
-#          cal.yr < 2012) %>%
-#   group_by(sam.sign, gSSMU) %>%
-#   summarise(
-#     n       = n(),
-#     mu_hat  = mean(LnSurvey),
-#     sd_hat  = sd(LnSurvey),
-#     .groups = "drop"
-#   )
-# params_ln
+### Estimating Frequency distributions for Krill Survey Data ####
 
 # 1. Data for histograms
 hist_data <- data %>%
@@ -302,8 +286,9 @@ survey_hist <- ggplot(hist_data, aes(x = LnSurvey)) +
   theme_minimal()
 survey_hist
 
+### Estimating Frequency distributions for IMPUTED LKB ####
 
-### LKB imputed data, using Equation (1) and (2) (Waters et al. 2020)
+### We estimate LKB imputed data using Equation (1) and (2) (Waters et al. 2020)
 
 ## Equation (2)
 # K = U(0.1k, 10k); k = mean(log(LKB)), by SAM sign
@@ -334,54 +319,139 @@ sdlogsummer <- matrix(
 sdlogsummer[1,] <- Table.01$sd[1:2] 
 sdlogsummer[2,] <- Table.01$sd[3:4] 
 
+# Produce random imputed LKB values for each set o condition (gSSMU x SAM)
+set.seed(123)  # optional, for reproducibility
 
-for (i in 1:2) {                    # two gSSMUs
-  for (j in 1:2) {                  # two SAM classes
-    mulogsummer[i,j] <- dunif(0.1*meanlogsummer[i,j],10*meanlogsummer[i,j])
-    sigmalogsummer <- dunif(0.1*sdlogsummer,10*sdlogsummer)
-    # mulogsummer[i, j] <- runif(
-    #   n   = 1,
-    #   min = 0.1 * meanLogS[i, j],
-    #   max = 10  * meanLogS[i, j]
-    # )
+n_sim <- 100000
+
+# meanlogsummer and sdlogsummer are 2x2 matrices:
+# rows: gSSMU1, gSSMU2
+# cols: Neg, Pos
+
+# log limits
+lower_log <- log(10000)
+upper_log <- log(100000000)
+
+# prepare empty matrix for simulated LKB
+sim_mat_log <- matrix(NA_real_, nrow = n_sim, ncol = 4)
+colnames(sim_mat_log) <- c("g1.Neg", "g1.Pos", "g2.Neg", "g2.Pos")
+
+# optional: store mu.ls and sd.ls if you want to keep them
+mu_mat <- sim_mat_log
+sd_mat <- sim_mat_log
+
+col_index <- 1
+for (i in 1:2) {          # gSSMU: 1,2
+  for (j in 1:2) {        # sam.sign: Neg, Pos
+    # draw mu.ls and sd.ls from uniform distributions
+    mu_ls <- runif(
+      n_sim,
+      min = 0.1 * meanlogsummer[i, j],
+      max = 10  * meanlogsummer[i, j]
+    )
+    sd_ls <- runif(
+      n_sim,
+      min = 0.1 * sdlogsummer[i, j],
+      max = 10  * sdlogsummer[i, j]
+    )
+    
+    # normal draws on log scale
+    log_vals <- rnorm(
+      n    = n_sim,
+      mean = mu_ls,
+      sd   = sd_ls
+    )
+    
+    # truncate to [log(10000), log(1e8)]
+    log_vals <- pmin(pmax(log_vals, lower_log), upper_log)
+    
+    # store
+    sim_mat_log[, col_index] <- log_vals
+    mu_mat[, col_index]      <- mu_ls
+    sd_mat[, col_index]      <- sd_ls
+    
+    col_index <- col_index + 1
   }
 }
 
-# sigmalogsummer ~ dunif(0.1 * sdlogsummer, 10 * sdlogsummer)
-sigmalogsummer <- runif(
-  n   = 1,
-  min = 0.1 * sdLogS,
-  max = 10  * sdLogS
-)
-taulogsummer <- sigmalogsummer^(-2)
 
+# back to original (normal) scale
+LKB.imp <- as.data.frame(exp(sim_mat_log))
 
+str(LKB.imp)
+head(LKB.imp)
 
-## ---- Priors -----------------------------------------------------------
-# # mulogsummer[i,j] ~ dunif(0.1 * meanlogsummer[i,j], 10 * meanlogsummer[i,j])
-# mulogsummer <- matrix(NA_real_, nrow = 2, ncol = 2)
-# for (i in 1:2) {
-#   for (j in 1:2) {
-#     mulogsummer[i, j] <- runif(
-#       n   = 1,
-#       min = 0.1 * meanLogS[i, j],
-#       max = 10  * meanLogS[i, j]
-#     )
-#   }
-# }
-# 
-# # sigmalogsummer ~ dunif(0.1 * sdlogsummer, 10 * sdlogsummer)
-# sigmalogsummer <- runif(
-#   n   = 1,
-#   min = 0.1 * sdLogS,
-#   max = 10  * sdLogS
-# )
-# taulogsummer <- sigmalogsummer^(-2)
-# 
-# 
-# 
-# for(i in nrow(missLKB)) {
-#   
-# }
-# 
-# 
+# Plot histogram of imputed mean-log(LKB):
+
+# Transform data to be used:
+sim_long <- sim_mat_log %>%
+  as.data.frame() %>%
+  mutate(sim_id = row_number()) %>%
+  pivot_longer(
+    cols = c(g1.Neg, g1.Pos, g2.Neg, g2.Pos),
+    names_to = c("gSSMU", "sam.sign"),
+    names_sep = "\\."
+  ) %>%
+  rename(LnSurvey = value) %>%
+  mutate(
+    gSSMU    = factor(gSSMU, levels = c("g1", "g2"), labels = c(1, 2)),
+    sam.sign = factor(sam.sign, levels = c("Neg", "Pos"))
+  )
+
+#  1. Data for histograms
+hist_imp_data <- sim_long %>%
+  mutate(
+    gSSMU    = factor(gSSMU, levels = c(1, 2)),
+    sam.sign = factor(sam.sign, levels = c("Neg", "Pos"))
+  )
+
+# 2. Data for fitted normal curves, built only from params_ln
+# Imputed LKB 
+Table.02 <- sim_long %>%
+  filter(!is.na(LnSurvey),
+         gSSMU %in% c(1, 2),
+         sam.sign %in% c("Neg", "Pos")) %>%
+  group_by(gSSMU,sam.sign) %>%
+  summarise(
+    n       = n(),
+    mu  = mean(LnSurvey),
+    sd  = sd(LnSurvey),
+    .groups = "drop"
+  )
+knitr::kable(Table.02, digits = 3)
+
+curve_data_imp <- Table.02 %>%
+  mutate(
+    sam.sign = factor(sam.sign, levels = c("Neg", "Pos")),
+    gSSMU    = factor(gSSMU)
+  ) %>%
+  rowwise() %>%
+  mutate(
+    x = list(seq(mu - 4*sd, mu + 4*sd, length.out = 200))
+  ) %>%
+  unnest(x) %>%
+  mutate(
+    density = dnorm(x, mean = mu, sd = sd)
+  ) %>%
+  ungroup()
+
+# 3. Plot: histogram of data + normal line from params_ln
+x_min <- floor(min(hist_imp_data$LnSurvey, na.rm = TRUE))
+x_max <- ceiling(max(hist_imp_data$LnSurvey, na.rm = TRUE))
+x_ll <- seq(x_min, x_max, 1)
+imputed_survey_hist <- ggplot(hist_imp_data, aes(x = LnSurvey)) +
+  geom_histogram(aes(y = ..density..),
+                 binwidth = 0.5,
+                 color = "black",
+                 fill  = "grey80") +
+  geom_line(data = curve_data_imp,
+            aes(x = x, y = density),
+            linewidth = 1) +
+  facet_grid(sam.sign ~ gSSMU) +
+  scale_x_continuous(limits = c(x_min, x_max),
+                     breaks = x_ll, 
+                     labels = x_ll) +
+  labs(x = "LnSurvey", y = "Density") +
+  theme_minimal()
+imputed_survey_hist
+
