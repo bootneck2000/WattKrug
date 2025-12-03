@@ -173,6 +173,16 @@ Watters et al. extracted the mean ln(K) from a uniform distribution, ranging fro
 At the same time, the imputed LKB were truncated, so the minimum LKB = 10,000 tonnes (ln(k) = 9.2103) and maximum LKB = 100,000,000 tonnes (ln(lkb) = 18.4207.  This means that imputed mean-ln(LKB) will be larger than the maximum, thus, 1x10^8 tonnes. Same goes for sd(lkb).
 As result, the distribution of the imputed ln(LKB) values are skewed up (Figure S4).
 
+```{r Imputed mean-log(LKB), fig.width=6.5, fig.asp=0.7, out.width="80%",fig.align="centre", warning=FALSE, echo=FALSE}
+
+print(imputed_survey_hist.mean)
 
 
+```
+
+Figure S5. 
+
+The removal of the equation (2), K ~ U(0.1k, 10k), corrects the issue observed in figure S4. 
+
+  
 # Citations
