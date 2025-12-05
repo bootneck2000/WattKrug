@@ -80,13 +80,13 @@ library(formatR)
 
 # Tables: 
 
-Table 1: Estimations of mean and sd of Ln(LKB), as per Equation (2) (Watters et al. 2020), and xx test between -/+ SAM values within each gSSMU. THe equivalent LKB value is given in 'mean LKB'.   
+Table 1. Estimates of the mean and standard deviation of Ln(LKB) derived from Equation (2) of Watters et al. (2020), together with the results of the nonparametric one-way ANOVA test comparing negative and positive SAM values within each gSSMU. The corresponding LKB values appear in the column labelled 'mean LKB'.
 ```{r Table.01, results='asis', warning=FALSE, echo=FALSE, message=FALSE, comment=NA}
 
 # Load script without printing anything to the document
 invisible(
   capture.output(
-  source("./A_Results_Suppl/Figure_S2_S4_Table_S1_Imputed_LKB_mod.R"),
+  source("./A_Results_Suppl/Figure1_S2_S5_Table_S1.R"),
   type = "output"
   )
 )
@@ -106,7 +106,18 @@ knitr::include_graphics("./A_Results/Fig1_gSSMUs.png")
 
 ```
 
-Figure 1. Location of the penguin colonies (COPA: red dot; SHIRREF: blue dot), gSSMU #1 (blue dashed area) and #2 (red dashed area), and SSMUs (APEI: Antarctic Peninsula Elephant Island; APDPE: Antarctic Peninsula Drake Passage East; APDPW: Antarctic Peninsula Drake Passage West; APBSE: Antarctic Peninsula Bransfield Strait East; APBSW: Antarctic Peninsula Bransfield Strait West). 
+Figure 1. Locations of the penguin colonies (COPA shown in red, SHIRREF shown in blue), the two gSSMUs (gSSMU 1 in the blue dashed area and gSSMU 2 in the red dashed area), and the surrounding SSMUs (APEI: Antarctic Peninsula Elephant Island; APDPE: Antarctic Peninsula Drake Passage East; APDPW: Antarctic Peninsula Drake Passage West; APBSE: Antarctic Peninsula Bransfield Strait East; APBSW: Antarctic Peninsula Bransfield Strait West).
+
+```{r LKB vs SAM, fig.width=7.5, fig.asp=0.65, out.width="80%",fig.align="centre", warning=FALSE, echo=FALSE}
+
+print(Figure_2a)
+
+print(Figure_2b)
+
+```
+
+Figure 2. (A) Observed and imputed LKB (local krill biomass) by gSSMU and summer SAM value. The dashed black line marks 1 Mt. Red and blue dashed lines show mean values during negative SAM summers, and red and blue solid lines show mean values during positive SAM summers. (B) Boxplots of observed and imputed LKB by gSSMU and SAM sign. The dashed black line marks 1 Mt. gSSMU 1 is shown in red and gSSMU 2 in blue. Filled symbols indicate observed data, and open symbols indicate imputed data. Imputed values were generated using the mean and standard deviation estimates in Table 1.
+
 
 ```{r Survey data, fig.width=7.5, fig.asp=0.65, out.width="80%",fig.align="centre", warning=FALSE, echo=FALSE}
 
@@ -115,8 +126,7 @@ print(FigS2_2)
 print(FigS2_1)
 
 ```
-
-Figure 2. Krill survey estimates (LKB) for the study period. Top: gSSMU #2 (SSIW-EI); Bottom: gSSMU #1 (BS). Filled circles: Survey data from Watters et al. (2020); Open circles: mean imputed median LKB-value for -/+ SAM; filled triangles: survey data from Wang et al. (2025). 
+Figure 3. Krill survey estimates (LKB) for the study period. Top panel: gSSMU 2 (SSIW-EI). Bottom panel: gSSMU 1 (BS). Filled circles show survey data from Watters et al. 2020. Open circles show the mean imputed median LKB values for negative and positive SAM, as per Table 1. Filled triangles show survey data from Wang et al. 2025.
 
 
 
