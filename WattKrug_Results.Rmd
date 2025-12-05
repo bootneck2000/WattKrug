@@ -1,0 +1,168 @@
+---
+title: "A rebuttal to Watters et al. ´2020 Long-term observations from Antarctica demonstrate that mismatched scales of fisheries management and predator-prey interaction lead to erroneous conclusions about precaution´"
+author:
+  - name: "Andrew Lowther"
+    affiliation: 1
+  - name: "Ulf Lindstrøm"
+    affiliation: 2
+  - name: "Bjørn Krafft"
+    affiliation: 3
+  - name: "Javier A. Arata"
+    affiliation: 4
+affiliation:
+  - id: 1
+    name: "Norwegian Polar Institute, Department of Research, Tromsø, Norway"
+  - id: 2
+    name: "Institute of Marine Research Tromsø, Norway"
+  - id: 3
+    name: "Institute of Marine Research Bergen, Norway"
+  - id: 4
+    name: "Association of Responsible Krill harvesting companies, ARK, Margate, TAS, Australia"
+
+journal: "Scientific Reports"
+geometry: margin=3cm
+date: "`r Sys.Date()`"
+#linenumbers: true
+#numbersections: true
+#csl: elsarticle.cls
+output: word_document
+always_allow_html: true
+header-includes:
+  - \usepackage{booktabs}
+  - \usepackage{longtable}
+  - \usepackage{array}
+  - \usepackage{multirow}
+  - \usepackage{wrapfig}
+  - \usepackage{float}
+  - \floatplacement{figure}{H}
+  - \newcommand{\pandocbounded}[1]{#1}
+  - \usepackage{colortbl}
+  - \usepackage{pdflscape}
+  - \usepackage{tabu}
+  - \usepackage{threeparttable}
+  - \usepackage{threeparttablex}
+  - \usepackage[normalem]{ulem}
+  - \usepackage{makecell}
+  - \usepackage{xcolor}
+  - \usepackage{booktabs}
+  - \newcommand{\blandscape}{\begin{landscape}}
+  - \newcommand{\elandscape}{\end{landscape}}
+  - \usepackage{float} \floatplacement{figure}{H} 
+  - \newcommand{\beginsupplement}{\setcounter{table}{0}  \renewcommand{\thetable}{S\arabic{table}}     -   - \setcounter{figure}{0} \renewcommand{\thefigure}{S\arabic{figure}}}
+#output: html_document
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, comment=NA)
+#options(knitr.kable.NA = '\\-')
+library(trip)
+library(raster)
+#library(rgdal)
+library(lubridate)
+library(tidyverse)
+library(sf)
+library(raster)
+#options(kableExtra.latex.load_packages = FALSE)
+library(kableExtra)
+library(RefManageR)
+library(bibtex)
+#library(rbbt)
+library(pander)
+library(track2KBA)
+library(knitr)
+library(lmerTest)
+# library(tabulapdf)
+library(formatR)
+```
+
+# Tables: 
+
+Table 1: Estimations of mean and sd of Ln(LKB), as per Equation (2) (Watters et al. 2020), and xx test between -/+ SAM values within each gSSMU. THe equivalent LKB value is given in 'mean LKB'.   
+```{r Table.01, results='asis', warning=FALSE, echo=FALSE, message=FALSE, comment=NA}
+
+# Load script without printing anything to the document
+invisible(
+  capture.output(
+  source("./A_Results_Suppl/Figure_S2_S4_Table_S1_Imputed_LKB_mod.R"),
+  type = "output"
+  )
+)
+
+kable(Table.01, digits = 3)
+
+```
+
+
+
+\newpage
+
+# Figures:
+```{r Map colonies, fig.width=7.5, fig.asp=0.65, out.width="80%",fig.align="centre", warning=FALSE, echo=FALSE}
+
+knitr::include_graphics("./A_Results/Fig1_gSSMUs.png")
+
+```
+
+Figure 1. Location of the penguin colonies (COPA: red dot; SHIRREF: blue dot), gSSMU #1 (blue dashed area) and #2 (red dashed area), and SSMUs (APEI: Antarctic Peninsula Elephant Island; APDPE: Antarctic Peninsula Drake Passage East; APDPW: Antarctic Peninsula Drake Passage West; APBSE: Antarctic Peninsula Bransfield Strait East; APBSW: Antarctic Peninsula Bransfield Strait West). 
+
+```{r Survey data, fig.width=7.5, fig.asp=0.65, out.width="80%",fig.align="centre", warning=FALSE, echo=FALSE}
+
+print(FigS2_2)
+
+print(FigS2_1)
+
+```
+
+Figure 2. Krill survey estimates (LKB) for the study period. Top: gSSMU #2 (SSIW-EI); Bottom: gSSMU #1 (BS). Filled circles: Survey data from Watters et al. (2020); Open circles: mean imputed median LKB-value for -/+ SAM; filled triangles: survey data from Wang et al. (2025). 
+
+
+
+
+
+
+```{r Penguin distribution plots, out.width="65%",fig.align="centre",fig.cap="Penguin foraging behaviour during summer breeding, derived from available ARGOS-CLS PTT data presented in Hinke et al. 2017. A) Chinstrap penguins from Cape Shireff (blue) and Copacabana (green) truncated at $10^{th}$ March in line with known phenology (Black 2016; Lowther et al.(this meeting).  Elongated grey track represents a single animal) B) Adélie penguins truncated to the end of January and C) gentoo penguins until \\textasciitilde{}August, representing all available PTT data provided. The SSMU are combined and coloured according to gSSMU (red; gSSMU 2, purple; gSSMU 1) with chinstrap and Adélie penguin 99\\% MCP home ranges occupying between 7-19\\% of the gSSMU to which they were assigned.", echo=FALSE}
+
+knitr::include_graphics("./Watters EMM figures/Penguin distributions.png")
+
+```
+
+```{r Overwinter penguin  plots, fig.align="centre", fig.cap="A) Distribution of overwinter movement for chinstrap penguins, relative to the gSSMU's to which they were attributed, created from telemetry data available in Hinke et al. 2019.  B) Adélie and chinstrap penguin movement recorded by light geolocators, highlighting the large longitudinal range both species disperse through at the end of breeding (taken from Hinke et al. 2015).  In the original model formulation by Watters et al. 2020, the winter performance indices for both species are matched to macroscale levels of ONI variability but gSSMU-scale estimates of LKB and LHR.", out.width="75%", echo=FALSE}
+
+knitr::include_graphics("./Watters EMM figures/Overwinter pengo distributions.png")
+```
+
+```{r Watters original and mistake, echo=FALSE, fig.align="centre", out.width="75%", fig.cap="Original Figure 1 plot from Watters et al. 2020 with A) Neutral ONI and B) B) Warm ONI constituting the Worst Case selected.  C) Displays the original case-by-case plots recreated from the paper, with Case 12 representing the intention while data from Case 18 was selected for rendering the boxplot.  Note that the expected performance under neutral ONI Worst Case is poorer than under the warm ONI that was presented in the original paper.  Henceforth, to facilitate comparison, we refer to the ONI Neutral plot however we consider this unrealistic if the intention is to portray a Worst Case of a continuing warming climate."}
+
+knitr::include_graphics("./Watters EMM figures/Watters original and mistake.png")
+
+```
+
+```{r Scenario plot 1, out.width="100%", fig.align="left", echo=FALSE, fig.cap="Model output for the alternatve Watters et al. 2020 scenario outlined above (all species initially present, Adélie and chinstrap penguins migrate out of the area after breeding, LKB and LHR rescaled to SSMU and March included in summer or winter).   Selected cases as per Watters et al. 2020 for March in A) Summer and B) Winter are provided, with the corresponding case-by-case boxplots presented beneath.  Boxplots are colour-coded by ONI state (red=warm, white=neutral, blue=cold).  In all cases, the marginal effect of ONI dominated the expected performance of penguins against their long-term mean, irrespective of LKB or LHR."}
+
+knitr::include_graphics("./Watters EMM figures/All spp summer then winter 37.png")
+```
+
+```{r Scenario plot 2, out.width="100%", fig.align="left", echo=FALSE, eval=FALSE, fig.cap="Model output for Watters et al. 2020 Scenario \\#2 outlined above (all species initially present,Adélie and chinstrap penguins migrate out of the area after breeding, LKB and LHR rescaled to SSMU and March included in summer or winter).   Selected cases as per Watters et al. 2020 for March in A) Summer and B) Winter are provided, with the corresponding case-by-case boxplots presented beneath.  Boxplots are colour-coded by ONI state (red;warm, white;neutral, blue;cold).  In all cases, the marginal effect of ONI dominated the expected performance of penguins against their long-term mean, irrespective of LKB or LHR."}
+
+knitr::include_graphics("./Watters EMM figures/ADE and CHIN summer 40 41.png")
+```
+
+```{r Scenario plot 3, out.width="100%", fig.align="left", echo=FALSE, eval=FALSE, fig.cap="Model output for Scenario \\#3 outlined above (all species initially present,Adélie and chinstrap penguins migrate out of the area after breeding, LKB and LHR rescaled to SSMU and March included in summer or winter).   Selected cases as per Watters et al. 2020 for March in A) Summer and B) Winter are provided, with the corresponding case-by-case boxplots presented beneath.  Boxplots are colour-coded by ONI state (red;warm, white;neutral, blue;cold).  In all cases, the marginal effect of ONI dominated the expected performance of penguins against their long-term mean, irrespective of LKB or LHR."}
+
+knitr::include_graphics("./Watters EMM figures/Gentoo only 38 39.png")
+```
+
+```{r March Subarea 48.1 fishing plot, out.width="60%", fig.align="centre", fig.cap="Daily accumulated catch (and fitted LOESS smooth curves) in Subarea 48.1 between 20$^{th}$ February and March 31$^{st}$ between A) 1990-2010 and B) 2010 to 2020. Catch in the Subarea was relatively consistent during the latter stages of penguin breeding at approximately 250tonnes/d (NOTE: different scaling of catch on y-axis between plots).  However, since 2010 there has been a tendency for the fishery to increase its effort in the Subarea, starting around the middle of March. C) During this latter period, the fishery increased effort earlier on three occasions (2013, 2015 and 2016), starting before the beginning of March.", echo=FALSE}
+
+#knitr::include_graphics("./Watters EMM figures/catch march 481.png")
+```
+
+\blandscape
+
+\elandscape
+\blandscape
+
+# Citations
