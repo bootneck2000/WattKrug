@@ -117,7 +117,7 @@ Figure S1. Survey coverage (total transect length surveyed) by gSSMU and year (u
 # Load script without printing anything to the document
 # invisible(
 #   capture.output(
-#   source("./A_Results_Suppl/Figure_S2_S4_Table_S1_Imputed_LKB_mod.R"),
+#   source("./A_Results_Suppl/Figure1_S2_S5_Table_S1.R"),
 #   type = "output"
 #   )
 # )
@@ -131,9 +131,17 @@ Figure S1. Survey coverage (total transect length surveyed) by gSSMU and year (u
 
 ```{r Survey data, fig.width=7.5, fig.asp=0.65, out.width="80%",fig.align="centre", warning=FALSE, echo=FALSE}
 
-print(FigS2_2)
+#Load script without printing anything to the document
+invisible(
+  capture.output(
+  source("./A_Results_Suppl/Figure1_S2_S5_Table_S1.R"),
+  type = "output"
+  )
+)
 
-print(FigS2_1)
+# print(FigS2_2)
+# 
+# print(FigS2_1)
 
 ```
 
