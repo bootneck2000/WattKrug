@@ -174,6 +174,8 @@ Table.01$'p-value' <- NA
 Table.01$`p-value`[1] <- pvalue(g1.stat)
 Table.01$`p-value`[3] <- pvalue(g2.stat)
 
+Table.01$Mean_LKB <- exp(Table.01$mu)
+
 knitr::kable(Table.01, digits = 3)
 
 

@@ -89,7 +89,7 @@ library(patchwork)
 
 # A. Analysis of Survey Coverage
 
-```{r Survey cover effort, fig.width=6.5, fig.asp=0.7, out.width="80%",fig.align="centre",fig.cap="Figure S1: Survey coverage (total transect length surveyed) by gSSMU and year (up). Frequency distribution of total transect length, including the 10th percentile (dashed line) is shown below.", echo=FALSE}
+```{r Survey cover effort, fig.width=7.5, fig.asp=0.6, out.width="80%",fig.align="centre",fig.cap="Figure S1: Survey coverage (total transect length surveyed) by gSSMU and year (up). Frequency distribution of total transect length, including the 10th percentile (dashed line) is shown below.", echo=FALSE}
 
 # load script that produces fig_g1 and fig_g2
 suppressMessages(
@@ -106,40 +106,30 @@ print(fig_g2)
 
 Figure S1. Survey coverage (total transect length surveyed) by gSSMU and year (up). Frequency distribution of total transect length, including the 10th percentile (dashed line) is shown below.
 
+
 # B. Imputed summer LKB values
 
 
-Table S1: Estimations of mean and sd of Ln(LKB), as per Equation (2) (Watters et al. 2020).  
+#Table S1: Estimations of mean and sd of Ln(LKB), as per Equation (2) (Watters et al. 2020).  
 
-```{r Table.01, results='asis', warning=FALSE, echo=FALSE, message=FALSE}
+```{r Table.01, results='asis', warning=FALSE, echo=FALSE, message=FALSE, comment=NA}
 
-# load script that produces Table S1, and Figures S2-S4
-suppressMessages(
-  suppressWarnings(
-    source("./A_Results_Suppl/Figure_S2_S4_Table_S1_Imputed_LKB_mod.R")
-  )
-)
-
-knitr::kable(Table.01, digits = 3)
-
-# Table.01 %>% 
-#     kbl(
-#     # caption = "Table S1. Local krill biomass (LKB) by area and SAM phase.",
-#     col.names = c("Area", "SAM", "Mean LKB", "SD LKB", "p-value"),
-#     booktabs = TRUE,
-#     align = c("l", "l", "r", "r", "r"),
-#     na = ""
-#   ) %>% 
-#   kable_styling(
-#     full_width = FALSE,
-#     position   = "center",
-#     font_size  = 11
+# Load script without printing anything to the document
+# invisible(
+#   capture.output(
+#   source("./A_Results_Suppl/Figure_S2_S4_Table_S1_Imputed_LKB_mod.R"),
+#   type = "output"
 #   )
+# )
+# 
+# kable(Table.01, digits = 3)
+
 
 ```
 
 
-```{r Survey data, fig.width=6.5, fig.asp=0.7, out.width="80%",fig.align="centre", warning=FALSE, echo=FALSE}
+
+```{r Survey data, fig.width=7.5, fig.asp=0.65, out.width="80%",fig.align="centre", warning=FALSE, echo=FALSE}
 
 print(FigS2_2)
 
@@ -147,10 +137,10 @@ print(FigS2_1)
 
 ```
 
-Figure S2. Krill survey estimates (LKB) for the study period. Top: gSSMU #2 (SSIW-EI); Bottm:gSSMU #1 (BS). Filled circles: Survey data from Watters et al. (2020); Open circles: mean imputed median LKB-value for -/+ SAM; filled triangles: survey data from Wang et al. (2025).
+Figure S2. Krill survey estimates (LKB) for the study period. Top: gSSMU #2 (SSIW-EI); Bottom:gSSMU #1 (BS). Filled circles: Survey data from Watters et al. (2020); Open circles: mean imputed median LKB-value for -/+ SAM; filled triangles: survey data from Wang et al. (2025).
 
 
-```{r Survey histogram, fig.width=6.5, fig.asp=0.7, out.width="80%",fig.align="centre", warning=FALSE, echo=FALSE}
+```{r Survey histogram, fig.width=7.5, fig.asp=0.7, out.width="80%",fig.align="centre", warning=FALSE, echo=FALSE}
 
 print(survey_hist)
 
@@ -160,7 +150,7 @@ print(survey_hist)
 Figure S3. Histogram of krill acoustic biomass data (ln-transformed) by gSMMU (#1 & #2) and SAM (Neg, Pos). Solid line: Log-Normal distribution fitted to survey data.
 
 
-```{r Imputed Survey, fig.width=6.5, fig.asp=0.7, out.width="80%",fig.align="centre", warning=FALSE, echo=FALSE}
+```{r Imputed Survey, fig.width=6.5, fig.asp=0.65, out.width="80%",fig.align="centre", warning=FALSE, echo=FALSE}
 
 print(imputed_survey_hist)
 
@@ -173,7 +163,7 @@ Watters et al. extracted the mean ln(K) from a uniform distribution, ranging fro
 At the same time, the imputed LKB were truncated, so the minimum LKB = 10,000 tonnes (ln(k) = 9.2103) and maximum LKB = 100,000,000 tonnes (ln(lkb) = 18.4207.  This means that imputed mean-ln(LKB) will be larger than the maximum, thus, 1x10^8 tonnes. Same goes for sd(lkb).
 As result, the distribution of the imputed ln(LKB) values are skewed up (Figure S4).
 
-```{r Imputed mean-log(LKB), fig.width=6.5, fig.asp=0.7, out.width="80%",fig.align="centre", warning=FALSE, echo=FALSE}
+```{r Imputed mean-log(LKB), fig.width=6.5, fig.asp=0.65, out.width="80%",fig.align="centre", warning=FALSE, echo=FALSE}
 
 print(imputed_survey_hist.mean)
 
