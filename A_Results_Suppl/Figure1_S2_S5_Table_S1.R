@@ -178,8 +178,174 @@ Table.01$Mean_LKB <- exp(Table.01$mu)
 
 knitr::kable(Table.01, digits = 3)
 
+### 4. Plots to see relation between SAM and Survey data ####
 
-### 4. Plots: Survey data ####
+ENV.LKB <- data %>%
+  filter(!is.na(survey), cal.yr < 2012) %>%
+  mutate(
+    gSSMU = as.factor(gSSMU),
+  ) %>%
+  filter(season == "S") %>%
+  select(1:8)
+
+LKB.imputed <- data %>%
+    filter(cal.yr < 1996 | cal.yr > 2011) %>%
+  mutate(gSSMU = as.factor(gSSMU)) %>%
+  filter(season == "S") %>%
+  select(1:5, 7:8, 10)
+LKB.imputed$LogSurvey_imputed = 0
+# LKB.imputed$survey_imputed = 0
+
+# Estimate imputed values for each year, according to gSSMU and SAM sign
+set.seed(123)  # optional, for reproducibility
+
+# log limits, as established by Watters et al.
+lower_log <- log(10000)
+upper_log <- log(100000000)
+
+for(i in 1:length(LKB.imputed$cal.yr)) {
+  if(LKB.imputed$gSSMU[i] == "1") {
+    if(LKB.imputed$sam.sign[i] == "Neg") {
+      mu_ls <- Table.01$mu[1]
+      sd_ls <- Table.01$sd[1]
+    }
+    if(LKB.imputed$sam.sign[i] == "Pos") {
+      mu_ls <- Table.01$mu[2]
+      sd_ls <- Table.01$sd[2]
+    }
+  }
+  if(LKB.imputed$gSSMU[i] == "2") {
+    if(LKB.imputed$sam.sign[i] == "Neg") {
+      mu_ls <- Table.01$mu[3]
+      sd_ls <- Table.01$sd[3]
+    }
+    if(LKB.imputed$sam.sign[i] == "Pos") {
+      mu_ls <- Table.01$mu[4]
+      sd_ls <- Table.01$sd[4]
+    }
+  }
+  LKB.imputed$LogSurvey_imputed[i] <- rnorm(1, mu_ls, sd_ls)
+  # truncate to [log(10000), log(1e8)]
+  LKB.imputed$LogSurvey_imputed[i] <- pmin(pmax(LKB.imputed$LogSurvey_imputed[i], lower_log), upper_log)
+  LKB.imputed$survey[i] <- exp(LKB.imputed$LogSurvey_imputed[i])
+}
+
+
+# (i) x = sam, y = survey
+Figure_2a <- ggplot(ENV.LKB, aes(x = sam, y = survey, col = gSSMU, group = gSSMU)) +
+  # Reference lines
+  geom_hline(yintercept = 1e+06, color = "black",   # 1Mt
+             linewidth = 1.2, linetype = "dashed") +
+  geom_vline(xintercept = 0, color = "grey50", linewidth = 1.5) +  # SAM = 0
+  geom_hline(yintercept = Table.01$Mean_LKB[1], color = "red",      # mean LKB, gSSMU1, SAM Neg
+             linewidth = 1, linetype = "dashed") +
+  geom_hline(yintercept = Table.01$Mean_LKB[2], color = "red",      # mean LKB, gSSMU1, SAM Pos
+             linewidth = 1) +
+  geom_hline(yintercept = Table.01$Mean_LKB[3], color = "blue",      # mean LKB, gSSMU2, SAM Neg
+             linewidth = 1, linetype = "dashed") +
+  geom_hline(yintercept = Table.01$Mean_LKB[4], color = "blue",      # mean LKB, gSSMU2, SAM Pos
+             linewidth = 1) +
+  # Points
+  geom_point(alpha = 0.75, size = 3.5, na.rm = TRUE) +
+  # Add imputed data
+  geom_point(
+    data = LKB.imputed,
+    aes(x = sam, y = survey, col = gSSMU, group = gSSMU),
+    shape = 2,          # filled circle (optional)
+    size  = 3.5,
+    na.rm = TRUE
+  ) +
+  # Facet and colors
+  # facet_wrap(~ gSSMU, ncol = 1, scales = "free_y") +
+  scale_color_manual(values = c("1" = "red", "2" = "blue"), 
+                     breaks = c("1", "2"), name = "gSSMU") +
+  # Labels and theme
+  # y-axis: always show a tick at 1e6
+  scale_y_continuous(
+    labels = label_number(big.mark = ","),
+    breaks = union(pretty(ENV.LKB$survey, n = 6), 1e6) %>% sort()
+  ) +
+  labs(title = "A) Survey data vs. SAM vs Imputed",
+       x = "SAM index", y = "Krill Biomass (ton)") +
+  theme_minimal(base_size = 14) +
+  theme(
+    legend.position = "top",
+    panel.grid.minor = element_blank(),
+    panel.grid.major.x = element_blank()
+    ); Figure_2a
+
+# --- Prep: bind rows with a dataset flag, keep types tidy ---
+combined <- bind_rows(
+  ENV.LKB     %>% mutate(source = "Original"),
+  LKB.imputed  %>% mutate(source = "Imputed")
+) %>%
+  mutate(
+    survey   = as.numeric(survey),
+    sam.sign = factor(sam.sign, levels = c("Neg", "Pos")),
+    gSSMU    = factor(gSSMU, levels = c(1, 2)),
+    source   = factor(source, levels = c("Original", "Imputed"))
+  )
+
+# --- Plot: boxes per SAM sign, dodged by dataset, faceted by gSSMU ---
+Figure_2b <- ggplot(combined, 
+                    aes(x = sam.sign, y = survey,
+                        color = gSSMU)) +
+  
+  geom_hline(yintercept = 1e6, color = "black", linewidth = 1.1, linetype = "dashed") +
+  
+  # --- BOX PLOTS separated by source (Original/Imputed) ---
+  geom_boxplot(aes(fill = source,
+                   group = interaction(sam.sign, source)),
+               position = position_dodge(width = 0.85),
+               width = 0.7,
+               alpha = 0.6,
+               outlier.shape = NA) +
+  
+  # --- POINTS with separate shapes by source ---
+  geom_jitter(aes(shape = source,
+                  group  = interaction(sam.sign, source)),
+              position = position_jitterdodge(jitter.width = 0.15,
+                                              dodge.width = 0.85),
+              alpha = 0.9,
+              size = 3,
+              na.rm = TRUE) +
+  
+  facet_wrap(~ gSSMU, ncol = 2) +
+  
+  # Colors for gSSMU (outline)
+  scale_color_manual(values = c("1" = "red", "2" = "blue"),
+                     name = "gSSMU") +
+  
+  # Fill for boxplots
+  scale_fill_manual(values = c("Original" = "white", "Imputed" = "gray90"),
+                    name = "Dataset") +
+  
+  # Shapes for points: filled circle vs open circle
+  scale_shape_manual(values = c("Original" = 16,  # filled circle
+                                "Imputed"  = 1),  # open circle
+                     name = "Dataset") +
+  
+  scale_y_continuous(
+    labels = scales::label_number(big.mark = ","),
+    breaks = union(pretty(combined$survey, n = 6), 1e6) %>% sort()
+  ) +
+  
+  labs(
+    title = "B) Survey distribution by SAM sign, Dataset, and gSSMU",
+    x = "SAM sign",
+    y = "Krill Biomass (ton)"
+  ) +
+  
+  theme_minimal(base_size = 14) +
+  theme(
+    legend.position = "top",
+    panel.grid.minor = element_blank(),
+    panel.grid.major.x = element_blank()
+  ); Figure_2b
+
+
+
+### 5. Plots: Survey data ####
 
 ### Fig S2: survey LKB vs. imputed data gSSMU1 and 2
 Chinese <- survey %>% filter(cal.yr > 2012) %>% filter(season == "S") 
@@ -239,7 +405,7 @@ FigS2_2 <- survey %>%
 
 
 
-### 5. Estimating Frequency distributions for Krill Survey Data ####
+### 6. Estimating Frequency distributions for Krill Survey Data ####
 
 # 1. Data for histograms
 hist_data <- data %>%
@@ -288,7 +454,7 @@ survey_hist <- ggplot(hist_data, aes(x = LnSurvey)) +
   theme_minimal()
 survey_hist
 
-### 6. Estimating Frequency distributions for original IMPUTED LKB ####
+### 7. Estimating Frequency distributions for original IMPUTED LKB ####
 
 ### We estimate LKB imputed data using Equation (1) and (2) (Waters et al. 2020)
 
@@ -458,7 +624,7 @@ imputed_survey_hist <- ggplot(hist_imp_data, aes(x = LnSurvey)) +
 imputed_survey_hist
 
 
-### 7. Estimating Frequency distributions for imputed mean-log(LKB) - variation####
+### 8. Estimating Frequency distributions for imputed mean-log(LKB) - variation####
 
 ### We estimate LKB imputed data using only Equation (1)Waters et al. 2020)
 # We use only mean-log(lkb) data; no Uniform distribution
