@@ -36,29 +36,6 @@ survey<-data.frame(cal.yr=rep(dimnames(survey)[[1]],dim(survey)[2]),
 survey$season<-ifelse(survey$cal.yr<2012,"S","W")
 survey$matchme<-paste(survey$cal.yr,survey$season,survey$gSSMU,sep="|")
 
-## Adding Chinese survey data from Wang et al. 2025. ICES J Mar Sci, 82(8)
-# Create dataframe 'Chinese_north' (gSSMU2)
-Chinese_SSIW <- data.frame(
-  cal.yr  = c("2013", "2015", "2016"),
-  gSSMU   = rep("2", 3),
-  survey    = c(418000, 400000, 896000),
-  season  = rep("S", 3),
-  stringsAsFactors = FALSE)
-
-Chinese_BS <- data.frame(
-  cal.yr  = c("2013", "2015", "2016"),
-  gSSMU   = rep("1", 3),
-  survey    = c(563000, 395000, 1035000),
-  season  = rep("S", 3),
-  stringsAsFactors = FALSE)
-
-Chinese_survey <- rbind(Chinese_SSIW, Chinese_BS) 
-Chinese_survey$matchme <- paste(Chinese_survey$cal.yr, Chinese_survey$season,
-                                Chinese_survey$gSSMU,sep="|")
-### Add Chinese survey data into 'survey'
-survey <- rbind(survey, Chinese_survey) 
-
-rm(Chinese_BS, Chinese_SSIW, Chinese_survey)
 ### END changes
 
 survey <- survey %>% mutate(cal.yr = as.integer(cal.yr))
@@ -248,13 +225,13 @@ Figure_2a <- ggplot(ENV.LKB, aes(x = sam, y = survey, col = gSSMU, group = gSSMU
   # Points
   geom_point(alpha = 0.75, size = 3.5, na.rm = TRUE) +
   # Add imputed data
-  geom_point(
-    data = LKB.imputed,
-    aes(x = sam, y = survey, col = gSSMU, group = gSSMU),
-    shape = 2,          # filled circle (optional)
-    size  = 3.5,
-    na.rm = TRUE
-  ) +
+  # geom_point(
+  #   data = LKB.imputed,
+  #   aes(x = sam, y = survey, col = gSSMU, group = gSSMU),
+  #   shape = 2,          # filled circle (optional)
+  #   size  = 3.5,
+  #   na.rm = TRUE
+  # ) +
   # Facet and colors
   # facet_wrap(~ gSSMU, ncol = 1, scales = "free_y") +
   scale_color_manual(values = c("1" = "red", "2" = "blue"), 
@@ -265,7 +242,7 @@ Figure_2a <- ggplot(ENV.LKB, aes(x = sam, y = survey, col = gSSMU, group = gSSMU
     labels = label_number(big.mark = ","),
     breaks = union(pretty(ENV.LKB$survey, n = 6), 1e6) %>% sort()
   ) +
-  labs(title = "A) Survey data vs. SAM vs Imputed",
+  labs(title = "A) LKB vs. SAM value",
        x = "SAM index", y = "Krill Biomass (ton)") +
   theme_minimal(base_size = 14) +
   theme(
@@ -274,42 +251,46 @@ Figure_2a <- ggplot(ENV.LKB, aes(x = sam, y = survey, col = gSSMU, group = gSSMU
     panel.grid.major.x = element_blank()
     ); Figure_2a
 
-# --- Prep: bind rows with a dataset flag, keep types tidy ---
-combined <- bind_rows(
-  ENV.LKB     %>% mutate(source = "Original"),
-  LKB.imputed  %>% mutate(source = "Imputed")
-) %>%
+# # --- Prep: bind rows with a dataset flag, keep types tidy ---
+# combined <- bind_rows(
+#   ENV.LKB     %>% mutate(source = "Original"),
+#   LKB.imputed  %>% mutate(source = "Imputed")
+# ) %>%
+#   mutate(
+#     survey   = as.numeric(survey),
+#     sam.sign = factor(sam.sign, levels = c("Neg", "Pos")),
+#     gSSMU    = factor(gSSMU, levels = c(1, 2)),
+#     source   = factor(source, levels = c("Original", "Imputed"))
+#   )
+
+ENV.LKB <-  ENV.LKB %>% 
   mutate(
     survey   = as.numeric(survey),
     sam.sign = factor(sam.sign, levels = c("Neg", "Pos")),
     gSSMU    = factor(gSSMU, levels = c(1, 2)),
-    source   = factor(source, levels = c("Original", "Imputed"))
   )
 
+
 # --- Plot: boxes per SAM sign, dodged by dataset, faceted by gSSMU ---
-Figure_2b <- ggplot(combined, 
+Figure_2b <- ggplot(ENV.LKB, 
                     aes(x = sam.sign, y = survey,
                         color = gSSMU)) +
   
   geom_hline(yintercept = 1e6, color = "black", linewidth = 1.1, linetype = "dashed") +
   
   # --- BOX PLOTS separated by source (Original/Imputed) ---
-  geom_boxplot(aes(fill = source,
-                   group = interaction(sam.sign, source)),
+  geom_boxplot(aes(group = sam.sign),
                position = position_dodge(width = 0.85),
                width = 0.7,
                alpha = 0.6,
                outlier.shape = NA) +
-  
   # --- POINTS with separate shapes by source ---
-  geom_jitter(aes(shape = source,
-                  group  = interaction(sam.sign, source)),
+  geom_jitter(aes(group  = sam.sign),
               position = position_jitterdodge(jitter.width = 0.15,
                                               dodge.width = 0.85),
               alpha = 0.9,
               size = 3,
               na.rm = TRUE) +
-  
   facet_wrap(~ gSSMU, ncol = 2) +
   
   # Colors for gSSMU (outline)
@@ -317,21 +298,21 @@ Figure_2b <- ggplot(combined,
                      name = "gSSMU") +
   
   # Fill for boxplots
-  scale_fill_manual(values = c("Original" = "white", "Imputed" = "gray90"),
+  scale_fill_manual("white",
                     name = "Dataset") +
   
   # Shapes for points: filled circle vs open circle
-  scale_shape_manual(values = c("Original" = 16,  # filled circle
-                                "Imputed"  = 1),  # open circle
-                     name = "Dataset") +
+  # scale_shape_manual(values = c("Original" = 16,  # filled circle
+  #                               "Imputed"  = 1),  # open circle
+  #                    name = "Dataset") +
   
   scale_y_continuous(
     labels = scales::label_number(big.mark = ","),
-    breaks = union(pretty(combined$survey, n = 6), 1e6) %>% sort()
+    breaks = union(pretty(ENV.LKB$survey, n = 6), 1e6) %>% sort()
   ) +
   
   labs(
-    title = "B) Survey distribution by SAM sign, Dataset, and gSSMU",
+    title = "B) LKB vs SAM sign",
     x = "SAM sign",
     y = "Krill Biomass (ton)"
   ) +
