@@ -85,9 +85,27 @@ library(lmerTest)
 library(formatR)
 library(tinytex)
 library(patchwork)
+library(tibble)
+library(ggplot2)
+library(scales)
+library(stringr)
 ```
 
 # A. Analysis of Survey Coverage
+
+Survey coverage, expressed as nautical miles surveyed within each gSSMU
+and survey leg, varied among years and between legs. In most years, two
+survey legs were conducted. Watters et al. (2020) proposed excluding
+surveys with transect coverage of 80 nm or less, but did not apply this
+criterion.
+
+Rather than applying a fixed threshold, we examined the frequency
+distribution of surveyed transect lengths for gSSMUs 1 and 2 separately
+and excluded surveys falling below the lower 10th percentile, rounded up
+to the nearest 10 nm. This approach resulted in the exclusion of three
+survey legs in gSSMU 1 (≤10 nm; 1996, 1999, 2010, and 2012) and four
+survey legs in gSSMU 2 (≤200 nm; 2010, 2011, 2012, and 2015) (Figure
+S1).
 
 ```{r Survey cover effort, fig.width=7.5, fig.asp=0.6, out.width="80%",fig.align="centre",fig.cap="Figure S1: Survey coverage (total transect length surveyed) by gSSMU and year (up). Frequency distribution of total transect length, including the 10th percentile (dashed line) is shown below.", echo=FALSE}
 
@@ -104,59 +122,84 @@ print(fig_g2)
 
 ```
 
-Figure S1. Survey coverage (total transect length surveyed) by gSSMU and year (up). Frequency distribution of total transect length, including the 10th percentile (dashed line) is shown below.
+Figure S1. Annual survey coverage (total transect length surveyed) by
+gSSMU, year and survey leg [top panel]. Frequency distribution of summed
+transect lengths across all surveys, with the 10th percentile marked by
+the dashed line [bottom panel].
 
+\newpage
+# B. Distribution of observed vs imputed summer ln*LKB* values
 
-# B. Imputed summer LKB values
+We evaluated the procedure used to impute LKB values in years without
+survey data. First, we assessed whether ln*LKB* from survey observations
+followed an appropriate parametric distribution. We then generated
+imputed ln*LKB* values following equations (1) and (2) of Watters et al.
+(2020) and compared the resulting distributions with the empirical
+distribution of observed data.
 
+We fitted a log-normal distribution to the survey-based LKB data and
+assessed normality of ln*LKB* using the Shapiro--Wilk test. Using the
+same parameterization, we generated 100,000 imputed ln*LKB* values from
+equations (1) and (2), applying lower and upper bounds of 10,000 t and 1
+× 10⁹ t, respectively, as defined in Supplementary Material S1.
+Normality of the imputed ln*LKB* distribution was then re-evaluated
+using the Shapiro--Wilk test.
 
-#Table S1: Estimations of mean and sd of Ln(LKB), as per Equation (2) (Watters et al. 2020).  
+Observed survey-based LKB distributions for all gSSMU--SAM combinations
+were well described by a log-normal distribution (Supplementary
+Material, Table S1; Figure S2). In contrast, ln(LKB) values generated
+through the imputation procedure of Watters et al. (2020) were
+concentrated toward the upper bound of the imposed limits, with mean
+ln(LKB) values of 17.5--17.7 (approximately 44 Mt), and did not conform
+to a log-normal distribution (Supplementary Material, Table S2; Figure
+S3).
 
-```{r Table.01, results='asis', warning=FALSE, echo=FALSE, message=FALSE, comment=NA}
+Table S1. Shapiro--Wilk test results for normality of observed
+log-transformed LKB values, reported by gSSMU and SAM sign. Columns show
+sample size (n), p-value, and W-statistic.
 
-# Load script without printing anything to the document
-# invisible(
-#   capture.output(
-#   source("./A_Results_Suppl/Figure1_S2_S5_Table_S1.R"),
-#   type = "output"
-#   )
-# )
-# 
-# kable(Table.01, digits = 3)
+```{r Table S1, results='asis', warning=FALSE, echo=FALSE, message=FALSE, comment=NA}
 
-
-```
-
-
-
-```{r Survey data, fig.width=7.5, fig.asp=0.65, out.width="80%",fig.align="centre", warning=FALSE, echo=FALSE}
-
-#Load script without printing anything to the document
-invisible(
-  capture.output(
-  source("./A_Results_Suppl/Figure1_S2_S5_Table_S1.R"),
-  type = "output"
+# load script that produces fig_g1 and fig_g2
+suppressMessages(
+  suppressWarnings(
+    source("./A_Results_Suppl/Figure_S2_S4_Table_S1_S2.R")
   )
 )
 
-# print(FigS2_2)
-# 
-# print(FigS2_1)
+kable(shapiro_results1, digits = 3)
 
 ```
 
-Figure S2. Krill survey estimates (LKB) for the study period. Top: gSSMU #2 (SSIW-EI); Bottom:gSSMU #1 (BS). Filled circles: Survey data from Watters et al. (2020); Open circles: mean imputed median LKB-value for -/+ SAM; filled triangles: survey data from Wang et al. (2025).
+Table S2. Shapiro--Wilk test results for normality of imputed
+log-transformed LKB values. The table reports the total number of
+imputations generated (n_total), the subsample used for the test
+(n_used), and the corresponding W and p values for each gSSMU and SAM
+sign.
 
+```{r Table S2, results='asis', warning=FALSE, echo=FALSE, message=FALSE, comment=NA}
+
+kable(shapiro_imp, digits = 3)
+
+```
 
 ```{r Survey histogram, fig.width=7.5, fig.asp=0.7, out.width="80%",fig.align="centre", warning=FALSE, echo=FALSE}
 
+# load script that produces fig_g1 and fig_g2
+suppressMessages(
+  suppressWarnings(
+    source("./A_Results_Suppl/Figure_S2_S4_Table_S1_S2.R")
+  )
+)
 print(survey_hist)
 
 
 ```
 
-Figure S3. Histogram of krill acoustic biomass data (ln-transformed) by gSMMU (#1 & #2) and SAM (Neg, Pos). Solid line: Log-Normal distribution fitted to survey data.
-
+Figure S2. Distribution of ln-transformed acoustic biomass (LnSurvey)
+shown as histograms stratified by gSSMU (1, 2) and SAM sign (Neg, Pos).
+The solid curve in each panel shows the log-normal density fitted to the
+observed survey values.
 
 ```{r Imputed Survey, fig.width=6.5, fig.asp=0.65, out.width="80%",fig.align="centre", warning=FALSE, echo=FALSE}
 
@@ -165,22 +208,16 @@ print(imputed_survey_hist)
 
 ```
 
-Figure S4. 
+Figure S3. Distribution of ln-transformed imputed biomass (LnSurvey)
+shown as histograms stratified by gSSMU (1, 2) and SAM sign (Neg, Pos).
+The solid curve in each panel shows the log-normal density fitted to the
+observed survey values.
 
-Watters et al. extracted the mean ln(K) from a uniform distribution, ranging from  0.1k to 10k. If applied to the mean-ln(LKB) for gSSMU #1 and -SAM (Table S1), the values range from 1.364-136.43 [ln(LKB) ~ U(0.1k, 10k); k = 13.643].
-At the same time, the imputed LKB were truncated, so the minimum LKB = 10,000 tonnes (ln(k) = 9.2103) and maximum LKB = 100,000,000 tonnes (ln(lkb) = 18.4207.  This means that imputed mean-ln(LKB) will be larger than the maximum, thus, 1x10^8 tonnes. Same goes for sd(lkb).
-As result, the distribution of the imputed ln(LKB) values are skewed up (Figure S4).
-
-```{r Imputed mean-log(LKB), fig.width=6.5, fig.asp=0.65, out.width="80%",fig.align="centre", warning=FALSE, echo=FALSE}
-
-print(imputed_survey_hist.mean)
-
-
-```
-
-Figure S5. 
-
-The removal of the equation (2), K ~ U(0.1k, 10k), corrects the issue observed in figure S4. 
-
-  
+\newpage
 # Citations
+
+Watters, George M., Jefferson T. Hinke, and Christian S. Reiss. 2020.
+\"Long-Term Observations from Antarctica Demonstrate That Mismatched
+Scales of Fisheries Management and Predator-Prey Interaction Lead to
+Erroneous Conclusions about Precaution.\" Scientific Reports 10 (1).
+<https://doi.org/10.1038/s41598-020-59223-9>.
