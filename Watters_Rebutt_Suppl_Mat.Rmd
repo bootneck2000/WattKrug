@@ -101,13 +101,12 @@ criterion.
 
 Rather than applying a fixed threshold, we examined the frequency
 distribution of surveyed transect lengths for gSSMUs 1 and 2 separately
-and excluded surveys falling below the lower 10th percentile, rounded up
-to the nearest 10 nm. This approach resulted in the exclusion of three
-survey legs in gSSMU 1 (≤10 nm; 1996, 1999, 2010, and 2012) and four
-survey legs in gSSMU 2 (≤200 nm; 2010, 2011, 2012, and 2015) (Figure
+and excluded surveys falling below the lower 10th percentile. This approach resulted in the exclusion of three
+survey legs in gSSMU 1 (≤10 nm; 1996, 1999, 2010, and 2012) and three
+survey legs in gSSMU 2 (≤200 nm; 2010, 2011 and 2012) (Figure
 S1).
 
-```{r Survey cover effort, fig.width=7.5, fig.asp=0.6, out.width="80%",fig.align="centre",fig.cap="Figure S1: Survey coverage (total transect length surveyed) by gSSMU and year (up). Frequency distribution of total transect length, including the 10th percentile (dashed line) is shown below.", echo=FALSE}
+```{r Survey cover effort, fig.width=7.5, fig.asp=0.6, out.width="80%",fig.align="centre", warning=FALSE, echo=FALSE}
 
 # load script that produces fig_g1 and fig_g2
 suppressMessages(

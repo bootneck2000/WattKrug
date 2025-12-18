@@ -22,7 +22,7 @@ survey_filtered <- survey %>%
 percentiles <- survey_filtered %>%
   group_by(gSSMU) %>%
   summarise(p10 = quantile(nmi.count, probs = 0.10, na.rm = TRUE))
-percentiles$p10 <- ceiling(percentiles$p10/10)*10
+percentiles$p10 <- round(percentiles$p10,0)   #  ceiling(percentiles$p10/10)*10
 survey_low_nmi <- survey_filtered %>%
   left_join(percentiles, by = "gSSMU") %>%
   filter(nmi.count >= p10)
