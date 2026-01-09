@@ -21,7 +21,7 @@ survey_filtered <- survey %>%
 percentiles <- survey_filtered %>%
   group_by(gSSMU) %>%
   summarise(p10 = quantile(nmi.count, probs = 0.10, na.rm = TRUE))
-percentiles$p10 <- ceiling(percentiles$p10/10)*10
+percentiles$p10 <- round(percentiles$p10,0)
 survey_low_nmi <- survey_filtered %>%
   left_join(percentiles, by = "gSSMU") %>%
   filter(nmi.count >= p10)
@@ -539,5 +539,19 @@ imputed_survey_hist.mean <- ggplot(hist_imp_data2, aes(x = LnSurvey)) +
 imputed_survey_hist.mean
 
 
+
+
+
+
+### 9. Predator's krill consumption ####
+
+Predators_summer <- read.csv("./A_Results_Suppl/Summer_Krill_req.csv",header=TRUE)
+Predators_winter <- read.csv("./A_Results_Suppl/Winter_Krill_req.csv",header=TRUE)
+
+Table.03 <- Predators_summer %>% select(-Reference)
+knitr::kable(Table.03, digits = 0)
+
+Table.04 <- Predators_winter %>% select(-Reference)
+knitr::kable(Table.04, digits = 0)
 
 

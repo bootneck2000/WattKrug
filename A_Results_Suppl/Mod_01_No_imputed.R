@@ -10,14 +10,16 @@ library(lattice)
 # Jump to Step 3 if already ran steps 1 & 2
 
 #### First Step, load variables & Update 'survey' data ####
-setwd("C:/Users/javie/OneDrive/R-Git projects/WattKrug/Supplementary Files")
+read_dir <- "./Supplementary Files/"
 
 make.localhr.data<-function(trim=1,plot.winter=FALSE){
+  ###########################################################################################################
   # generate the summer indices
+  ###########################################################################################################
   #
   # fledge weight (fwt)
   # bigger indicates better summer
-  fwt<-read.csv("fweight.csv",header=TRUE,stringsAsFactors = FALSE)
+  fwt<-read.csv(file.path(read_dir,"fweight.csv"),header=TRUE,stringsAsFactors = FALSE)
   fwt<-tapply(fwt$WT,list(fwt$YEAR,fwt$PROJECT,fwt$SPECIES),mean)
   fwt<-data.frame(YEAR=rep(dimnames(fwt)[[1]],dim(fwt)[2]*dim(fwt)[3]),
                   PROJECT=rep(rep(dimnames(fwt)[[2]],each=dim(fwt)[1]),dim(fwt)[3]),
@@ -40,10 +42,10 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
   fwt$cal.yr<-as.numeric(substr(fwt$YEAR,1,4))+1
   #print(str(fwt))
   #
-
+  ###########################################################################################################
   # post-hatch success (phs) (numbers of chicks creched/numbers of chicks hatched)
   # bigger indicates better summer
-  phs<-read.csv("success.csv",header=TRUE,stringsAsFactors = FALSE)
+  phs<-read.csv(file.path(read_dir,"success.csv"),header=TRUE,stringsAsFactors = FALSE)
   phs$phs<-phs$N_CRECHE/phs$N_CHICKS
   phs$phs<-log(phs$phs/(1-phs$phs))
   phs$matchme<-paste(phs$PROJECT,phs$SPECIES,sep="|")
@@ -60,10 +62,10 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
   phs$cal.yr<-as.numeric(substr(phs$YEAR,1,4))+1
   #print(str(phs))
   #
-
+  ###########################################################################################################
   # trip duration (td)
   # smaller indicates better summer (thus need to switch direction of index)
-  td<-read.csv("tripduration.csv",header=TRUE,stringsAsFactors = FALSE)
+  td<-read.csv(file.path(read_dir,"tripduration.csv"),header=TRUE,stringsAsFactors = FALSE)
   td<-td[,c(1:3,8)]
   # next line is to make trip duration point in same direction as fwt and phs (max td is 59.95 for all trips)
   # call this "revtd" for "reversed" trip duration
@@ -90,12 +92,13 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
   td$cal.yr<-as.numeric(substr(td$YEAR,1,4))+1
   #print(str(td))
   #
-
+  ###########################################################################################################
   # generate the winter indices
+  ###########################################################################################################
   #
   # adult male mass at E1 lay (mml)
   # bigger indicates better winter
-  ade1<-read.csv("massatlay.csv",header=TRUE,stringsAsFactors = FALSE)
+  ade1<-read.csv(file.path(read_dir,"massatlay.csv"),header=TRUE,stringsAsFactors = FALSE)
   mml<-ade1[,c(1:3,5)]
   mml<-tapply(mml$WT_MALE,list(mml$YEAR,mml$PROJECT,mml$SPECIES),mean,na.rm=TRUE)
   mml<-data.frame(YEAR=rep(dimnames(mml)[[1]],dim(mml)[2]*dim(mml)[3]),
@@ -118,6 +121,7 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
   mml$cal.yr<-as.numeric(substr(mml$YEAR,1,4))
   #print(str(mml))
   #
+  ###########################################################################################################
   #
   # adult female mass at E1 lay (fml)
   # bigger indicates better winter
@@ -143,10 +147,11 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
   fml$cal.yr<-as.numeric(substr(fml$YEAR,1,4))
   #print(str(fml))
   #
+  ###########################################################################################################
   #
   # avg egg density using both eggs (egg)
   # bigger indicates better winter
-  e1e2<-read.csv("egg.csv",header=TRUE,stringsAsFactors = FALSE)
+  e1e2<-read.csv(file.path(read_dir,"egg.csv"),header=TRUE,stringsAsFactors = FALSE)
   egg<-e1e2[,c(1:3)]
   egg$egg<-(e1e2[,5]+e1e2[,7])/(e1e2[,6]+e1e2[,8])
   egg<-tapply(egg$egg,list(egg$YEAR,egg$PROJECT,egg$SPECIES),mean,na.rm=TRUE)
@@ -170,10 +175,11 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
   egg$cal.yr<-as.numeric(substr(egg$YEAR,1,4))
   #print(str(egg))
   #
+  ###########################################################################################################
   #
   # clutch initiation date (cid)
   # earlier indicates better winter
-  cid<-read.csv("cid.csv",header=TRUE,stringsAsFactors = FALSE)[,1:4]
+  cid<-read.csv(file.path(read_dir,"cid.csv"),header=TRUE,stringsAsFactors = FALSE)[,1:4]
   # next line is to make CID point in same direction as other indices where bigger indicates better conditions (take diff from Dec 31)
   # call this "revcid" for "reversed" CID
   cid[,4]<-as.vector(as.POSIXlt(paste(substr(cid$YEAR,1,4),"-12-31",sep=""))-strptime(cid[,4],"%m/%e/%Y"))
@@ -194,10 +200,11 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
   #cid<-cid[cid$SPECIES!="GEPE",]
   #print(str(cid))
   #
+  ###########################################################################################################
   #
   # cohort recruitment (rec)
   # bigger indicates better winter
-  rec<-read.csv("recruitment.csv",header=TRUE,stringsAsFactors = FALSE)[,1:4]
+  rec<-read.csv(file.path(read_dir,"recruitment.csv"),header=TRUE,stringsAsFactors = FALSE)[,1:4]
   names(rec)[4]<-"rec"
   rec$rec<-log(rec$rec/(1-rec$rec))
   rec$matchme<-paste(rec$PROJECT,rec$SPECIES,sep="|")
@@ -214,32 +221,32 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
   rec$cal.yr<-as.numeric(substr(rec$YEAR,1,4))+1
   #print(str(rec))
   #
-
+  ###########################################################################################################
   # read in the krill survey and fishery data
+  ###########################################################################################################
   #
   # krill survey biomass
-  survey<-read.csv("krillsurveywithJoinville.csv",header=TRUE,stringsAsFactors = FALSE)
+  survey<-read.csv(file.path(read_dir,"krillsurveywithJoinville.csv"),header=TRUE,stringsAsFactors = FALSE)
+  # use next line if want to filter acoustic data to have minimum number of miles (comment out if not desired)
+  # as per CSR, 80 nmi would be about equivalent of 2 tracklines in the Bransfield
+  #survey<-survey[survey$nmi.count>=80,]
+  # could try changing "biomass" in following line to "mean.density.gm2" or "median.density.gm2" but haven't done that
 
-  # # use next line if want to filter acoustic data to have minimum number of miles (comment out if not desired)
-  # # as per CSR, 80 nmi would be about equivalent of 2 tracklines in the Bransfield
-  # #survey<-survey[survey$nmi.count>=80,]
-
-### Introduced Change: 
+  ### Introduced Change: 
   # Filter low transect coverage (<10th percentil)
   survey_filtered <- survey %>%
     filter(gSSMU %in% c(1, 2))
   percentiles <- survey_filtered %>%
     group_by(gSSMU) %>%
     summarise(p10 = quantile(nmi.count, probs = 0.10, na.rm = TRUE))
-  percentiles$p10 <- ceiling(percentiles$p10/10)*10
+  percentiles$p10 <- round(percentiles$p10,0)
   survey_low_nmi <- survey_filtered %>%
     left_join(percentiles, by = "gSSMU") %>%
     filter(nmi.count >= p10)
   survey <- survey_low_nmi
   rm(percentiles, survey_filtered, survey_low_nmi)
-### END changes
+  ### END changes
   
-  # # could try changing "biomass" in following line to "mean.density.gm2" or "median.density.gm2" but haven't done that
   survey<-tapply(survey$biomass,list(survey$Year,survey$gSSMU),mean,na.rm=TRUE)
   survey<-data.frame(cal.yr=rep(dimnames(survey)[[1]],dim(survey)[2]),
                      gSSMU=rep(dimnames(survey)[[2]],each=dim(survey)[1]),
@@ -248,11 +255,12 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
   # use next line if want to remove winter survey data altogether (comment out if not desired)
   #survey<-survey[survey$season=="S",]
   survey$matchme<-paste(survey$cal.yr,survey$season,survey$gSSMU,sep="|")
-  # #print(str(survey))
+  #print(str(survey))
   #
+  ###########################################################################################################
   #
   # krill fishery catches
-  fishery<-read.csv("c1.csv",header=TRUE,stringsAsFactors = FALSE)
+  fishery<-read.csv(file.path(read_dir,"c1.csv"),header=TRUE,stringsAsFactors = FALSE)
   fishery$season<-ifelse(is.element(fishery$Month,c(10:12,1:3)),"S","W")
   gSSMU1<-c("APBSE","APBSW")
   gSSMU2<-c("APDPE","APDPW","APEI")
@@ -272,9 +280,12 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
   fishery$cal.yr<-as.numeric(as.character(fishery$cal.yr))
   fishery$gSSMU<-as.numeric(as.character(fishery$gSSMU))
   fishery$matchme<-paste(fishery$cal.yr,fishery$season,fishery$gSSMU,sep="|")
+  
+  fishery$catch[is.na(fishery$catch)] <- 0 # Added Change
+  
   #print(str(fishery))
   #
-
+  ###########################################################################################################
   # now match predator data with krill data
   out<-rbind(fwt,phs,td,mml,fml,egg,cid,rec,make.row.names=FALSE)
   # all birds from Copa always forage in gSSMU 1 (Bransfield SSMUs)
@@ -304,11 +315,12 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
   #
   out<-out[!is.na(out$gSSMU),]
   #
-
+  ###########################################################################################################
   # pull in the environmental indices
+  ###########################################################################################################
   #
   # SOUTHERN ANNULAR MODE
-  sam<-read.csv("sam.csv")
+  sam<-read.csv(file.path(read_dir,"sam.csv"))
   names(sam)<-c("yr","mo","sam")
   sam$season<-ifelse(is.element(sam$mo,c(10:12,1:3)),"S","W")
   sam$YEAR<-ifelse(is.element(sam$mo,10:12),sam$yr+1,sam$yr)
@@ -318,7 +330,7 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
   out$sam.sign<-ifelse(out$sam<0,"Neg","Pos")
   #
   # OCEANIC NINO INDEX
-  oni<-read.csv("oni.csv",stringsAsFactors = FALSE)
+  oni<-read.csv(file.path(read_dir,"oni.csv"),stringsAsFactors = FALSE)
   oni$yr<-ifelse(is.element(oni$SEAS,c("OND","NDJ")),oni$YR+1,oni$YR)
   oni$season<-ifelse(is.element(oni$SEAS,c("OND","NDJ","DJF","JFM")),"S",NA)
   oni$season<-ifelse(is.element(oni$SEAS,c("AMJ","MJJ","JJA","JAS")),"W",oni$season)
@@ -336,7 +348,7 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
   out<-out[!is.na(out$sam),]
   out<-out[!is.nan(out$index),]
   out<-out[!is.na(out$index),]
-  # will not try to impute missing winter surveys  ## ONLY USES DATA FOR 2012, 2014, 2015
+  # will not try to impute missing winter surveys
   # but will keep winter performance indices if want to plot them
   if(!plot.winter){out<-out[!(is.na(out$survey)&out$season=="W"),]}
   #
@@ -352,17 +364,17 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
 
 junk<-make.localhr.data()
 
+junk<-junk[!is.na(junk$survey),]
+junk$bclass<-ifelse(junk$survey<=1000000,1,2)
+junk$hrclass<-ifelse(junk$catch/junk$survey<=0.01,1,ifelse(junk$catch/junk$survey>=0.1,3,2))
+junk$oniclass<-ifelse(junk$oni.class=="Cool",1,ifelse(junk$oni.class=="Warm",3,2))
+
+
+
 #### Second - Run Model ####
-setwd("C:/Users/javie/OneDrive/R-Git projects/WattKrug/")
-out.dir <- "./A_Results_Suppl/Mod Survey filtered/"
 
 modelstring<-"
- 
   # George Watters -- April 2019
-  
-  # missing estimates of krill biomass during the summer are imputed based on observed relationship
-  # with environmental covariates and the uncertainty in this imputation is carried forward into
-  # estimation of effects from krill availability
 
   # samclass are environment classes based on SAM where
   # 1 = negative
@@ -373,57 +385,13 @@ modelstring<-"
   # 2 = neutral
   # 3 = warm
 
-  # studies are combinations of site, species, and monitoring parameter
-    
-  
-
   model{
 
-    #####################################################################
-    #
-    # model for missing biomass estimates in summer (do not think data are sufficient to do this for winter)
-    # this idea is based on example at http://www.columbia.edu/~cjd11/charles_dimaggio/DIRE/styled-4/styled-11/code-10/
-    #
-    #####################################################################    
-
-    # likelihood
-    for(i in 1:nsummerobs){
-      # I think this structure will only work if the data are arranged such that all summer data are first followed by winter data
-      # have never observed gSSMU-scale biomass < 10,000t or > 100,000,000t
-      # catches at gSSMU scale have ranged from 0t to about 117,000t (during period of study)
-      # assume catch has never been greater than biomass so truncate distribution of summer biomasses as follows
-      # lower bound of max(10000t, catch in year i) and upper bound of 100000000t
-      lower[i]<-max(10000,catch[i])
-      summer[i]~dlnorm(mulogsummer[gssmu[i],samclass[i]],taulogsummer) T(lower[i],100000000)
-    }
-    
-    # priors
-    # this prior specification patterned after http://doingbayesiandataanalysis.blogspot.com/2016/04/bayesian-estimation-of-log-normal.html
-    for(i in 1:2){ # two gSSMUs
-      for(j in 1:2){ # two SAM classes
-        mulogsummer[i,j]~dunif(0.1*meanlogsummer[i,j],10*meanlogsummer[i,j])
-      }
-    }
-    taulogsummer<-pow(sigmalogsummer,-2)
-    sigmalogsummer~dunif(0.1*sdlogsummer,10*sdlogsummer)
-
-    # substitute imputed harvest rates
-    for(i in 1:nsummerobs){
-      hr.summer[i]<-ifelse(impute.me[i]==1,catch[i]/summer[i],1)
-      bmass.summer[i]<-ifelse(impute.me[i]==1,summer[i],1)
-    }
-    for(i in (nsummerobs+1):nobs){
-      hr.summer[i]<-0
-      bmass.summer[i]<-0
-    }
-
-    for(i in 1:nobs){
-      hr[i]<-ifelse(impute.me[i]==1,hr.summer[i],catch[i]/survey[i])
+  for(i in 1:nobs){
+      hr[i]<-(catch[i]/survey[i])
       hrclass[i]<-ifelse(hr[i]<=0.01,1,ifelse(hr[i]>=0.1,3,2))
-      bmass[i]<-ifelse(impute.me[i]==1,bmass.summer[i],survey[i])
-      bclass[i]<-ifelse(bmass[i]<=1000000,1,2)
+      bclass[i]<-ifelse(survey[i]<=1000000,1,2)
     }
-
 
     #####################################################################
     #
@@ -431,7 +399,8 @@ modelstring<-"
     #
     #####################################################################
 
-    # create the design matrix with sum-to-zero constraints
+
+    # the design matrix with sum-to-zero constraints
     for(i in 1:nobs){
       X[i,1]<-1.0     # intercept
       X[i,2]<-equals(bclass[i],2)-equals(bclass[i],1) # b2
@@ -441,12 +410,13 @@ modelstring<-"
       X[i,6]<-equals(oniclass[i],3)-equals(oniclass[i],1) # o3
     }
   
-    # first the likelihood
-    # loop over number of data points (nobs)
+
+    # the likelihood
     for(i in 1:nobs){
-      index[i]~dnorm(mu[i],tau.index)
-      mu[i] <- inprod(X[i,],beta[])
+      index[i]~dnorm(mu.index[i],tau.index)
+      mu.index[i] <- inprod(X[i,],beta[])
     }
+    
 
     # priors
 
@@ -472,7 +442,7 @@ modelstring<-"
 
     # derived quantities
     # first the design matrix for easily interpreting effects
-    # row 1 -- ONI=cool, LKB<=1Mt, LHR<=0.01 (reference or best case)
+    # row 1 -- ONI=cool, LKB<=1Mt, LHR<=0.01 (reference case)
     # row 2 -- ONI=cool, LKB>1Mt, 0.01<LHR<0.1
     # row 3 -- ONI=cool, LKB<=1Mt, LHR>=0.1
     # row 4 -- ONI=cool, LKB>1Mt, LHR<=0.01
@@ -491,96 +461,100 @@ modelstring<-"
     # row 17 -- ONI=warm, LKB<=1Mt, 0.01<LHR<0.1
     # row 18 -- ONI=warm, LKB>1Mt, LHR>=0.1
     for(i in 1:18){
-      mu.new[i]<-inprod(predX[i,],beta[]) # posterior expectation at new data points
-      index.new[i]~dnorm(mu.new[i],tau.index) # posterior predictive
+      mu.index.new[i]<-inprod(predX[i,],beta[]) # posterior expectation at new data points
+      index.new[i]~dnorm(mu.index.new[i],tau.index) # posterior predictive
     }
     
     # some interesting probabilities
-
+    
     # that effects change expected performance relative to the reference case
     # high biomass
-    prob[1]<-ifelse(mu.new[2]<mu.new[1],1,0)
+    prob[1]<-ifelse(mu.index.new[2]<mu.index.new[1],1,0)
     prob.new[1]<-ifelse(index.new[2]<index.new[1],1,0)
     # med hr
-    prob[2]<-ifelse(mu.new[3]<mu.new[1],1,0)
+    prob[2]<-ifelse(mu.index.new[3]<mu.index.new[1],1,0)
     prob.new[2]<-ifelse(index.new[3]<index.new[1],1,0)
     # high hr
-    prob[3]<-ifelse(mu.new[5]<mu.new[1],1,0)
+    prob[3]<-ifelse(mu.index.new[5]<mu.index.new[1],1,0)
     prob.new[3]<-ifelse(index.new[5]<index.new[1],1,0)
     # neutral ONI
-    prob[4]<-ifelse(mu.new[7]<mu.new[1],1,0)
+    prob[4]<-ifelse(mu.index.new[7]<mu.index.new[1],1,0)
     prob.new[4]<-ifelse(index.new[7]<index.new[1],1,0)
     # warm ONI
-    prob[5]<-ifelse(mu.new[13]<mu.new[1],1,0)
+    prob[5]<-ifelse(mu.index.new[13]<mu.index.new[1],1,0)
     prob.new[5]<-ifelse(index.new[13]<index.new[1],1,0)
     # worst case
-    prob[6]<-ifelse(mu.new[12]<mu.new[1],1,0)
+    prob[6]<-ifelse(mu.index.new[12]<mu.index.new[1],1,0)
     prob.new[6]<-ifelse(index.new[12]<index.new[1],1,0)
     
     # that other effects are more extreme than environmental effects
     # med hr has more negative effect than neutral ONI
-    prob[7]<-ifelse(mu.new[3]<mu.new[7],1,0)
+    prob[7]<-ifelse(mu.index.new[3]<mu.index.new[7],1,0)
     prob.new[7]<-ifelse(index.new[3]<index.new[7],1,0)
     # that high hr has more negative effect than neutral ONI
-    prob[8]<-ifelse(mu.new[5]<mu.new[7],1,0)
+    prob[8]<-ifelse(mu.index.new[5]<mu.index.new[7],1,0)
     prob.new[8]<-ifelse(index.new[5]<index.new[7],1,0)
     # that high krill biomass has more negative effect than neutral ONI
-    prob[9]<-ifelse(mu.new[2]<mu.new[7],1,0)
+    prob[9]<-ifelse(mu.index.new[2]<mu.index.new[7],1,0)
     prob.new[9]<-ifelse(index.new[2]<index.new[7],1,0)
     # that med hr has more negative effect than warm ONI
-    prob[10]<-ifelse(mu.new[3]<mu.new[13],1,0)
+    prob[10]<-ifelse(mu.index.new[3]<mu.index.new[13],1,0)
     prob.new[10]<-ifelse(index.new[3]<index.new[13],1,0)
     # that high hr has more negative effect than warm ONI
-    prob[11]<-ifelse(mu.new[5]<mu.new[13],1,0)
+    prob[11]<-ifelse(mu.index.new[5]<mu.index.new[13],1,0)
     prob.new[11]<-ifelse(index.new[5]<index.new[13],1,0)
     # that high krill biomass has more negative effect than warm ONI
-    prob[12]<-ifelse(mu.new[2]<mu.new[13],1,0)
+    prob[12]<-ifelse(mu.index.new[2]<mu.index.new[13],1,0)
     prob.new[12]<-ifelse(index.new[2]<index.new[13],1,0)
     
     
     # that effects change expected performance relative to long-term mean
     # reference case
-    prob[13]<-ifelse(mu.new[1]<0,1,0)
+    prob[13]<-ifelse(mu.index.new[1]<0,1,0)
     prob.new[13]<-ifelse(index.new[1]<0,1,0)
     # high biomass
-    prob[14]<-ifelse(mu.new[2]<0,1,0)
+    prob[14]<-ifelse(mu.index.new[2]<0,1,0)
     prob.new[14]<-ifelse(index.new[2]<0,1,0)
     # med hr
-    prob[15]<-ifelse(mu.new[3]<0,1,0)
+    prob[15]<-ifelse(mu.index.new[3]<0,1,0)
     prob.new[15]<-ifelse(index.new[3]<0,1,0)
     # high hr
-    prob[16]<-ifelse(mu.new[5]<0,1,0)
+    prob[16]<-ifelse(mu.index.new[5]<0,1,0)
     prob.new[16]<-ifelse(index.new[5]<0,1,0)
     # neutral ONI
-    prob[17]<-ifelse(mu.new[7]<0,1,0)
+    prob[17]<-ifelse(mu.index.new[7]<0,1,0)
     prob.new[17]<-ifelse(index.new[7]<0,1,0)
     # warm ONI
-    prob[18]<-ifelse(mu.new[13]<0,1,0)
+    prob[18]<-ifelse(mu.index.new[13]<0,1,0)
     prob.new[18]<-ifelse(index.new[13]<0,1,0)
     # worst case
-    prob[19]<-ifelse(mu.new[12]<0,1,0)
+    prob[19]<-ifelse(mu.index.new[12]<0,1,0)
     prob.new[19]<-ifelse(index.new[12]<0,1,0)
 
   }
 "
-        
+
+
 # objects needed to fit the model and monitor variables of interest
 # there's a trick here -- if is.na(survey) then make survey a big number to prevent
 # division by zero during imputation procedure these will either be replaced
 # by imputed values (summer surveys) or not used (winter surveys)
 #
+
 pred.matrix<-matrix(c(1,-1,-1,-1,-1,-1,
                       1,1,-1,-1,-1,-1,
                       1,-1,1,0,-1,-1,
                       1,1,1,0,-1,-1,
                       1,-1,0,1,-1,-1,
                       1,1,0,1,-1,-1,
+                      
                       1,-1,-1,-1,1,0,
                       1,1,-1,-1,1,0,
                       1,-1,1,0,1,0,
                       1,1,1,0,1,0,
                       1,-1,0,1,1,0,
                       1,1,0,1,1,0,
+                      
                       1,-1,-1,-1,0,1,
                       1,1,-1,-1,0,1,
                       1,-1,1,0,0,1,
@@ -588,111 +562,61 @@ pred.matrix<-matrix(c(1,-1,-1,-1,-1,-1,
                       1,-1,0,1,0,1,
                       1,1,0,1,0,1),nrow=18,ncol=6,byrow=TRUE)
 
+# hr.data<-list(index=as.vector(junk$index),
+              # bclass=junk$bclass,
+              # hrclass=junk$hrclass,
+              # oniclass=junk$oni.class,
+              # nobs=dim(junk)[1],
+              # predX=pred.matrix)
+
+# From imputed model:
 hr.data<-list(index=as.vector(junk$index),
               survey=ifelse(is.na(junk$survey),1E12,junk$survey),
               catch=junk$catch,
-              gssmu=junk$gSSMU,
               oniclass=as.numeric(factor(junk$oni.class)),
-              samclass=as.numeric(factor(junk$sam.sign)),
-              summer=junk$survey[junk$season=="S"],
-              impute.me=ifelse(is.na(junk$survey)&junk$season=="S",1,0),
-              meanlogsummer=tapply(log(junk$survey[junk$season=="S"]),
-                                   list(junk$gSSMU[junk$season=="S"],junk$sam.sign[junk$season=="S"]),
-                                   mean,na.rm=TRUE),
-              sdlogsummer=sd(log(junk$survey[junk$season=="S"]),na.rm=TRUE),
               nobs=dim(junk)[1],
-              nsummerobs=as.vector(table(junk$season)[1]),
               predX=pred.matrix)
 
-#Plot the input
 
-# plot(as.vector(junk$index))
-# plot(ifelse(is.na(junk$survey),1E12,junk$survey))
-# plot(junk$catch)
-# plot(junk$gSSMU)
-# plot(as.numeric(factor(junk$oni.class)))
-# plot(as.numeric(factor(junk$sam.sign)))
-# plot(junk$survey[junk$season=="S"])
-# plot(ifelse(is.na(junk$survey)&junk$season=="S",1,0))
-# plot(tapply(log(junk$survey[junk$season=="S"]),list(junk$gSSMU[junk$season=="S"],
-#                                                     junk$sam.sign[junk$season=="S"]),
-#             mean,na.rm=TRUE))
-# plot(sd(log(junk$survey[junk$season=="S"]),na.rm=TRUE))
-# plot(dim(junk)[1])
-# plot(as.vector(table(junk$season)[1]))
-
-hr.params<-c("beta","mulogsummer","sigmalogsummer","sd.index","t.sd.index")
+hr.params<-c("beta","sd.index","t.sd.index")
 
 beta.init1<-rep(-1,6)
 beta.init2<-rep(0,6)
 beta.init3<-rep(1,6)
 
 
-hr.inits<-list(list(beta=beta.init1,t.sd.index=0.1,.RNG.seed=123,
-                    .RNG.name="base::Super-Duper"),
-               list(beta=beta.init2,t.sd.index=1.0,.RNG.seed=456,
-                    .RNG.name="base::Super-Duper"),
-               list(beta=beta.init3,t.sd.index=1.9,.RNG.seed=789,
-                    .RNG.name="base::Super-Duper"))
+hr.inits<-list(list(beta=beta.init1,t.sd.index=0.1,.RNG.seed=123,.RNG.name="base::Super-Duper"),
+               list(beta=beta.init2,t.sd.index=1.0,.RNG.seed=456,.RNG.name="base::Super-Duper"),
+               list(beta=beta.init3,t.sd.index=1.9,.RNG.seed=789,.RNG.name="base::Super-Duper"))
 
-hr.derived<-c("index.new","mu.new","prob","prob.new")
+hr.derived<-c("index.new","mu.index.new","prob","prob.new")
 
-hr.imputed<-"hr"
 
 # now do the analysis
-Sys.unsetenv("JAGS_HOME")  # let rjags auto-detect
 library(coda)
 library(rjags)
 
-hr.jags<-jags.model(textConnection(modelstring),hr.data,hr.inits,n.chains=3,n.adapt=250)
+hr.jags<-jags.model(textConnection(modelstring),hr.data,hr.inits,n.chains=3,n.adapt=50000)
 # burn in for 150000 iterations
-update(hr.jags, n.iter=50000)
-hr.params.post<-coda.samples(hr.jags,hr.params,n.iter=10000,thin=25)
-hr.derived.post<-coda.samples(hr.jags,hr.derived,n.iter=10000,thin=25)
-hr.imputed.post<-coda.samples(hr.jags,hr.imputed,n.iter=10000,thin=25)
+update(hr.jags, n.iter=100000)
+hr.params.post<-coda.samples(hr.jags,hr.params,n.iter=50000,thin=25)
+hr.derived.post<-coda.samples(hr.jags,hr.derived,n.iter=50000,thin=25)
 hr.params.summ<-summary(hr.params.post)
 hr.derived.summ<-summary(hr.derived.post)
-hr.imputed.summ<-summary(hr.imputed.post)
 
 # write input/output
+out.dir <- "./A_Results_Suppl/Model01_filtered/"
+dir.create(out.dir, showWarnings = FALSE, recursive = TRUE)
+
 saveRDS(hr.params.post, file.path(out.dir, file = "hr.params.post.rds"))
 saveRDS(hr.derived.post, file.path(out.dir, file = "hr.derived.post.rds"))
-saveRDS(hr.imputed.post, file.path(out.dir, file = "hr.imputed.post.rds"))
 
 saveRDS(hr.params.summ, file.path(out.dir, file = "hr.params.summ.rds"))
 saveRDS(hr.derived.summ, file.path(out.dir, file = "hr.derived.summ.rds"))
-saveRDS(hr.imputed.summ, file.path(out.dir, file = "hr.imputed.summ.rds"))
-
-saveRDS(junk, file.path(out.dir, file = "junk.rds"))
-
-# cat(capture.output(print(hr.params.post), file.path(out.dir, file="hr_params_post.txt")))
-sink(file.path(out.dir, file="hr_params.txt"))
-print(hr.params.post)
-sink()
-sink(file.path(out.dir, file="hr_derived.txt"))
-print(hr.derived.summ)
-sink()
-sink(file.path(out.dir, file="hr_imputed.txt"))
-print(hr.imputed.summ)
-sink()
 
 
-#### Step 3: PLOTTING  ####
+### Step 3: PLOTTING  ###
 
-out.dir <- "./A_Results_Suppl/Mod Survey filtered/"
-setwd(out.dir)
-
-# Read data files
-hr.params.post <- readRDS("hr.params.post.rds")
-hr.derived.post <- readRDS("hr.derived.post.rds")
-hr.imputed.post2 <- readRDS("hr.imputed.post.rds")
-junk <- readRDS("junk.rds")
-
-hr.params.summ <- readRDS("hr.params.summ.rds")
-hr.derived.summ <- readRDS("hr.derived.summ.rds")
-hr.imputed.summ2 <- readRDS("hr.imputed.summ.rds")
-
-# plot posterior expectations of marginal effects
 require(ggmcmc)
 hr.params.s<-ggs(hr.params.post)
 hr.derived.s<-ggs(hr.derived.post)
@@ -700,44 +624,17 @@ hr.derived.s<-ggs(hr.derived.post)
 # just want to copy hr.params.s to work with it for plotting diagnostics without screwing up the original object
 # also get rid of chains for t.sd.index since this is not really a parameter of interest
 HR.labels<-data.frame(Parameter=dimnames(hr.params.post[[1]])[[2]],
-                      Label=c("alpha","beta[3]","beta[4]","beta[5]","beta[1]",
-                              "beta[2]","K[B,-]","K[D,-]","K[B,+]","K[D,+]",
-                              "sigma","phi","exclude"))
+                      Label=c("alpha","beta[3]","beta[4]","beta[5]","beta[1]","beta[2]","K[B,-]","K[D,-]","K[B,+]","K[D,+]","sigma","phi","exclude"))
 
 hr.params2.s<-ggs(hr.params.post,par_labels = HR.labels)
 hr.params2.s<-hr.params2.s[hr.params2.s$ParameterOriginal!="t.sd.index",]
 
-ggmcmc(hr.params.s, "diagnostics_hr_params_final.pdf")
-ggmcmc(hr.derived.s, "diagnostics_hr_derived_final.pdf")
 
-## Figure 2 paper Watters et al. (2020).
+# ****************************************************************************************************
 
-# reference (best case)
-png("EP_summ_boxplot.png", width = 10, height = 7, units = "in", res = 300, pointsize = 10) # Added
-par(mar = c(6, 5, 2, 1))  # optional margins # Added
-boxplot(value~I(as.numeric(Parameter)),data=hr.derived.s,subset=(as.numeric(hr.derived.s$Parameter)==19),
-        range=0,ylim=c(-2,2),xaxt="n",xlim=c(0.5,7.5),ylab="Expected performance",
-        xlab="",whisklty=1,boxwex=1,at=1)
-# ONI
-boxplot(value~I(as.numeric(Parameter)),data=hr.derived.s,subset=(is.element(as.numeric(hr.derived.s$Parameter),c(25,31))),
-        range=0,xaxt="n",yaxt="n",whisklty=1,boxwex=0.5,add=TRUE,at=2:3,col="gray80")
-# biomass
-boxplot(value~I(as.numeric(Parameter)),data=hr.derived.s,subset=(as.numeric(hr.derived.s$Parameter)==20),
-        range=0,xaxt="n",yaxt="n",whisklty=1,boxwex=1,add=TRUE,at=4,col="gray40",medcol="white")
-# harvest rate
-boxplot(value~I(as.numeric(Parameter)),data=hr.derived.s,subset=(is.element(as.numeric(hr.derived.s$Parameter),c(21,23))),
-        range=0,yaxt="n",xaxt="n",whisklty=1,boxwex=0.5,add=TRUE,at=5:6,col="black",medcol="white")
-# worst case with PARAMETER 36 chosen - so with "warm" ONI.  Should be (hr.derived.s$Parameter)==12
-boxplot(value~I(as.numeric(Parameter)),data=hr.derived.s,subset=(as.numeric(hr.derived.s$Parameter)==36),
-        range=0,xaxt="n",yaxt="n",whisklty=1,boxwex=1,add=TRUE,at=7)
-axis(1,at=1:7,labels=c("reference","-0.5 < ONI < 0.5","ONI >= 0.5","LKB > 1 Mt","0.01 < LHR < 0.10","LHR >= 0.10","worst case"))
-abline(h=mean(hr.derived.s$value[as.numeric(hr.derived.s$Parameter)==19]),lty=2)
-abline(h=0)
-abline(h=-mean(hr.derived.s$value[as.numeric(hr.derived.s$Parameter)==19]),col="blue",lty=2)  # Added blue line
-dev.off() # Added
+# Supplementary Figures
 
-
-### Supplementary Figures
+# ****************************************************************************************************
 
 # S1 -- trace plots of main model parameters
 ggs_traceplot(hr.params2.s) + facet_wrap(~ Parameter, ncol = 3, scales="free")
@@ -763,166 +660,88 @@ ggs_histogram(hr.params2.s) + facet_wrap(~ Parameter, ncol = 3, scales="free")
 
 # S7 -- plot posterior predictive distributions over data for visual posterior predictive check
 xx<-junk
-xx$impute.me<-ifelse(is.na(xx$survey) & xx$season=="S",1,0)
-xx$imputed.hr<-hr.imputed.summ$statistics[,1]
-xx$survey[xx$impute.me==1]<-xx$catch[xx$impute.me==1]/xx$imputed.hr[xx$impute.me==1]
-xx$hr.class<-ifelse(xx$catch/xx$survey<=0.01,1,ifelse(xx$catch/xx$survey>=0.1,3,2))
-xx$kb.class<-ifelse(xx$survey<=1000000,1,2) 
-xx$oni.class<-as.numeric(factor(xx$oni.class))
-xx$case<-ifelse(xx$oni.class==1 & xx$kb.class==1 & xx$hr.class==1,1,
-                ifelse(xx$oni.class==1 & xx$kb.class==2 & xx$hr.class==1,2,
-                 ifelse(xx$oni.class==1 & xx$kb.class==1 & xx$hr.class==2,3,
-                  ifelse(xx$oni.class==1 & xx$kb.class==2 & xx$hr.class==2,4,
-                   ifelse(xx$oni.class==1 & xx$kb.class==1 & xx$hr.class==3,5,
-                    ifelse(xx$oni.class==1 & xx$kb.class==2 & xx$hr.class==3,6,
-                     ifelse(xx$oni.class==2 & xx$kb.class==1 & xx$hr.class==1,7,
-                      ifelse(xx$oni.class==2 & xx$kb.class==2 & xx$hr.class==1,8,
-                       ifelse(xx$oni.class==2 & xx$kb.class==1 & xx$hr.class==2,9,
-                        ifelse(xx$oni.class==2 & xx$kb.class==2 & xx$hr.class==2,10,
-                         ifelse(xx$oni.class==2 & xx$kb.class==1 & xx$hr.class==3,11,
-                          ifelse(xx$oni.class==2 & xx$kb.class==2 & xx$hr.class==3,12,
-                           ifelse(xx$oni.class==3 & xx$kb.class==1 & xx$hr.class==1,13,
-                            ifelse(xx$oni.class==3 & xx$kb.class==2 & xx$hr.class==1,14,
-                             ifelse(xx$oni.class==3 & xx$kb.class==1 & xx$hr.class==2,15,
-                              ifelse(xx$oni.class==3 & xx$kb.class==2 & xx$hr.class==2,16,
-                               ifelse(xx$oni.class==3 & xx$kb.class==1 & xx$hr.class==3,17,18)))))))))))))))))
+xx$case<-ifelse(xx$oniclass==1 & xx$bclass==1 & xx$hrclass==1,1,
+         ifelse(xx$oniclass==1 & xx$bclass==2 & xx$hrclass==1,2,
+         ifelse(xx$oniclass==1 & xx$bclass==1 & xx$hrclass==2,3,
+         ifelse(xx$oniclass==1 & xx$bclass==2 & xx$hrclass==2,4,
+         ifelse(xx$oniclass==1 & xx$bclass==1 & xx$hrclass==3,5,
+         ifelse(xx$oniclass==1 & xx$bclass==2 & xx$hrclass==3,6,
+         ifelse(xx$oniclass==2 & xx$bclass==1 & xx$hrclass==1,7,
+         ifelse(xx$oniclass==2 & xx$bclass==2 & xx$hrclass==1,8,
+         ifelse(xx$oniclass==2 & xx$bclass==1 & xx$hrclass==2,9,
+         ifelse(xx$oniclass==2 & xx$bclass==2 & xx$hrclass==2,10,
+         ifelse(xx$oniclass==2 & xx$bclass==1 & xx$hrclass==3,11,
+         ifelse(xx$oniclass==2 & xx$bclass==2 & xx$hrclass==3,12,
+         ifelse(xx$oniclass==3 & xx$bclass==1 & xx$hrclass==1,13,
+         ifelse(xx$oniclass==3 & xx$bclass==2 & xx$hrclass==1,14,
+         ifelse(xx$oniclass==3 & xx$bclass==1 & xx$hrclass==2,15,
+         ifelse(xx$oniclass==3 & xx$bclass==2 & xx$hrclass==2,16,
+         ifelse(xx$oniclass==3 & xx$bclass==1 & xx$hrclass==3,17,18)))))))))))))))))
 
-#### Save xx
-saveRDS(xx, "Data_Fig_S7.rds")  # save the data
+#### Save 'xx'
+saveRDS(xx, file.path(out.dir, "Data_Fig_S7.rds"))  # save the data
 ####
 
 # plot the data
-png("std_performance_boxplot.png", width = 10, height = 7, units = "in", res = 300, pointsize = 10) # Added
-par(mar = c(6, 5, 2, 1))  # optional margins # Added
-plot(jitter(xx$case[xx$impute.me==0],amount=0.25),xx$index[xx$impute.me==0],type="n",xlim=c(0.65,18.35),
-     ylim=c(-3.5,3.5),
-     xlab="case",xaxt="n",ylab="std performance index",pch=16)
+plot(jitter(xx$case,amount=0.25),xx$index,type="n",xlim=c(0.65,18.35),ylim=c(-3.5,3.5),
+     xlab="Case",xaxt="n",ylab="Performance index",pch=16)
 # add posterior predictive distributions as box plots
 for(i in 1:18){
   boxplot(value~I(as.numeric(Parameter)),data=hr.derived.s,subset=(as.numeric(hr.derived.s$Parameter)==i),
-          range=0,outline=FALSE,xaxt="n",whisklty=1,boxwex=1,at=i,add=TRUE)
+          range=1.5,outline=FALSE,xaxt="n",whisklty=1,boxwex=1,at=i,col="white",add=TRUE)
 }
 # plot the data
-points(jitter(xx$case[xx$impute.me==0&xx$season=="S"],amount=0.2),xx$index[xx$impute.me==0&xx$season=="S"],
-       cex=0.8,col="red",pch=16)
-points(jitter(xx$case[xx$impute.me==0&xx$season=="W"],amount=0.2),xx$index[xx$impute.me==0&xx$season=="W"],
-       cex=0.8,col="blue",pch=16)
-points(jitter(xx$case[xx$impute.me==1],amount=0.2),xx$index[xx$impute.me==1],cex=1,col="red")
+points(jitter(xx$case[xx$season=="S"],amount=0.2),xx$index[xx$season=="S"],cex=0.5,col="red",pch=16)
+points(jitter(xx$case[xx$season=="W"],amount=0.2),xx$index[xx$season=="W"],cex=0.5,col="blue",pch=16)
 axis(1,at=1:18)
+abline(h=0)
+abline(h=mean(hr.derived.s$value[as.numeric(hr.derived.s$Parameter)==19]),lty=2)
+## ADD BLUE LINE
+abline(h=-mean(hr.derived.s$value[as.numeric(hr.derived.s$Parameter)==19]),col="blue",lty=2)  # Added
+
+dev.copy(
+  png,
+  filename = "./A_Results_Suppl/Model01_filtered/Posterior_predictive_dist_mod01.png",
+  width    = 8,
+  height   = 6,
+  units    = "in",
+  res      = 300
+)
+dev.off()
+
+
+# Revised Supplementary Figure S8 (Watters et al.)
+
+# reference (best case)
+
+boxplot(value~I(as.numeric(Parameter)),data=hr.derived.s,subset=(as.numeric(hr.derived.s$Parameter)==19),
+        range=0,ylim=c(-1.75,1.75),xaxt="n",xlim=c(0.5,7.5),
+        ylab="expected performance", xlab="",whisklty=1,boxwex=1,at=1,col="white")
+# ONI
+boxplot(value~I(as.numeric(Parameter)),data=hr.derived.s,subset=(is.element(as.numeric(hr.derived.s$Parameter),c(25,31))),
+        range=0,xaxt="n",yaxt="n",whisklty=1,boxwex=0.5,add=TRUE,at=2:3,col="gray80")
+# biomass
+boxplot(value~I(as.numeric(Parameter)),data=hr.derived.s,subset=(as.numeric(hr.derived.s$Parameter)==20),
+        range=0,xaxt="n",yaxt="n",whisklty=1,boxwex=1,add=TRUE,at=4,col="gray40",medcol="white")
+# harvest rate
+boxplot(value~I(as.numeric(Parameter)),data=hr.derived.s,subset=(is.element(as.numeric(hr.derived.s$Parameter),c(21,23))),
+        range=0,yaxt="n",xaxt="n",whisklty=1,boxwex=0.5,add=TRUE,at=5:6,col="black",medcol="white")
+# worst case
+boxplot(value~I(as.numeric(Parameter)),data=hr.derived.s,subset=(as.numeric(hr.derived.s$Parameter)==36),
+        range=0,xaxt="n",yaxt="n",whisklty=1,boxwex=1,add=TRUE,at=7,col="white")
+axis(1,at=1:7,labels=c("best case","-0.5 < ONI < 0.5","ONI >= 0.5","LKB > 1 Mt","0.01 < LHR < 0.10","LHR >= 0.10","worst case"))
 abline(h=mean(hr.derived.s$value[as.numeric(hr.derived.s$Parameter)==19]),lty=2)
 abline(h=0)
+## ADD BLUE LINE
 abline(h=-mean(hr.derived.s$value[as.numeric(hr.derived.s$Parameter)==19]),col="blue",lty=2)  # Added
-dev.off() # Added
 
-
-
-### #  Added by Andy - plot all cases*
-
-png("Expected_Performance_18.png", width = 10, height = 7, units = "in", res = 300, pointsize = 10) # Added
-par(mar = c(6, 5, 2, 1))  # optional margins # Added
-
-# # reference (best case)
-boxplot(value~I(as.numeric(Parameter)),data=hr.derived.s,
-        subset=(as.numeric(hr.derived.s$Parameter)==19),
-        range=0,ylim=c(-2,2),xaxt="n",xlim=c(0.5,18.5),
-        ylab="Expected performance",xlab="Case scenario",
-        whisklty=1,boxwex=1,at=1)
-
-boxplot(value~I(as.numeric(Parameter)),data=hr.derived.s,subset=(is.element(as.numeric(hr.derived.s$Parameter),c(20:36))),
-        range=0,xaxt="n",yaxt="n",whisklty=1,boxwex=0.5,add=TRUE,at=2:18,col="gray80")
-
-# points added by Javier (from  S7)
-points(jitter(xx$case[xx$impute.me==0&xx$season=="S"],amount=0.2),xx$index[xx$impute.me==0&xx$season=="S"],
-       cex=0.8,col="red",pch=16)
-points(jitter(xx$case[xx$impute.me==0&xx$season=="W"],amount=0.2),xx$index[xx$impute.me==0&xx$season=="W"],
-       cex=0.8,col="blue",pch=16)
-points(jitter(xx$case[xx$impute.me==1],amount=0.2),xx$index[xx$impute.me==1],cex=1,col="red")
-##
-axis(1,at=1:18,labels=c("1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18"))
-abline(h=mean(hr.derived.s$value[as.numeric(hr.derived.s$Parameter)==19]),lty=2)
-abline(h=0)
-abline(h=-mean(hr.derived.s$value[as.numeric(hr.derived.s$Parameter)==19]),col="blue",lty=2)  # Added
-dev.off() # Added
-
-
-
-
-
-#### misc stuff ####
-
-junk2<-make.localhr.data(plot.winter=TRUE)
-junk2$impute.me<-ifelse(is.na(junk2$survey)&junk2$season=="S",1,0)
-junk2$imputed<-exp(ifelse(junk2$impute.me==0,NA,ifelse(junk2$gSSMU==1&junk2$sam.sign=="Neg",
-                                                       hr.params.summ$statistics[7,1],
-                                                       ifelse(junk2$gSSMU==2&junk2$sam.sign=="Neg",hr.params.summ$statistics[8,1],
-                                                              ifelse(junk2$gSSMU==1&junk2$sam.sign=="Pos",hr.params.summ$statistics[9,1],
-                                                                     hr.params.summ$statistics[10,1])))))
-
-library(lattice)
-# plot the time series
-xyplot(index~cal.yr|season,data=junk2,horizontal=FALSE,aspect=0.25,panel=function(x,y,subscripts,...,Z=junk2$survey,IMP=junk2$imputed){
-  z<-(Z[subscripts]-mean(c(Z[subscripts],IMP[subscripts]),na.rm=TRUE))/sd(c(Z[subscripts],IMP[subscripts]),na.rm=TRUE)
-  imp<-(IMP[subscripts]-mean(c(Z[subscripts],IMP[subscripts]),na.rm=TRUE))/sd(c(Z[subscripts],IMP[subscripts]),na.rm=TRUE)
-  panel.xyplot(x,y,...,pch=16,col="black")
-  panel.points(as.numeric(x),z,col="red",pch=16,cex=1.25)
-  panel.points(as.numeric(x),imp,col="red",pch=1,cex=1.25)
-  panel.abline(h=0,lty=2)},
-  ylim=c(-3.5,4.5),layout=c(1,2),xlab="year",ylab="std monitoring index")
-
-# plot the time series with env indices (panel for Fig 1)
-xyplot(index~cal.yr|season+PROJECT,data=junk2,horizontal=FALSE,aspect=0.5,panel=function(x,y,subscripts,...,Z=junk2$survey,
-                                                                                         IMP=junk2$imputed,ONI=junk2$oni,SAM=junk2$sam){
-  z<-(Z[subscripts]-mean(c(Z[subscripts],IMP[subscripts]),na.rm=TRUE))/sd(c(Z[subscripts],IMP[subscripts]),na.rm=TRUE)
-  imp<-(IMP[subscripts]-mean(c(Z[subscripts],IMP[subscripts]),na.rm=TRUE))/sd(c(Z[subscripts],IMP[subscripts]),na.rm=TRUE)
-  panel.xyplot(x,y,...,pch=16,col="black")
-  panel.points(as.numeric(x),z,col="red",pch=16,cex=1.25)
-  panel.points(as.numeric(x),imp,col="red",pch=1,cex=1.25)
-  tt.oni<-data.frame(as.numeric(x),ONI[subscripts])
-  tt.oni<-tt.oni[order(tt.oni[,1]),]
-  panel.lines(tt.oni[,1],tt.oni[,2],col="blue")
-  tt.sam<-data.frame(as.numeric(x),SAM[subscripts])
-  tt.sam<-tt.sam[order(tt.sam[,1]),]
-  panel.lines(tt.sam[,1],tt.sam[,2],col="dark green")
-  panel.abline(h=0,lty=2)},
-  ylim=c(-3.5,4.5),layout=c(2,2),xlab="year",ylab="index")
-
-
-# some stuff to tablulate local harvest rates by year (including imputed estimates)
-
-junk$impute.me<-ifelse(is.na(junk$survey)&junk$season=="S",1,0)
-junk$survey<-ifelse(junk$impute.me==0,junk$survey,exp(ifelse(junk$gSSMU==1&junk$sam.sign=="Neg",
-                                                             hr.params.summ$statistics[7,1],
-                                                             ifelse(junk$gSSMU==2&junk$sam.sign=="Neg",hr.params.summ$statistics[8,1],
-                                                                    ifelse(junk$gSSMU==1&junk$sam.sign=="Pos",hr.params.summ$statistics[9,1],
-                                                                           hr.params.summ$statistics[10,1])))))
-junk$hr<-junk$catch/junk$survey
-junk$hihr<-(junk$hr>=0.10)
-
-# table for supplementary info
-jj<-unique(junk[,c(7,8,6,11,17,16)])
-names(jj)<-c("calendar.year","stratum","season","catch","LHR","imputed")
-jj$stratum<-ifelse(jj$stratum==1,"Bransfield","Drake")
-jj$season<-ifelse(jj$season=="S","Summer","Winter")
-jj$imputed<-ifelse(jj$imputed==1,"Yes","No")
-# no catch data for 2016
-jj<-jj[jj$calendar.year!=2016,]
-write.csv(jj[order(jj[,1],jj[,2],jj[,3]),],file="hr.csv",row.names = FALSE)
-
-# variation in catch by season and decade (panel for Fig 3)
-tt<-read.csv("c1.csv",header=TRUE,stringsAsFactors = FALSE)
-tt<-tt[is.element(tt$AssignedSSMU,c("APBSE","APBSW","APDPE","APDPW","APE","APEI","APPA","APW")),]
-tt$FishingSeason<-ifelse(tt$Month==12,tt$CalendarYear+1,tt$CalendarYear)
-tt$season<-ifelse(is.element(tt$Month,c(10:12,1:3)),"S","W")
-tt$decade<-ifelse(tt$FishingSeason<1990,"before 1990",
-                  ifelse(tt$FishingSeason>1989&tt$FishingSeason<2000,"1990-1999",
-                         ifelse(tt$FishingSeason>1999&tt$FishingSeason<2010,"2000-2009","after 2009")))
-tt$decade<-ordered(tt$decade,levels=c("before 1990","1990-1999","2000-2009","after 2009"))
-tt<-tapply(tt$TotalCatch,list(tt$decade,tt$season),sum)
-tt<-data.frame(catch=as.numeric(tt),decade=rep(dimnames(tt)[[1]],dim(tt)[2]),season=rep(dimnames(tt)[[2]],
-                                                                                        each=dim(tt)[1]))
-tt$decade<-ordered(tt$decade,levels=c("before 1990","1990-1999","2000-2009","after 2009"))
-#
-barchart(I(catch/1000)~season|decade,data=tt,layout=c(4,1),aspect=1,xlab="Season",ylab="Total catch (1000 t)")
-
-           
+dev.copy(
+  png,
+  filename = "./A_Results_Suppl/Model01_filtered/Penguin_performance_mod01.png",
+  width    = 8,
+  height   = 6,
+  units    = "in",
+  res      = 300
+)
+dev.off()
 

@@ -7,6 +7,8 @@ author:
     affiliation: 2
   - name: "Bjørn Krafft"
     affiliation: 3
+  - name: "Javier A. Arata"
+    affiliation: 4
 affiliation:
   - id: 1
     name: "Norwegian Polar Institute, Department of Research, Tromsø, Norway"
@@ -14,6 +16,8 @@ affiliation:
     name: "Institute of Marine Research Tromsø, Norway"
   - id: 3
     name: "Institute of Marine Research Bergen, Norway"
+  - id: 4
+    name: "Association of Responsible Krill harvesting companies, ARK, Margate, TAS, Australia"
 abstract: |
     Characterising the impact of human activities on wildlife is a key function of applied science. In the Antarctic Peninsula, the fishery for Antarctic krill has been operating for over half a century, and concerns that fishery-driven localised depletion of krill around pygoscelid penguin colonies could have deleterious effect on their performance and demographic trends have been raised. One study utilises 30 years of penguin foraging and reproductive performance of penguins at two colonies in the South Shetland Islands matched against acoustic measurements of krill biomass and krill catches at the gSSMU scale [@Watters2020]. Herein we provide an assessment of the efficacy of this approach in drawing conclusions as representing sound scientific advice, given that the study in question is now being used as such. We demonstrate that several underlying assumptions in the Watters et al. 2020 study are contrary to the published scientific literature and not supported by the data provided by the authors themselves.  When the modelling appraoch is reformulated to account for these inaccuracies, we demonstrate that the impact on penguin performance of fishing activity is greatly reduced, and that the dominant driver of penguin performance is the Oceanic Niño Index. We conclude that the original study should be treated with caution when used as a basis for fisheries management advice.
 journal: "Scientific Reports"

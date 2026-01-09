@@ -98,7 +98,7 @@ summer Ln(LKB) by gSSMU and SAM sign, derived from Equation (2) of Watters et
 al. (2020). Statistical results from the nonparametric one-way ANOVA are
 reported as follows: p-value_1 compares SAM sign within each gSSMU, and
 p-value_2 compares gSSMUs within each SAM sign. The corresponding LKB
-estimates appear in the column labelled mean LKB.
+estimates appear in the column labelled median-LKB.
 
 ```{r Table.01, results='asis', warning=FALSE, echo=FALSE, message=FALSE, comment=NA}
 
@@ -124,13 +124,7 @@ knitr::include_graphics("./A_Results/Fig1_gSSMUs.png")
 
 ```
 
-Figure 1. Locations of the penguin colonies (COPA shown in red, SHIRREF
-shown in blue), the two gSSMUs (gSSMU 1 in the blue dashed area and
-gSSMU 2 in the red dashed area), and the surrounding SSMUs (APEI:
-Antarctic Peninsula Elephant Island; APDPE: Antarctic Peninsula Drake
-Passage East; APDPW: Antarctic Peninsula Drake Passage West; APBSE:
-Antarctic Peninsula Bransfield Strait East; APBSW: Antarctic Peninsula
-Bransfield Strait West).
+Figure 1. Locations of penguin colonies and spatial management units in the study area. COPA is shown in red and SHIRREF in blue. The two gSSMUs are indicated by dashed outlines, gSSMU 1 in red and gSSMU 2 in blue. Surrounding SSMUs are also shown: APEI, Antarctic Peninsula Elephant Island; APDPE, Antarctic Peninsula Drake Passage East; APDPW, Antarctic Peninsula Drake Passage West; APBSE, Antarctic Peninsula Bransfield Strait East; APBSW, Antarctic Peninsula Bransfield Strait West.
 
 ```{r LKB vs SAM, fig.width=7.5, fig.asp=0.65, out.width="80%",fig.align="centre", warning=FALSE, echo=FALSE}
 
@@ -157,7 +151,7 @@ and Local Harvest Rate (LHR) (right) for the study period. Top
 panel:gSSMU 2 (SSIW-EI). Bottom panel: gSSMU 1 (BS). Filled circles show
 survey data from Watters et al. 2020. Open circles show the mean imputed
 median LKB values for negative and positive SAM, as per Table 1. Color
-code: red = summer; blue = winter. Black dash line: LHR = 0.01; solid
+code: red = summer; blue = winter. Dash black line: LHR = 0.01; solid
 black line: LHR = 0.10.
 
 ```{r Penguin distribution plots, out.width="65%",fig.align="centre", echo=FALSE}

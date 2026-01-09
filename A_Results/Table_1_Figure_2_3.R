@@ -132,7 +132,7 @@ data <- data %>%
     
     # fill log survey
     LogSurvey_imputed = case_when(
-      gSSMU == 1  & sam.sign == "Neg" ~ as.numeric(Table.01[1, 4]),  # remove from beggining: 'impute.me == 1 &' 
+      gSSMU == 1  & sam.sign == "Neg" ~ as.numeric(Table.01[1, 4]),  # remove from begining: 'impute.me == 1 &' 
       gSSMU == 1  & sam.sign == "Pos" ~ as.numeric(Table.01[2, 4]),
       gSSMU == 2  & sam.sign == "Neg" ~ as.numeric(Table.01[3, 4]),
       gSSMU == 2  & sam.sign == "Pos" ~ as.numeric(Table.01[4, 4]),
