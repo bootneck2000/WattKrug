@@ -236,8 +236,8 @@ summer cases with low harvest rates (LHR ≤0.01) across all ONI
 categories and both LKB classes, together with a limited number of
 winter cases characterized by intermediate or high harvest rates.
 Several combinations, including the nominal \"worst case\" scenario
-(−0.5 \< ONI \< 0.5; LKB \> 1 Mt; LHR ≥0.10), were not supported by
-empirical observations.
+(−0.5 \< ONI \< 0.5; LKB \> 1 Mt; LHR ≥0.10), had no empirical
+observations.
 
 Across supported cases, penguin performance varied most strongly among
 ONI categories. Comparisons between otherwise identical cases differing
