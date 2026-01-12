@@ -185,7 +185,7 @@ kable(shapiro_imp, digits = 3)
 
 ```
 
-```{r Survey histogram, fig.width=7.5, fig.asp=0.7, out.width="80%",fig.align="centre", warning=FALSE, echo=FALSE}
+```{r Survey histogram, fig.width=8.0, fig.asp=0.7, out.width="80%",fig.align="centre", warning=FALSE, echo=FALSE}
 
 # load script that produces fig_g1 and fig_g2
 suppressMessages(
@@ -215,87 +215,214 @@ shown as histograms stratified by gSSMU (1, 2) and SAM sign (Neg, Pos).
 The solid curve in each panel shows the log-normal density fitted to the
 observed survey values.
 
+```{=tex}
 \newpage
 \blandscape
+```
+# C. Effect of Survey filtering and imputed LKB values on penguin performance
 
-# C. Effect of Survey filtering and imputed-LKB values on Penguin performance
+Penguin performance and posterior predictive distributions were
+re-analysed after excluding surveys with low spatial coverage. In this
+initial sensitivity analysis, missing summer LKB values were not imputed
+(Figures S4--S5). These analyses are directly comparable to
+Supplementary Figures S7--S8 of Watters et al. (2020). We then repeated
+the analysis with missing summer LKB values imputed using the median
+summer LKB derived from surveyed years (Table 1; Figures S6--S7).
 
-Analysis of penguin performance and posterior predictive distribution, after removing surveys with low coverage (Fig. S4-S5).
+Posterior predictive distributions showed that only a subset of the
+possible ONI--LKB--LHR combinations were supported by empirical
+observations (Figure S4; Table S3). Most data were concentrated in
+summer cases with low harvest rates (LHR ≤0.01) across all ONI
+categories and both LKB classes, together with a limited number of
+winter cases characterized by intermediate or high harvest rates.
+Several combinations, including the nominal \"worst case\" scenario
+(−0.5 \< ONI \< 0.5; LKB \> 1 Mt; LHR ≥0.10), were not supported by
+empirical observations.
 
+Across supported cases, penguin performance varied most strongly among
+ONI categories. Comparisons between otherwise identical cases differing
+only in ONI (e.g., cases 1--2, 7--8, and 13--14) showed consistently
+higher performance under negative ONI conditions and lower performance
+under intermediate ONI conditions, based on summer-derived indices.
+Winter observations were sparse but included the lowest performance
+values observed, particularly for the combination −0.5 \< ONI \< 0.5,
+LKB \> 1 Mt, and 0.01 \< LHR \< 0.10 (case 10).
 
-```{r Posterior preductive Model01, fig.width=7.5, fig.asp=0.65, out.width="80%",fig.align="centre", warning=FALSE, echo=FALSE}
+Imputing missing summer LKB values resulted in only minor changes to
+posterior predictive distributions of penguin performance (Figure S6).
+The primary effect was increased support for reduced performance in case
+9 (−0.5 \< ONI \< 0.5; LKB ≤ 1 Mt; 0.01 \< LHR \< 0.10). The nominal
+\"worst case\" scenario (case 12) remained unsupported by either
+observed or imputed data.
+
+Posterior expectations of penguin performance after filtering for survey
+coverage (Figure S5) were broadly similar to those reported by Watters
+et al. (2020, Supplementary Figure S8), but differed in three key
+respects. First, the nominal \"worst case\" scenario no longer produced
+the lowest expected performance and instead lay close to the long-term
+mean. Second, scenarios with high harvest rates (LHR ≥0.10) exhibited
+median performance comparable to the \"best case.\" Third, the lowest
+median performance was associated with intermediate harvest rates (0.01
+\< LHR \< 0.10; equivalent to case 3), followed by intermediate ONI
+conditions (equivalent to case 7; Figure S5). These patterns were
+maintained, and further accentuated, when missing summer LKB values were
+imputed (Figure S7). Consistent with Watters et al. (2020), variation in
+LKB (\<1 Mt versus \>1 Mt) exhibited the weakest association with
+penguin performance.
+
+Taken together, these results indicate that, once surveys with low
+spatial coverage are excluded, penguin performance is most strongly
+associated with intermediate ONI and intermediate LHR conditions. High
+LKB (\>1 Mt) and high LHR (≥0.10) scenarios show limited influence on
+expected performance, and the nominal \"worst case\" scenario remains
+close to the long-term mean (Figures S5 & S7) and unsupported by
+empirical data (Figures S4 and S6).
+
+Table S3. The posterior predictive distributions shows that only some of
+the potential combinations have actual data (Fig. S4). Specifically,
+most data comes from the following combinations:
+
+| Scenario        | ONI               | LKB     | LHR                | Season |
+|-----------------|-------------------|---------|--------------------|--------|
+| Case 1 ('best') | ≤ -0.5            | ≤ 1 Mt  | ≤ 0.01             | summer |
+| Case 2          | ≤ -0.5            | \> 1 Mt | ≤ 0.01             | summer |
+| Case 7          | -0.5 \< ONI \<0.5 | ≤ 1 Mt  | ≤ 0.01             | summer |
+| Case 8          | -0.5 \< ONI \<0.5 | \> 1 Mt | ≤ 0.01             | summer |
+| Case 10         | -0.5 \< ONI \<0.5 | \> 1 Mt | 0.01 \< LHR \< 0.1 | winter |
+| Case 13         | ≥ 0.5             | ≤ 1 Mt  | ≤ 0.01             | summer |
+| Case 14         | ≥ 0.5             | \> 1 Mt | ≤ 0.01             | summer |
+| Case 17         | ≥ 0.5             | ≤ 1 Mt  | ≥ 0.1              | winter |
+
+```{r Posterior preductive Model01, fig.width=8.0, fig.asp=1.00, out.width="100%",fig.align="centre", warning=FALSE, echo=FALSE}
 
 knitr::include_graphics("./A_Results_Suppl/Model01_filtered/Posterior_predictive_dist_mod01.png")
 
 
 ```
 
-Figure S4. Posterior predictive distributions (boxplots) and jittered observations (colored circles) of penguin performance, after removing low coverage survey data; missing summer LKB were not imputed. Case 1 is ONI ≤ -0.5°C; LKB ≤ 1 Mt; and LHR ≤ 0.01 (the “best case”). Case 2 is ONI ≤ -0.5°C; LKB > 1 Mt; and LHR ≤ 0.01. Case 3 is ONI ≤ -0.5°C; LKB ≤ 1 Mt; and 0.01 < LHR < 0.1. Case 4 is ONI ≤ -0.5°C; LKB > 1 Mt; and 0.01 < LHR < 0.01. Case 5 is ONI ≤ -0.5°C; LKB ≤ 1 Mt; and LHR ≥ 0.1. Case 6 is ONI ≤ -0.5°C; LKB > 1 Mt; and LHR ≥ 0.1. Cases 7-12 are the same as Cases 1-6 except -0.5°C < ONI < 0.5°C; Case 12 is the “worst case.” Cases 13-18 are the same as Cases 1-6 except ONI ≥ 0.5°C. Filled red circles represent summer observations from krill surveys. Blue circles represent winter observations. Boxes characterize interquartile ranges with medians indicated by bold horizontal lines and whiskers extending to 1.5 times these ranges.
+Figure S4. Posterior predictive distributions (boxplots) and jittered
+observations (colored circles) of penguin performance, after removing
+low coverage survey data; missing summer LKB were not imputed. Case 1 is
+ONI ≤ -0.5°C; LKB ≤ 1 Mt; and LHR ≤ 0.01 (the "best case"). Case 2 is
+ONI ≤ -0.5°C; LKB \> 1 Mt; and LHR ≤ 0.01. Case 3 is ONI ≤ -0.5°C; LKB ≤
+1 Mt; and 0.01 \< LHR \< 0.1. Case 4 is ONI ≤ -0.5°C; LKB \> 1 Mt; and
+0.01 \< LHR \< 0.1. Case 5 is ONI ≤ -0.5°C; LKB ≤ 1 Mt; and LHR ≥ 0.1.
+Case 6 is ONI ≤ -0.5°C; LKB \> 1 Mt; and LHR ≥ 0.1. Cases 7-12 are the
+same as Cases 1-6 except -0.5°C \< ONI \< 0.5°C; Case 12 is the "worst
+case." Cases 13-18 are the same as Cases 1-6 except ONI ≥ 0.5°C. Filled
+red circles represent summer observations from krill surveys. Blue
+circles represent winter observations. Boxes characterize interquartile
+ranges with medians indicated by bold horizontal lines and whiskers
+extending to 1.5 times these ranges.
 
-
-
-```{r Peng Performance Model01, fig.width=7.5, fig.asp=0.65, out.width="80%",fig.align="centre", warning=FALSE, echo=FALSE}
+```{r Peng Performance Model01, fig.width=8.0, fig.asp=0.5, out.width="100%",fig.align="centre", warning=FALSE, echo=FALSE}
 
 knitr::include_graphics("./A_Results_Suppl/Model01_filtered/Penguin_performance_mod01.png")
 
 
 ```
 
-Figure S5. Posterior expectations of penguin performance from the sensitivity test in which: low coverage survey data was removed, and missing summer LKB were not imputed. The “best case” is ONI ≤ -0.5; LKB ≤ 1 Mt; and LHR ≤ 0.01. The “worst case” is -0.5 < ONI < 0.5; LKB > 1 Mt, and LHR ≥ 0.1. All other cases are marginal deviations from the best case. The median, interquartile range, and range of the posterior expectations are provided for each boxplot. Reference lines respectively indicate the median expected performance in the best case (dashed line) and the long-term mean performance (solid line). As per Supplementary Fig. S8, Watters et al. (2020).
+Figure S5. Posterior expectations of penguin performance from the
+sensitivity test in which: low coverage survey data was removed, and
+missing summer LKB were not imputed. The "best case" is ONI ≤ -0.5; LKB
+≤ 1 Mt; and LHR ≤ 0.01. The "worst case" is -0.5 \< ONI \< 0.5; LKB \> 1
+Mt, and LHR ≥ 0.1. All other cases are marginal deviations from the best
+case. The median, interquartile range, and range of the posterior
+expectations are provided for each boxplot. Reference lines respectively
+indicate the median expected performance in the best case (dashed line)
+and the long-term mean performance (solid line). As per Supplementary
+Fig. S8, Watters et al. (2020).
 
-
-
-Analysis of penguin performance and posterior predictive distribution, after removing surveys with low coverage amd imputing missing summer surveys as in Table 1 (Fig. S6-S7).
-
-
-```{r Posterior preductive Model01 imputed, fig.width=7.5, fig.asp=0.65, out.width="80%",fig.align="centre", warning=FALSE, echo=FALSE}
+```{r Posterior preductive Model01 imputed, fig.width=8.0, fig.asp=1.00, out.width="100%",fig.align="centre", warning=FALSE, echo=FALSE}
 
 knitr::include_graphics("./A_Results_Suppl/Model01_imputed1/Posterior_predictive_dist_mod01imp.png")
 
 
 ```
 
-Figure S6. Posterior predictive distributions (boxplots) and jittered observations (colored circles) of penguin performance, after removing low coverage survey data; missing summer LKB were imputed according to values in Table 1. Case 1 is ONI ≤ -0.5°C; LKB ≤ 1 Mt; and LHR ≤ 0.01 (the “best case”). Case 2 is ONI ≤ -0.5°C; LKB > 1 Mt; and LHR ≤ 0.01. Case 3 is ONI ≤ -0.5°C; LKB ≤ 1 Mt; and 0.01 < LHR < 0.1. Case 4 is ONI ≤ -0.5°C; LKB > 1 Mt; and 0.01 < LHR < 0.01. Case 5 is ONI ≤ -0.5°C; LKB ≤ 1 Mt; and LHR ≥ 0.1. Case 6 is ONI ≤ -0.5°C; LKB > 1 Mt; and LHR ≥ 0.1. Cases 7-12 are the same as Cases 1-6 except -0.5°C < ONI < 0.5°C; Case 12 is the “worst case.” Cases 13-18 are the same as Cases 1-6 except ONI ≥ 0.5°C. Filled red circles represent summer observations from krill surveys. Blue circles represent winter observations. Boxes characterize interquartile ranges with medians indicated by bold horizontal lines and whiskers extending to 1.5 times these ranges.
+Figure S6. Posterior predictive distributions (boxplots) and jittered
+observations (colored circles) of penguin performance, after removing
+low coverage survey data; missing summer LKB were imputed according to
+values in Table 1. Case 1 is ONI ≤ -0.5°C; LKB ≤ 1 Mt; and LHR ≤ 0.01
+(the "best case"). Case 2 is ONI ≤ -0.5°C; LKB \> 1 Mt; and LHR ≤ 0.01.
+Case 3 is ONI ≤ -0.5°C; LKB ≤ 1 Mt; and 0.01 \< LHR \< 0.1. Case 4 is
+ONI ≤ -0.5°C; LKB \> 1 Mt; and 0.01 \< LHR \< 0.1. Case 5 is ONI ≤
+-0.5°C; LKB ≤ 1 Mt; and LHR ≥ 0.1. Case 6 is ONI ≤ -0.5°C; LKB \> 1 Mt;
+and LHR ≥ 0.1. Cases 7-12 are the same as Cases 1-6 except -0.5°C \< ONI
+\< 0.5°C; Case 12 is the "worst case." Cases 13-18 are the same as Cases
+1-6 except ONI ≥ 0.5°C. Filled red circles represent summer observations
+from krill surveys. Blue circles represent winter observations. Boxes
+characterize interquartile ranges with medians indicated by bold
+horizontal lines and whiskers extending to 1.5 times these ranges.
 
-
-
-```{r Peng Performance Model01 imputed, fig.width=7.5, fig.asp=0.65, out.width="80%",fig.align="centre", warning=FALSE, echo=FALSE}
+```{r Peng Performance Model01 imputed, fig.width=8.0, fig.asp=1.00, out.width="100%",fig.align="centre", warning=FALSE, echo=FALSE}
 
 knitr::include_graphics("./A_Results_Suppl/Model01_imputed1/Penguin_performance_mod01imp.png")
 
 
 ```
 
-Figure S7. Posterior expectations of penguin performance from the sensitivity test in which: low coverage survey data was removed; missing summer LKB were imputed according to values in Table 1. The “best case” is ONI ≤ -0.5; LKB ≤ 1 Mt; and LHR ≤ 0.01. The “worst case” is -0.5 < ONI < 0.5; LKB > 1 Mt, and LHR ≥ 0.1. All other cases are marginal deviations from the best case. The median, interquartile range, and range of the posterior expectations are provided for each boxplot. Reference lines respectively indicate the median expected performance in the best case (dashed line) and the long-term mean performance (solid line). As per Supplementary Fig. S8, Watters et al. (2020).
+Figure S7. Posterior expectations of penguin performance from the
+sensitivity test in which: low coverage survey data was removed; missing
+summer LKB were imputed according to values in Table 1. The "best case"
+is ONI ≤ -0.5; LKB ≤ 1 Mt; and LHR ≤ 0.01. The "worst case" is -0.5 \<
+ONI \< 0.5; LKB \> 1 Mt, and LHR ≥ 0.1. All other cases are marginal
+deviations from the best case. The median, interquartile range, and
+range of the posterior expectations are provided for each boxplot.
+Reference lines respectively indicate the median expected performance in
+the best case (dashed line) and the long-term mean performance (solid
+line). As per Supplementary Fig. S8, Watters et al. (2020).
 
-
-
+```{=tex}
 \newpage
 \blandscape
-
+```
 # D. Krill consumption by main predator taxa
 
-Estimates of krill consumption by major predator groups during the study period have been previously summarized by Hill et al. (2007). During summer, fish accounted for the largest proportion of krill consumption, with estimated removals of 
-`r scales::comma(round(sum(Table.03$Fish_Krill_ton[3:4]), 0))` in the Bransfield Strait
-(gSMSMU #1: APBSW + APBSE) and `r scales::comma(round(sum(Table.03$Fish_Krill_ton[1:2]), 0))` in the Drake
-Passage (gSSMU #2: APDPW + APDPE). Combined summer consumption by penguins and whales was estimated at 
+Estimates of krill consumption by major predator groups during the study
+period have been previously summarized by Hill et al. (2007). During
+summer, fish accounted for the largest proportion of krill consumption,
+with estimated removals of
+`r scales::comma(round(sum(Table.03$Fish_Krill_ton[3:4]), 0))` in the
+Bransfield Strait (gSMSMU #1: APBSW + APBSE) and
+`r scales::comma(round(sum(Table.03$Fish_Krill_ton[1:2]), 0))` in the
+Drake Passage (gSSMU #2: APDPW + APDPE). Combined summer consumption by
+penguins and whales was estimated at
 `r scales::comma(round(sum(Table.03$Whale_Krill_ton[3:4])+sum(Table.03$Penguin_Krill_ton[3:4]), 0))`
 in the Bransfield Strait and
 `r scales::comma(round(sum(Table.03$Whale_Krill_ton[1:2])+sum(Table.03$Penguin_Krill_ton[1:2]), 0))`
-in the Drake Passage. Total summer krill consumption therefore exceeded 1 Mt in both gSSMU 1 and gSSMU 2.
+in the Drake Passage. Total summer krill consumption therefore exceeded
+1 Mt in both gSSMU 1 and gSSMU 2.
 
-Watters et al. (2020) noted "krill biomass in the Antarctic Peninsula is generally sufficient to support penguin production." Consistent with this, no evidence of acute adult penguin mortality or complete lack of bird attending nesting grounds has been documented in the region, unlike patterns reported for other penguin species during severe starvation events (Vianna et al. 2014, Crawford et al. 2025). In this context, summer survey estimates below 1 million tonnes for each gSSMU are inconsistent with observed predator dynamics and likely underestimate krill availability.
+Watters et al. (2020) noted "krill biomass in the Antarctic Peninsula is
+generally sufficient to support penguin production." Consistent with
+this, no evidence of acute adult penguin mortality or complete lack of
+bird attending nesting grounds has been documented in the region, unlike
+patterns reported for other penguin species during severe starvation
+events (Vianna et al. 2014, Crawford et al. 2025). In this context,
+summer survey estimates below 1 million tonnes for each gSSMU are
+inconsistent with observed predator dynamics and likely underestimate
+krill availability.
 
-As  Watters et al. (2020) indicates, "krill biomass in the AP is generally sufficient to support penguin production." As no evidene of accute adult penguin mortality has been recorded for the region (as is the case for other penguin species during accute starvation; Crawford et al. 2025), summer survey estimates below 1 Million tonnes for each gSSMU should be considered as gross subestimations of krill availability. 
+As Watters et al. (2020) indicates, "krill biomass in the AP is
+generally sufficient to support penguin production." As no evidene of
+accute adult penguin mortality has been recorded for the region (as is
+the case for other penguin species during accute starvation; Crawford et
+al. 2025), summer survey estimates below 1 Million tonnes for each gSSMU
+should be considered as gross subestimations of krill availability.
 
-Winter consumption estimates were lower but more uncertain. Hill et al. (2007) estimated fish consumption of `r scales::comma(round(sum(Table.04$Fish_Krill_ton[3:4]), 0))` in the Bransfield Strait
-and `r scales::comma(round(sum(Table.04$Fish_Krill_ton[1:2]), 0))` in the Drake
-Passage. Penguin consumption during winter was estimated at 
-`r scales::comma(round(sum(Table.04$Penguin_Krill_ton[3:4]), 0))`
-in the Bransfield Strait and
-`r scales::comma(round(sum(Table.04$Penguin_Krill_ton[1:2]), 0))`
-in the Drake Passage. Combined winter consumption by fish and penguins therefore exceeded 500,000 t and 350,000 for gSSMU #1 and #2. respectively. 
-
+Winter consumption estimates were lower but more uncertain. Hill et al.
+(2007) estimated fish consumption of
+`r scales::comma(round(sum(Table.04$Fish_Krill_ton[3:4]), 0))` in the
+Bransfield Strait and
+`r scales::comma(round(sum(Table.04$Fish_Krill_ton[1:2]), 0))` in the
+Drake Passage. Penguin consumption during winter was estimated at
+`r scales::comma(round(sum(Table.04$Penguin_Krill_ton[3:4]), 0))` in the
+Bransfield Strait and
+`r scales::comma(round(sum(Table.04$Penguin_Krill_ton[1:2]), 0))` in the
+Drake Passage. Combined winter consumption by fish and penguins
+therefore exceeded 500,000 t and 350,000 for gSSMU #1 and #2.
+respectively.
 
 Table S3. Estimated krill consumption by major predator taxa during the
 austral summer. Values from Hill et al. (2007), Table 15.
@@ -321,17 +448,21 @@ flextable(Table.04) |>
 
 
 ```
+
+```{=tex}
 \elandscape
 \newpage
-
+```
 # Citations
-
 
 Hill, S., K. Reid, S. E. Thorpe, J. T. Hinke, and G. M. Watters. 2007.
 "A Compilation of Parameters for Ecosystem Dynamics Models of the Scotia
 Sea--Antarctic Peninsula Region." CCAMLR Science 14: 1-25.
 
-Vianna J.A. , M. Cortez, B. Ramos, N. Sallaberry-Pincheira, D. González-Acuña, G. P. M. Dantas, J. Morgante, A. Simeone, and G. Luna-Jorquera. 2014. Changes in abundance and distribution of Humboldt penguin Spheniscus humboldti. Marine Ornithology 42:153-159.
+Vianna J.A. , M. Cortez, B. Ramos, N. Sallaberry-Pincheira, D.
+González-Acuña, G. P. M. Dantas, J. Morgante, A. Simeone, and G.
+Luna-Jorquera. 2014. Changes in abundance and distribution of Humboldt
+penguin Spheniscus humboldti. Marine Ornithology 42:153-159.
 
 Watters, George M., Jefferson T. Hinke, and Christian S. Reiss. 2020.
 "Long-Term Observations from Antarctica Demonstrate That Mismatched
