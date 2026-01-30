@@ -3,6 +3,8 @@
 
 ## Conditions: 
 # A. Survey data filtered by transect (nm) coverage 
+# B. Not imputed summer LKB
+# C. Penguin distribution adjusted to specific SSMUs
 
 library(tidyverse)
 library(lattice)
@@ -235,7 +237,7 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
   ### Introduced Change: 
   # Filter low transect coverage (<10th percentil)
   survey_filtered <- survey %>%
-    filter(gSSMU %in% c(1, 2))
+    filter(gSSMU %in% c(1, 2,3,4))
   percentiles <- survey_filtered %>%
     group_by(gSSMU) %>%
     summarise(p10 = quantile(nmi.count, probs = 0.10, na.rm = TRUE))
@@ -247,6 +249,21 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
   rm(percentiles, survey_filtered, survey_low_nmi)
   ### END changes
   
+  ### New change: Estimate split gSSMU LKB
+  survey.mod = as_tibble(survey) %>%
+    group_split(gSSMU)
+  # 28.7/(28.7+22) #fraction of nmi area # change here
+  survey.mod[[1]]$biomass = survey.mod[[1]]$biomass * 0.566075 
+  # 15.8/(15.8+16.4+36.2)fraction of nmi area # change here 
+  survey.mod[[2]]$biomass = survey.mod[[2]]$biomass * 0.230994 
+  # 22.0/(28.7+22.0) change here
+  survey.mod[[3]]$biomass = survey.mod[[3]]$biomass * 0.433925 
+  # change here
+  survey.mod[[4]]$biomass = survey.mod[[4]]$biomass * 1 
+  # change here
+  survey = data.frame(bind_rows(survey.mod[[1]],survey.mod[[2]],survey.mod[[3]],survey.mod[[4]]))  
+  ### END changes
+
   survey<-tapply(survey$biomass,list(survey$Year,survey$gSSMU),mean,na.rm=TRUE)
   survey<-data.frame(cal.yr=rep(dimnames(survey)[[1]],dim(survey)[2]),
                      gSSMU=rep(dimnames(survey)[[2]],each=dim(survey)[1]),
@@ -256,16 +273,20 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
   #survey<-survey[survey$season=="S",]
   survey$matchme<-paste(survey$cal.yr,survey$season,survey$gSSMU,sep="|")
   #print(str(survey))
+  rm(survey.mod)
   #
   ###########################################################################################################
   #
   # krill fishery catches
   fishery<-read.csv(file.path(read_dir,"c1.csv"),header=TRUE,stringsAsFactors = FALSE)
-  fishery$season<-ifelse(is.element(fishery$Month,c(10:12,1:3)),"S","W")
-  gSSMU1<-c("APBSE","APBSW")
-  gSSMU2<-c("APDPE","APDPW","APEI")
-  gSSMU3<-"APPA"
-  gSSMU4<-c("APW","APE")
+  fishery$season<-ifelse(is.element(fishery$Month,c(10:12,1:2)),"S","W")  # March: Winter
+  
+  # Change definitions of gSSMUs
+  gSSMU1<-c("APBSE") # change here
+  gSSMU2<-c("APDPW") # change here
+  gSSMU3<-"APBSW" # change here
+  gSSMU4<-c("APW","APE") # change here
+  
   fishery$gSSMU<-rep(NA,dim(fishery)[1])
   fishery$gSSMU<-ifelse(is.element(fishery$AssignedSSMU,gSSMU1),1,fishery$gSSMU)
   fishery$gSSMU<-ifelse(is.element(fishery$AssignedSSMU,gSSMU2),2,fishery$gSSMU)
@@ -280,8 +301,10 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
   fishery$cal.yr<-as.numeric(as.character(fishery$cal.yr))
   fishery$gSSMU<-as.numeric(as.character(fishery$gSSMU))
   fishery$matchme<-paste(fishery$cal.yr,fishery$season,fishery$gSSMU,sep="|")
-  
+
+  # Add the following  
   fishery$catch[is.na(fishery$catch)] <- 0 # Added Change
+  fishery$cal.yr <- as.character(fishery$cal.yr)
   
   #print(str(fishery))
   #
@@ -294,26 +317,32 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
   #out$gSSMU<-ifelse(out$PROJECT=="COPA",1,
   #                  ifelse(out$SPECIES=="CHPE",2,
   #                         ifelse(out$SPECIES=="GEPE"&out$PROJECT=="CS"&out$season=="S",2,1)))
+  
+  ### Changes in Spatial Distribution
+
+#  out<-out[!is.na(out$index),] # remove empty index data
+  
   out$gSSMU<-rep(NA,dim(out)[1])
   out$gSSMU<-ifelse(out$SPECIES=="ADPE"&out$PROJECT=="COPA"&out$season=="S",1,out$gSSMU)
-  out$gSSMU<-ifelse(out$SPECIES=="ADPE"&out$PROJECT=="COPA"&out$season=="W",1,out$gSSMU)
+  out$gSSMU<-ifelse(out$SPECIES=="ADPE"&out$PROJECT=="COPA"&out$season=="W",NA,out$gSSMU)
   out$gSSMU<-ifelse(out$SPECIES=="CHPE"&out$PROJECT=="COPA"&out$season=="S",1,out$gSSMU)
-  out$gSSMU<-ifelse(out$SPECIES=="CHPE"&out$PROJECT=="COPA"&out$season=="W",2,out$gSSMU)
+  out$gSSMU<-ifelse(out$SPECIES=="CHPE"&out$PROJECT=="COPA"&out$season=="W",NA,out$gSSMU)
   out$gSSMU<-ifelse(out$SPECIES=="GEPE"&out$PROJECT=="COPA"&out$season=="S",1,out$gSSMU)
   out$gSSMU<-ifelse(out$SPECIES=="GEPE"&out$PROJECT=="COPA"&out$season=="W",1,out$gSSMU)
   out$gSSMU<-ifelse(out$SPECIES=="CHPE"&out$PROJECT=="CS"&out$season=="S",2,out$gSSMU)
-  out$gSSMU<-ifelse(out$SPECIES=="CHPE"&out$PROJECT=="CS"&out$season=="W",2,out$gSSMU)
+  out$gSSMU<-ifelse(out$SPECIES=="CHPE"&out$PROJECT=="CS"&out$season=="W",NA,out$gSSMU)
   out$gSSMU<-ifelse(out$SPECIES=="GEPE"&out$PROJECT=="CS"&out$season=="S",2,out$gSSMU)
   # use following line if GEPE at CS forage in gSSMU 2 during winter
   #out$gSSMU<-ifelse(out$SPECIES=="GEPE"&out$PROJECT=="CS"&out$season=="W",2,out$gSSMU)
   # use following line if GEPE at CS forage in gSSMU 1 during winter
-  out$gSSMU<-ifelse(out$SPECIES=="GEPE"&out$PROJECT=="CS"&out$season=="W",1,out$gSSMU)
+  out$gSSMU<-ifelse(out$SPECIES=="GEPE"&out$PROJECT=="CS"&out$season=="W",3,out$gSSMU)
   #
   out$matchme<-paste(out$cal.yr,out$season,out$gSSMU,sep="|")
   out$survey<-survey$survey[match(out$matchme,survey$matchme)]
   out$catch<-fishery$catch[match(out$matchme,fishery$matchme)]
   #
   out<-out[!is.na(out$gSSMU),]
+  
   #
   ###########################################################################################################
   # pull in the environmental indices
@@ -364,11 +393,10 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
 
 junk<-make.localhr.data()
 
-junk<-junk[!is.na(junk$survey),]
+junk<-filter(junk,survey>0)
 junk$bclass<-ifelse(junk$survey<=1000000,1,2)
 junk$hrclass<-ifelse(junk$catch/junk$survey<=0.01,1,ifelse(junk$catch/junk$survey>=0.1,3,2))
 junk$oniclass<-ifelse(junk$oni.class=="Cool",1,ifelse(junk$oni.class=="Warm",3,2))
-
 
 
 #### Second - Run Model ####
@@ -586,14 +614,14 @@ hr.params.summ<-summary(hr.params.post)
 hr.derived.summ<-summary(hr.derived.post)
 
 # write input/output
-out.dir <- "./A_Results_Suppl/Model01_filtered/"
+out.dir <- "./A_Results/Model02_Andy/"
 dir.create(out.dir, showWarnings = FALSE, recursive = TRUE)
 
-saveRDS(hr.params.post, file.path(out.dir, file = "hr.params.post.rds"))
-saveRDS(hr.derived.post, file.path(out.dir, file = "hr.derived.post.rds"))
-
-saveRDS(hr.params.summ, file.path(out.dir, file = "hr.params.summ.rds"))
-saveRDS(hr.derived.summ, file.path(out.dir, file = "hr.derived.summ.rds"))
+# saveRDS(hr.params.post, file.path(out.dir, file = "hr.params.post.rds"))
+# saveRDS(hr.derived.post, file.path(out.dir, file = "hr.derived.post.rds"))
+# 
+# saveRDS(hr.params.summ, file.path(out.dir, file = "hr.params.summ.rds"))
+# saveRDS(hr.derived.summ, file.path(out.dir, file = "hr.derived.summ.rds"))
 
 
 ### Step 3: PLOTTING  ###
@@ -602,8 +630,8 @@ require(ggmcmc)
 hr.params.s<-ggs(hr.params.post)
 hr.derived.s<-ggs(hr.derived.post)
 # 
-# just want to copy hr.params.s to work with it for plotting diagnostics without screwing up the original object
-# also get rid of chains for t.sd.index since this is not really a parameter of interest
+# # just want to copy hr.params.s to work with it for plotting diagnostics without screwing up the original object
+# # also get rid of chains for t.sd.index since this is not really a parameter of interest
 # HR.labels<-data.frame(Parameter=dimnames(hr.params.post[[1]])[[2]],
 #                       Label=c("alpha","beta[3]","beta[4]","beta[5]","beta[1]","beta[2]",
 #                               "K[B,-]","K[D,-]","K[B,+]","K[D,+]","sigma","phi","exclude"))
@@ -613,10 +641,109 @@ HR.labels <- data.frame(
   Parameter = dimnames(hr.params.post[[1]])[[2]],
   Label = c("alpha", "beta[1]", "beta[2]", "beta[3]", "beta[4]", "beta[5]", 
             "sigma", "phi")
-)
+) 
 hr.params2.s<-ggs(hr.params.post,par_labels = HR.labels)
 hr.params2.s<-hr.params2.s[hr.params2.s$ParameterOriginal!="t.sd.index",]
 
+
+
+
+# Revised Supplementary Figure S8 (Watters et al.)
+
+# reference (best case)
+boxplot(value~I(as.numeric(Parameter)),data=hr.derived.s,subset=(as.numeric(hr.derived.s$Parameter)==19),
+        range=0,ylim=c(-1.75,1.75),xaxt="n",xlim=c(0.5,7.5),
+        ylab="expected performance", xlab="",whisklty=1,boxwex=1,at=1,col="white")
+# ONI
+boxplot(value~I(as.numeric(Parameter)),data=hr.derived.s,subset=(is.element(as.numeric(hr.derived.s$Parameter),c(25,31))),
+        range=0,xaxt="n",yaxt="n",whisklty=1,boxwex=0.5,add=TRUE,at=2:3,col="gray80")
+# biomass
+boxplot(value~I(as.numeric(Parameter)),data=hr.derived.s,subset=(as.numeric(hr.derived.s$Parameter)==20),
+        range=0,xaxt="n",yaxt="n",whisklty=1,boxwex=1,add=TRUE,at=4,col="gray40",medcol="white")
+# harvest rate
+boxplot(value~I(as.numeric(Parameter)),data=hr.derived.s,subset=(is.element(as.numeric(hr.derived.s$Parameter),c(21,23))),
+        range=0,yaxt="n",xaxt="n",whisklty=1,boxwex=0.5,add=TRUE,at=5:6,col="black",medcol="white")
+# worst case
+boxplot(value~I(as.numeric(Parameter)),data=hr.derived.s,subset=(as.numeric(hr.derived.s$Parameter)==36),
+        range=0,xaxt="n",yaxt="n",whisklty=1,boxwex=1,add=TRUE,at=7,col="white")
+axis(1,at=1:7,labels=c("best case","-0.5 < ONI < 0.5","ONI >= 0.5","LKB > 1 Mt",
+                       "0.01< LHR <0.10","LHR >= 0.10","worst case"), cex=0.75)
+abline(h=mean(hr.derived.s$value[as.numeric(hr.derived.s$Parameter)==19]),lty=2)
+abline(h=0)
+## ADD BLUE LINE
+abline(h=-mean(hr.derived.s$value[as.numeric(hr.derived.s$Parameter)==19]),col="blue",lty=2)  # Added
+
+dev.copy(
+  png,
+  filename = file.path(out.dir, file = "Penguin_performance_mod02_Andy_MWinter.png"),
+  width    = 12,
+  height   = 7,
+  units    = "in",
+  res      = 300
+)
+dev.off()
+
+# write.csv(hr.derived.s, file = file.path(out.dir, file ="hr_derived_s.csv"))
+
+# # ***********************************************************************************************
+# # *************************************** ADDED FIGURE - plot all cases***************************
+# # ***********************************************************************************************
+
+# # reference (best case)
+# Set up plot margins to accommodate rotated labels (bottom margin increased)
+par(mar=c(8.5, 4, 4, 0.5) + 0.1)
+# Color ONI classes
+case_colors <- c(rep("lightblue", 6), rep("white", 6), rep("lightpink", 6))
+# Create x-axis labels
+x_labels <- c("LKB<=1Mt, LHR<=0.01", "LKB>1Mt, LHR<=0.01",
+              "LKB<=1Mt, 0.01<LHR<0.1", "LKB>1Mt, 0.01<LHR<0.1",
+              "LKB<=1Mt, LHR>=0.1", "LKB>1Mt, LHR>=0.1",
+              "LKB<=1Mt, LHR<=0.01", "LKB>1Mt, LHR<=0.01",
+              "LKB<=1Mt, 0.01<LHR<0.1", "LKB>1Mt, 0.01<LHR<0.1",
+              "LKB<=1Mt, LHR>=0.1", "LKB>1Mt, LHR>=0.1",
+              "LKB<=1Mt, LHR<=0.01", "LKB>1Mt, LHR<=0.01",
+              "LKB<=1Mt, 0.01<LHR<0.1", "LKB>1Mt, 0.01<LHR<0.1",
+              "LKB<=1Mt, LHR>=0.1", "LKB>1Mt, LHR>=0.1")
+
+boxplot(value~I(as.numeric(Parameter)),data=hr.derived.s,
+        subset=(as.numeric(hr.derived.s$Parameter)==19),
+        range=0,ylim=c(-2,2),xaxt="n",xlim=c(0.5,18.5),
+        ylab="expected performance",xlab="",
+        whisklty=1,boxwex=1,at=1,col=case_colors[1])
+
+for(i in 2:18){
+  boxplot(value~I(as.numeric(Parameter)),data=hr.derived.s,
+          subset=(as.numeric(hr.derived.s$Parameter)==(i+18)),
+          range=0,ylim=c(-2,2),xaxt="n",xlim=c(0.5,18.5),
+          whisklty=1,boxwex=1,at=i,
+        col=case_colors[i],add=TRUE)
+}
+
+# axis(1,at=1:18,labels=c("1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18"))
+axis(1, at=1:18, labels=FALSE)
+text(x=1:18, y=par("usr")[3]-0.3, labels=x_labels, srt=90, adj=1, xpd=TRUE, cex=0.65)
+
+abline(h=mean(hr.derived.s$value[as.numeric(hr.derived.s$Parameter)==19]),lty=2)
+abline(h=0)
+abline(h=-mean(hr.derived.s$value[as.numeric(hr.derived.s$Parameter)==19]),col="blue",lty=2)  # Added
+
+# Add legend for ONI classes
+legend("topright", 
+       legend=c("ONI < -0.5C", "-0.5C < ONI < 0.5C", "ONI > 0.5C"),
+       fill=c("lightblue", "white", "lightpink"),
+       border="black",
+       title="ONI Classes",
+       cex=0.65)
+
+dev.copy(
+  png,
+  filename = file.path(out.dir, file = "Penguin_performance_ALL_mod02_Andy_MWinter.png"),
+  width    = 8,
+  height   = 6,
+  units    = "in",
+  res      = 300
+)
+dev.off()
 
 # ****************************************************************************************************
 
@@ -649,47 +776,81 @@ ggs_histogram(hr.params2.s) + facet_wrap(~ Parameter, ncol = 3, scales="free")
 # S7 -- plot posterior predictive distributions over data for visual posterior predictive check
 xx<-junk
 xx$case<-ifelse(xx$oniclass==1 & xx$bclass==1 & xx$hrclass==1,1,
-         ifelse(xx$oniclass==1 & xx$bclass==2 & xx$hrclass==1,2,
-         ifelse(xx$oniclass==1 & xx$bclass==1 & xx$hrclass==2,3,
-         ifelse(xx$oniclass==1 & xx$bclass==2 & xx$hrclass==2,4,
-         ifelse(xx$oniclass==1 & xx$bclass==1 & xx$hrclass==3,5,
-         ifelse(xx$oniclass==1 & xx$bclass==2 & xx$hrclass==3,6,
-         ifelse(xx$oniclass==2 & xx$bclass==1 & xx$hrclass==1,7,
-         ifelse(xx$oniclass==2 & xx$bclass==2 & xx$hrclass==1,8,
-         ifelse(xx$oniclass==2 & xx$bclass==1 & xx$hrclass==2,9,
-         ifelse(xx$oniclass==2 & xx$bclass==2 & xx$hrclass==2,10,
-         ifelse(xx$oniclass==2 & xx$bclass==1 & xx$hrclass==3,11,
-         ifelse(xx$oniclass==2 & xx$bclass==2 & xx$hrclass==3,12,
-         ifelse(xx$oniclass==3 & xx$bclass==1 & xx$hrclass==1,13,
-         ifelse(xx$oniclass==3 & xx$bclass==2 & xx$hrclass==1,14,
-         ifelse(xx$oniclass==3 & xx$bclass==1 & xx$hrclass==2,15,
-         ifelse(xx$oniclass==3 & xx$bclass==2 & xx$hrclass==2,16,
-         ifelse(xx$oniclass==3 & xx$bclass==1 & xx$hrclass==3,17,18)))))))))))))))))
+          ifelse(xx$oniclass==1 & xx$bclass==2 & xx$hrclass==1,2,
+           ifelse(xx$oniclass==1 & xx$bclass==1 & xx$hrclass==2,3,
+             ifelse(xx$oniclass==1 & xx$bclass==2 & xx$hrclass==2,4,
+              ifelse(xx$oniclass==1 & xx$bclass==1 & xx$hrclass==3,5,
+                ifelse(xx$oniclass==1 & xx$bclass==2 & xx$hrclass==3,6,
+                ifelse(xx$oniclass==2 & xx$bclass==1 & xx$hrclass==1,7,
+                  ifelse(xx$oniclass==2 & xx$bclass==2 & xx$hrclass==1,8,
+                    ifelse(xx$oniclass==2 & xx$bclass==1 & xx$hrclass==2,9,
+                      ifelse(xx$oniclass==2 & xx$bclass==2 & xx$hrclass==2,10,
+                        ifelse(xx$oniclass==2 & xx$bclass==1 & xx$hrclass==3,11,
+                          ifelse(xx$oniclass==2 & xx$bclass==2 & xx$hrclass==3,12,
+                            ifelse(xx$oniclass==3 & xx$bclass==1 & xx$hrclass==1,13,
+                              ifelse(xx$oniclass==3 & xx$bclass==2 & xx$hrclass==1,14,
+                                ifelse(xx$oniclass==3 & xx$bclass==1 & xx$hrclass==2,15,
+                                  ifelse(xx$oniclass==3 & xx$bclass==2 & xx$hrclass==2,16,
+                                    ifelse(xx$oniclass==3 & xx$bclass==1 & xx$hrclass==3,17,18)))))))))))))))))
 
 #### Save 'xx'
-saveRDS(xx, file.path(out.dir, "Data_Fig_S7.rds"))  # save the data
+saveRDS(xx, file.path(out.dir, "Data_Fig_S7_MarchWinter.rds"))  # save the data
 ####
+
+# Create mapping for colors and hatching based on case number
+# Cases 1-6: oniclass=1 (light blue)
+# Cases 7-12: oniclass=2 (transparent/white)
+# Cases 13-18: oniclass=3 (light red)
+case_colors <- c(rep("lightblue", 6), rep("white", 6), rep("lightpink", 6))
+
+# Create x-axis labels
+x_labels <- c("LKB<=1Mt, LHR<=0.01", "LKB>1Mt, LHR<=0.01",
+              "LKB<=1Mt, 0.01<LHR<0.1", "LKB>1Mt, 0.01<LHR<0.1",
+              "LKB<=1Mt, LHR>=0.1", "LKB>1Mt, LHR>=0.1",
+              "LKB<=1Mt, LHR<=0.01", "LKB>1Mt, LHR<=0.01",
+              "LKB<=1Mt, 0.01<LHR<0.1", "LKB>1Mt, 0.01<LHR<0.1",
+              "LKB<=1Mt, LHR>=0.1", "LKB>1Mt, LHR>=0.1",
+              "LKB<=1Mt, LHR<=0.01", "LKB>1Mt, LHR<=0.01",
+              "LKB<=1Mt, 0.01<LHR<0.1", "LKB>1Mt, 0.01<LHR<0.1",
+              "LKB<=1Mt, LHR>=0.1", "LKB>1Mt, LHR>=0.1")
+
+# Set up plot margins to accommodate rotated labels (bottom margin increased)
+par(mar=c(8.5, 4, 4, 0.5) + 0.1)
 
 # plot the data
 plot(jitter(xx$case,amount=0.25),xx$index,type="n",xlim=c(0.65,18.35),ylim=c(-3.5,3.5),
-     xlab="Case",xaxt="n",ylab="Performance index",pch=16)
+     xlab="",xaxt="n",ylab="Performance index",pch=16)
 # add posterior predictive distributions as box plots
 for(i in 1:18){
-  boxplot(value~I(as.numeric(Parameter)),data=hr.derived.s,subset=(as.numeric(hr.derived.s$Parameter)==i),
-          range=1.5,outline=FALSE,xaxt="n",whisklty=1,boxwex=1,at=i,col="white",add=TRUE)
+  boxplot(value~I(as.numeric(Parameter)),data=hr.derived.s,
+              subset=(as.numeric(hr.derived.s$Parameter)==i),
+              range=1.5,outline=FALSE,xaxt="n",whisklty=1,boxwex=1,at=i,
+              col=case_colors[i],add=TRUE)
 }
+
 # plot the data
 points(jitter(xx$case[xx$season=="S"],amount=0.2),xx$index[xx$season=="S"],cex=0.5,col="red",pch=16)
 points(jitter(xx$case[xx$season=="W"],amount=0.2),xx$index[xx$season=="W"],cex=0.5,col="blue",pch=16)
-axis(1,at=1:18)
 abline(h=0)
 abline(h=mean(hr.derived.s$value[as.numeric(hr.derived.s$Parameter)==19]),lty=2)
 ## ADD BLUE LINE
 abline(h=-mean(hr.derived.s$value[as.numeric(hr.derived.s$Parameter)==19]),col="blue",lty=2)  # Added
 
+# Add custom x-axis with rotated labels
+axis(1, at=1:18, labels=FALSE)
+text(x=1:18, y=par("usr")[3]-0.3, labels=x_labels, srt=90, adj=1, xpd=TRUE, cex=0.65)
+
+# Add legend for ONI classes
+legend("topright", 
+       legend=c("ONI < -0.5C", "-0.5C < ONI < 0.5C", "ONI > 0.5C"),
+       fill=c("lightblue", "white", "lightpink"),
+       border="black",
+       title="ONI Classes",
+       cex=0.65)
+
 dev.copy(
   png,
-  filename = "./A_Results_Suppl/Model01_filtered/Posterior_predictive_dist_mod01.png",
+  filename = file.path(out.dir, file = "Posterior_predictive_dist_mod02_Andy_MWinter.png"),
   width    = 8,
   height   = 6,
   units    = "in",
@@ -698,38 +859,4 @@ dev.copy(
 dev.off()
 
 
-# Revised Supplementary Figure S8 (Watters et al.)
-
-# reference (best case)
-
-boxplot(value~I(as.numeric(Parameter)),data=hr.derived.s,subset=(as.numeric(hr.derived.s$Parameter)==19),
-        range=0,ylim=c(-1.75,1.75),xaxt="n",xlim=c(0.5,7.5),
-        ylab="expected performance", xlab="",whisklty=1,boxwex=1,at=1,col="white")
-# ONI
-boxplot(value~I(as.numeric(Parameter)),data=hr.derived.s,subset=(is.element(as.numeric(hr.derived.s$Parameter),c(25,31))),
-        range=0,xaxt="n",yaxt="n",whisklty=1,boxwex=0.5,add=TRUE,at=2:3,col="gray80")
-# biomass
-boxplot(value~I(as.numeric(Parameter)),data=hr.derived.s,subset=(as.numeric(hr.derived.s$Parameter)==20),
-        range=0,xaxt="n",yaxt="n",whisklty=1,boxwex=1,add=TRUE,at=4,col="gray40",medcol="white")
-# harvest rate
-boxplot(value~I(as.numeric(Parameter)),data=hr.derived.s,subset=(is.element(as.numeric(hr.derived.s$Parameter),c(21,23))),
-        range=0,yaxt="n",xaxt="n",whisklty=1,boxwex=0.5,add=TRUE,at=5:6,col="black",medcol="white")
-# worst case
-boxplot(value~I(as.numeric(Parameter)),data=hr.derived.s,subset=(as.numeric(hr.derived.s$Parameter)==36),
-        range=0,xaxt="n",yaxt="n",whisklty=1,boxwex=1,add=TRUE,at=7,col="white")
-axis(1,at=1:7,labels=c("best case","-0.5 < ONI < 0.5","ONI >= 0.5","LKB > 1 Mt","0.01 < LHR < 0.10","LHR >= 0.10","worst case"))
-abline(h=mean(hr.derived.s$value[as.numeric(hr.derived.s$Parameter)==19]),lty=2)
-abline(h=0)
-## ADD BLUE LINE
-abline(h=-mean(hr.derived.s$value[as.numeric(hr.derived.s$Parameter)==19]),col="blue",lty=2)  # Added
-
-dev.copy(
-  png,
-  filename = "./A_Results_Suppl/Model01_filtered/Penguin_performance_mod01.png",
-  width    = 8,
-  height   = 6,
-  units    = "in",
-  res      = 300
-)
-dev.off()
 

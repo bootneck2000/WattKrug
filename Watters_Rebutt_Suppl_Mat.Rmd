@@ -235,9 +235,8 @@ observations (Figure S4; Table S3). Most data were concentrated in
 summer cases with low harvest rates (LHR ≤0.01) across all ONI
 categories and both LKB classes, together with a limited number of
 winter cases characterized by intermediate or high harvest rates.
-Several combinations, including the nominal \"worst case\" scenario
-(−0.5 \< ONI \< 0.5; LKB \> 1 Mt; LHR ≥0.10), had no empirical
-observations.
+Several combinations, including the nominal "worst case" scenario (−0.5
+\< ONI \< 0.5; LKB \> 1 Mt; LHR ≥0.10), had no empirical observations.
 
 Across supported cases, penguin performance varied most strongly among
 ONI categories. Comparisons between otherwise identical cases differing
@@ -252,16 +251,16 @@ Imputing missing summer LKB values resulted in only minor changes to
 posterior predictive distributions of penguin performance (Figure S6).
 The primary effect was increased support for reduced performance in case
 9 (−0.5 \< ONI \< 0.5; LKB ≤ 1 Mt; 0.01 \< LHR \< 0.10). The nominal
-\"worst case\" scenario (case 12) remained unsupported by either
-observed or imputed data.
+"worst case" scenario (case 12) remained unsupported by either observed
+or imputed data.
 
 Posterior expectations of penguin performance after filtering for survey
 coverage (Figure S5) were broadly similar to those reported by Watters
 et al. (2020, Supplementary Figure S8), but differed in three key
-respects. First, the nominal \"worst case\" scenario no longer produced
+respects. First, the nominal "worst case" scenario no longer produced
 the lowest expected performance and instead lay close to the long-term
 mean. Second, scenarios with high harvest rates (LHR ≥0.10) exhibited
-median performance comparable to the \"best case.\" Third, the lowest
+median performance comparable to the "best case." Third, the lowest
 median performance was associated with intermediate harvest rates (0.01
 \< LHR \< 0.10; equivalent to case 3), followed by intermediate ONI
 conditions (equivalent to case 7; Figure S5). These patterns were
@@ -274,7 +273,7 @@ Taken together, these results indicate that, once surveys with low
 spatial coverage are excluded, penguin performance is most strongly
 associated with intermediate ONI and intermediate LHR conditions. High
 LKB (\>1 Mt) and high LHR (≥0.10) scenarios show limited influence on
-expected performance, and the nominal \"worst case\" scenario remains
+expected performance, and the nominal "worst case" scenario remains
 close to the long-term mean (Figures S5 & S7) and unsupported by
 empirical data (Figures S4 and S6).
 
@@ -377,7 +376,23 @@ line). As per Supplementary Fig. S8, Watters et al. (2020).
 \newpage
 \blandscape
 ```
-# D. Krill consumption by main predator taxa
+# D. Continuing spatial and temporal mismatches
+
+
+Table S4. Size of SSMUs for Subarea 48.1. 
+CCAMLR Small-Scale Management Units (SSMUs) were download from CCAMLR Public repository (https://github.com/ccamlr/data).
+CCAMLR. 2022. Geographical data layer: CCAMLR Fishery Small-Scale Management Units. Version 0.9, URL: <https://github.com/ccamlr/data/tree/main/geographical_data/ssmu/versions/v0.9>.
+
+```{r Table S4, results='asis', warning=FALSE, echo=FALSE, message=FALSE, comment=NA}
+
+# load csv table
+ssmu_table <- read.csv("./A_Results_Suppl/SSMU48_area.csv")
+
+knitr::kable(ssmu_table)
+
+```
+
+# E. Krill consumption by main predator taxa
 
 Estimates of krill consumption by major predator groups during the study
 period have been previously summarized by Hill et al. (2007). During

@@ -186,6 +186,22 @@ Watters et al. 2020, the winter performance indices for both species are
 matched to macroscale levels of ONI variability but gSSMU-scale
 estimates of LKB and LHR.
 
+
+
+
+```{r Watters original and SSMU, fig.align="centre", fig.asp=1.5, out.width=100%", echo=FALSE, warning=FALSE}
+
+knitr::include_graphics("./A_Results/Model02_SSMU/Posterior_predictive_dist_mod02_SSMU.png")
+
+```
+
+
+
+
+
+
+
+
 ```{r Watters original and mistake, fig.align="centre", out.width="75%", echo=FALSE}
 
 knitr::include_graphics("./Watters EMM figures/Watters original and mistake.png")

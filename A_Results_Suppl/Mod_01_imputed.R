@@ -639,7 +639,8 @@ hr.derived.s<-ggs(hr.derived.post)
 # just want to copy hr.params.s to work with it for plotting diagnostics without screwing up the original object
 # also get rid of chains for t.sd.index since this is not really a parameter of interest
 HR.labels<-data.frame(Parameter=dimnames(hr.params.post[[1]])[[2]],
-                      Label=c("alpha","beta[3]","beta[4]","beta[5]","beta[1]","beta[2]","K[B,-]","K[D,-]","K[B,+]","K[D,+]","sigma","phi","exclude"))
+                      Label=c("alpha","beta[3]","beta[4]","beta[5]","beta[1]","beta[2]",
+                              "K[B,-]","K[D,-]","K[B,+]","K[D,+]","sigma","phi","exclude"))
 
 hr.params2.s<-ggs(hr.params.post,par_labels = HR.labels)
 hr.params2.s<-hr.params2.s[hr.params2.s$ParameterOriginal!="t.sd.index",]

@@ -348,7 +348,7 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
 }
 junk<-make.localhr.data()
 # write out data
-write.csv(junk, file = "junk.csv")  
+# write.csv(junk, file = "junk.csv")  
 modelstring<-"
  
       model{
