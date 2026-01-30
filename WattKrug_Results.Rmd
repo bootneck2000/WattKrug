@@ -114,6 +114,119 @@ kable(Table.01, digits = 3)
 
 ```
 
+
+```{r read in content, include=FALSE}
+#table original
+d.org = read_csv("./A_Results/Watters_model/Imputed/hr_derived_s.csv",col_types="dddfd")
+#table Andy_March_Summer
+d.andy1 = read_csv("./A_Results/Model02_Andy/hr_derived_s.csv",col_types="dddfd")
+#table SSMUs
+d.SSMUs = read_csv("./A_Results/Model02_SSMU/hr_derived_s.csv",col_types="dddfd")
+
+```
+
+
+
+
+```{r Table 2 Posterior and posterior predictive probabilities, warning=FALSE, echo=FALSE}
+### Replica of Summary Table 1, Watters et al. ----
+keepers = c(37:74)
+pt = d.org %>%
+  dplyr::group_by(Parameter) %>%
+  dplyr::summarize(mean(value)) %>%
+  dplyr::rename(.,c(mean = `mean(value)`)) %>%
+  dplyr::slice(37:74)
+
+best.case.names = c("Best case", "ONI Neutral", "ONI warm", "LKB High", "LHR medium", "LHR high", "Worst case")
+best.case = c(NA,pt$mean[4], pt$mean[5], pt$mean[1], pt$mean[2], pt$mean[3], pt$mean[6])
+oni.range = c(NA,NA,NA, pt$mean[9], pt$mean[7], pt$mean[8], NA)
+oni.warm = c(NA, NA, NA, pt$mean[12], pt$mean[10], pt$mean[11], NA)
+long.term.posterior = c(pt$mean[13], pt$mean[17], pt$mean[18], pt$mean[14], pt$mean[15], pt$mean[16], pt$mean[19])
+long.term.predicted = c(pt$mean[32], pt$mean[36], pt$mean[37], pt$mean[33], pt$mean[34], pt$mean[35], pt$mean[38])
+
+table.original.scenario = round(tibble(best.case, oni.range, 
+                                oni.warm, long.term.posterior,long.term.predicted),2) %>%
+  dplyr::mutate(Effects = best.case.names) %>%
+  dplyr::select(6,1,2,3,4,5)
+
+knitr::kable(table.original.scenario, booktabs=TRUE,  col.names = c("Effects", 
+             "Best Case", 
+              "-0.5°C < ONI < +0.5°C",
+              "ONI > +0.5°C", 
+             "Long-term µ", 
+              "Long-term predicted µ"),
+             longtable=TRUE, align="lccccc", caption = "Table 2. Original table in Watters et al. 2020.  In this and all subsequent tables below, posterior and posterior predictive probabilities that expected performance given the effects indicated in the left-most column are less than the expected performance given effects or conditions indicated in the column headings. Posterior predictive probabilities are indicated in parentheses. ONI is the Oceanic Niño Index, LKB is local krill biomass, and LHR is local harvest rate. Worst Case is represented by neutral ONI; LHR  $\\geqslant$ 0.1; and LKB $\\geqslant$ 1Mt.  The Best Case is represented by La Niña conditions, low LKB and low LHR.", escape=FALSE)
+
+```
+
+
+
+
+```{r Table 3 Posterior and posterior predictive probabilities, warning=FALSE, echo=FALSE}
+### Replica of Summary Table 1, Watters et al. ----
+keepers = c(37:74)
+pt = d.andy1 %>%
+  dplyr::group_by(Parameter) %>%
+  dplyr::summarize(mean(value)) %>%
+  dplyr::rename(.,c(mean = `mean(value)`)) %>%
+  dplyr::slice(37:74)
+
+best.case.names = c("Best case", "ONI Neutral", "ONI warm", "LKB High", "LHR medium", "LHR high", "Worst case")
+best.case = c(NA,pt$mean[4], pt$mean[5], pt$mean[1], pt$mean[2], pt$mean[3], pt$mean[6])
+oni.range = c(NA,NA,NA, pt$mean[9], pt$mean[7], pt$mean[8], NA)
+oni.warm = c(NA, NA, NA, pt$mean[12], pt$mean[10], pt$mean[11], NA)
+long.term.posterior = c(pt$mean[13], pt$mean[17], pt$mean[18], pt$mean[14], pt$mean[15], pt$mean[16], pt$mean[19])
+long.term.predicted = c(pt$mean[32], pt$mean[36], pt$mean[37], pt$mean[33], pt$mean[34], pt$mean[35], pt$mean[38])
+
+table.original.scenario = round(tibble(best.case, oni.range, 
+                                oni.warm, long.term.posterior,long.term.predicted),2) %>%
+  dplyr::mutate(Effects = best.case.names) %>%
+  dplyr::select(6,1,2,3,4,5)
+
+knitr::kable(table.original.scenario, booktabs=TRUE,  col.names = c("Effects", 
+             "Best Case", 
+              "-0.5°C < ONI < +0.5°C",
+              "ONI > +0.5°C", 
+             "Long-term µ", 
+              "Long-term predicted µ"),
+             longtable=TRUE, align="lccccc", caption = "Table 3. Posterior and posterior predictive probabilities for Spatial Model (Andy 1).", escape=FALSE)
+
+```
+
+
+
+
+```{r Table 4 Posterior and posterior predictive probabilities, warning=FALSE, echo=FALSE}
+### Replica of Summary Table 1, Watters et al. ----
+keepers = c(37:74)
+pt = d.SSMUs %>%
+  dplyr::group_by(Parameter) %>%
+  dplyr::summarize(mean(value)) %>%
+  dplyr::rename(.,c(mean = `mean(value)`)) %>%
+  dplyr::slice(37:74)
+
+best.case.names = c("Best case", "ONI Neutral", "ONI warm", "LKB High", "LHR medium", "LHR high", "Worst case")
+best.case = c(NA,pt$mean[4], pt$mean[5], pt$mean[1], pt$mean[2], pt$mean[3], pt$mean[6])
+oni.range = c(NA,NA,NA, pt$mean[9], pt$mean[7], pt$mean[8], NA)
+oni.warm = c(NA, NA, NA, pt$mean[12], pt$mean[10], pt$mean[11], NA)
+long.term.posterior = c(pt$mean[13], pt$mean[17], pt$mean[18], pt$mean[14], pt$mean[15], pt$mean[16], pt$mean[19])
+long.term.predicted = c(pt$mean[32], pt$mean[36], pt$mean[37], pt$mean[33], pt$mean[34], pt$mean[35], pt$mean[38])
+
+table.original.scenario = round(tibble(best.case, oni.range, 
+                                oni.warm, long.term.posterior,long.term.predicted),2) %>%
+  dplyr::mutate(Effects = best.case.names) %>%
+  dplyr::select(6,1,2,3,4,5)
+
+knitr::kable(table.original.scenario, booktabs=TRUE,  col.names = c("Effects", 
+             "Best Case", 
+              "-0.5°C < ONI < +0.5°C",
+              "ONI > +0.5°C", 
+             "Long-term µ", 
+              "Long-term predicted µ"),
+             longtable=TRUE, align="lccccc", caption = "Table 4. Posterior and posterior predictive probabilities for Spatial Model by SSMUs.", escape=FALSE) 
+
+```
+
 \newpage
 
 # Figures:
@@ -171,7 +284,7 @@ provided. The SSMU are combined and coloured according to gSSMU (red:
 gSSMU 2; purple: gSSMU 1) with Chinstrap and Adélie penguin 99% MCP home
 ranges occupying between 7-19% of the gSSMU to which they were assigned.
 
-```{r Overwinter penguin  plots, fig.align="centre", out.width="75%", echo=FALSE}
+```{r Overwinter penguin  plots, fig.align="centre", out.width="60%", echo=FALSE}
 
 knitr::include_graphics("./Watters EMM figures/Overwinter pengo distributions.png")
 ```
@@ -189,17 +302,37 @@ estimates of LKB and LHR.
 
 
 
-```{r Watters original and SSMU, fig.align="centre", fig.asp=1.5, out.width=100%", echo=FALSE, warning=FALSE}
+```{r Watters original and SSMU ALL data, fig.align="centre", fig.asp=1.5, out.width="65%", echo=FALSE, warning=FALSE}
 
-knitr::include_graphics("./A_Results/Model02_SSMU/Posterior_predictive_dist_mod02_SSMU.png")
+knitr::include_graphics("./A_Results/Watters_model/Imputed/Watters_Penguin_performance_imputed.png")
+
+knitr::include_graphics("./A_Results/Model02_Andy/Penguin_performance_ALL_mod02_Andy.png")
+
+knitr::include_graphics("./A_Results/Model02_SSMU/Penguin_performance_ALL_mod02_SSMU.png")
+
+```
+
+Figure 6. Expected performance of penguins, all combinations. A) From Watters et al. 2020 model. B) Summer and Winter distributions modified according to Andy. C) Summer and Winter penguin distributions modified as in text.  
+
+
+
+```{r Watters original and SSMU Expected performance, fig.align="centre", fig.asp=1.5, out.width="65%", echo=FALSE, warning=FALSE}
+
+knitr::include_graphics("./A_Results/Watters_model/Imputed/Watters_Penguin_performance.png")
+
+knitr::include_graphics("./A_Results/Model02_Andy/Penguin_performance_mod02_Andy.png")
+
+knitr::include_graphics("./A_Results/Model02_Andy/Penguin_performance_mod02_Andy_MWinter.png")
+
+knitr::include_graphics("./A_Results/Model02_SSMU/Penguin_performance_mod02_SSMU.png")
 
 ```
 
 
+Figure 7. Expected performance of penguins attributable to the marginal effects of the Oceanic Niño Index (ONI), local krill biomass (LKB) and local harvest rate (LHR) relative to the “best case”. The best case is ONI ≤ −0.5 °C; LKB ≤ 1 Mt; and LHR ≤ 0.01. The “worst case” is −0.5 °C < ONI < 0.5 °C; LKB > 1 Mt; and LHR ≥ 0.1. The median, interquartile range, and range of the posterior expectations are indicated by each boxplot. Reference lines respectively indicate the median expected performance in the best case (dashed line) and the long-term mean performance. A) Watters et al. 2020 model. B) Summer and Winter distributions modified according to Andy. C) Andy with March = Winter. D) Summer and Winter penguin distributions modified as in text. 
 
 
-
-
+Figure 8. 
 
 
 ```{r Watters original and mistake, fig.align="centre", out.width="75%", echo=FALSE}
@@ -208,7 +341,7 @@ knitr::include_graphics("./Watters EMM figures/Watters original and mistake.png"
 
 ```
 
-Figure 6. Original Figure 1 plot from Watters et al. 2020 with A)
+Figure x. Original Figure 1 plot from Watters et al. 2020 with A)
 Neutral ONI and B) B) Warm ONI constituting the "Worst Case" selected.
 C) Displays the original case-by-case plots recreated from the paper,
 with Case 12 representing the intention while data from Case 18 was
@@ -224,7 +357,7 @@ continuing warming climate.
 knitr::include_graphics("./Watters EMM figures/All spp summer then winter 37.png")
 ```
 
-Figure 7. Model output for the alternatve Watters et al. 2020 scenario
+Figure x2. Model output for the alternatve Watters et al. 2020 scenario
 outlined above (all species initially present, Adélie and Chinstrap
 penguins migrate out of the area after breeding, LKB and LHR rescaled to
 SSMU and March included in summer or winter). Selected cases as per
@@ -239,7 +372,7 @@ of penguins against their long-term mean, irrespective of LKB or LHR.
 knitr::include_graphics("./Watters EMM figures/ADE and CHIN summer 40 41.png")
 ```
 
-Figure 8. Model output for Watters et al. 2020 Scenario #2 outlined
+Figure x3. Model output for Watters et al. 2020 Scenario #2 outlined
 above (all species initially present, Adélie and Chinstrap penguins
 migrate out of the area after breeding, LKB and LHR rescaled to SSMU and
 March included in summer or winter). Selected cases as per Watters et

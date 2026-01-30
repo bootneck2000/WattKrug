@@ -386,11 +386,30 @@ CCAMLR. 2022. Geographical data layer: CCAMLR Fishery Small-Scale Management Uni
 ```{r Table S4, results='asis', warning=FALSE, echo=FALSE, message=FALSE, comment=NA}
 
 # load csv table
-ssmu_table <- read.csv("./A_Results_Suppl/SSMU48_area.csv")
+ssmu_table <- read.csv("./Supplementary files/SSMU48_area.csv")
 
 knitr::kable(ssmu_table)
 
 ```
+
+
+Effect of Spatial and temporal mismatches in penguin performance.
+
+```{r Peng posterior predictive Performance , fig.width=8.0, fig.asp=1.00, out.width="65%",fig.align="centre", warning=FALSE, echo=FALSE}
+
+knitr::include_graphics("./A_Results/Watters_model/Imputed/Watters_Posterior_predictive_dist_imputed.png")
+
+knitr::include_graphics("./A_Results/Model02_Andy/Posterior_predictive_dist_mod02_Andy.png")
+
+knitr::include_graphics("./A_Results/Model02_Andy/Posterior_predictive_dist_mod02_Andy_MWinter.png")
+
+knitr::include_graphics("./A_Results/Model02_SSMU/Posterior_predictive_dist_mod02_SSMU.png")
+
+```
+
+Figure S8. Posterior predictive distributions (boxplots) and jittered observations (colored circles) of penguin  76 performance. A) Watters model. B) Andy spatial. C) Andy SApatial, MArch = winter. D) Spatial and temporal SSMUs.
+
+
 
 # E. Krill consumption by main predator taxa
 
@@ -442,7 +461,7 @@ respectively.
 Table S3. Estimated krill consumption by major predator taxa during the
 austral summer. Values from Hill et al. (2007), Table 15.
 
-```{r Table S3, results='asis', warning=FALSE, echo=FALSE, message=FALSE, comment=NA}
+```{r Table S5, results='asis', warning=FALSE, echo=FALSE, message=FALSE, comment=NA}
 
 flextable(Table.03) |>
   fontsize(size = 8, part = "all") |>
@@ -454,7 +473,7 @@ flextable(Table.03) |>
 Table S4. Estimated krill consumption by major predator taxa during the
 austral winter. Values from Hill et al. (2007), Table 15.
 
-```{r Table S4, results='asis', warning=FALSE, echo=FALSE, message=FALSE, comment=NA}
+```{r Table S6, results='asis', warning=FALSE, echo=FALSE, message=FALSE, comment=NA}
 
 flextable(Table.04) |>
   fontsize(size = 8, part = "all") |>
