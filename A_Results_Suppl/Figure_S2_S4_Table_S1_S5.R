@@ -187,7 +187,7 @@ survey_hist <- ggplot(hist_data, aes(x = LnSurvey)) +
                      labels = x_ll) +
   labs(x = "LnSurvey", y = "Density") +
   theme_minimal()
-survey_hist
+survey_hist  # Figure S2
 
 ### 7. Estimating Frequency distributions for original IMPUTED LKB ####
 
@@ -379,7 +379,7 @@ imputed_survey_hist <- ggplot(hist_imp_data, aes(x = LnSurvey)) +
                      labels = x_ll) +
   labs(x = "LnSurvey", y = "Density") +
   theme_minimal()
-imputed_survey_hist
+imputed_survey_hist # Figure S3
 
 
 ### 8. Estimating Frequency distributions for imputed mean-log(LKB) - variation####
