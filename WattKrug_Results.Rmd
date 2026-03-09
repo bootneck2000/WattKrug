@@ -306,13 +306,16 @@ estimates of LKB and LHR.
 
 knitr::include_graphics("./A_Results/Watters_model/Imputed/Watters_Penguin_performance_imputed.png")
 
-knitr::include_graphics("./A_Results/Model02_Andy/Penguin_performance_ALL_mod02_Andy.png")
+#knitr::include_graphics("./A_Results/Model02_Andy/Penguin_performance_ALL_mod02_Andy.png")
 
 knitr::include_graphics("./A_Results/Model02_SSMU/Penguin_performance_ALL_mod02_SSMU.png")
 
+knitr::include_graphics("./A_Results/Model02_SSMU_MarchWinter/Penguin_performance_ALL_mod02_SSMU_W.png")
+
+
 ```
 
-Figure 6. Expected performance of penguins, all combinations. A) From Watters et al. 2020 model. B) Summer and Winter distributions modified according to Andy. C) Summer and Winter penguin distributions modified as in text.  
+Figure 6. Expected performance of penguins, all combinations. A) From Watters et al. 2020 model. B) Summer and Winter distributions modified according to penguins' use of SSMUs (see text). C) Same as B) but March catches allocated to winter.   
 
 
 
@@ -320,16 +323,19 @@ Figure 6. Expected performance of penguins, all combinations. A) From Watters et
 
 knitr::include_graphics("./A_Results/Watters_model/Imputed/Watters_Penguin_performance.png")
 
-knitr::include_graphics("./A_Results/Model02_Andy/Penguin_performance_mod02_Andy.png")
+#knitr::include_graphics("./A_Results/Model02_Andy/Penguin_performance_mod02_Andy.png")
 
-knitr::include_graphics("./A_Results/Model02_Andy/Penguin_performance_mod02_Andy_MWinter.png")
+#knitr::include_graphics("./A_Results/Model02_Andy/Penguin_performance_mod02_Andy_MWinter.png")
 
 knitr::include_graphics("./A_Results/Model02_SSMU/Penguin_performance_mod02_SSMU.png")
+
+knitr::include_graphics("./A_Results/Model02_SSMU_MarchWinter/Penguin_performance_mod02_SSMU_W.png")
+
 
 ```
 
 
-Figure 7. Expected performance of penguins attributable to the marginal effects of the Oceanic Niño Index (ONI), local krill biomass (LKB) and local harvest rate (LHR) relative to the “best case”. The best case is ONI ≤ −0.5 °C; LKB ≤ 1 Mt; and LHR ≤ 0.01. The “worst case” is −0.5 °C < ONI < 0.5 °C; LKB > 1 Mt; and LHR ≥ 0.1. The median, interquartile range, and range of the posterior expectations are indicated by each boxplot. Reference lines respectively indicate the median expected performance in the best case (dashed line) and the long-term mean performance. A) Watters et al. 2020 model. B) Summer and Winter distributions modified according to Andy. C) Andy with March = Winter. D) Summer and Winter penguin distributions modified as in text. 
+Figure 7. Expected performance of penguins attributable to the marginal effects of the Oceanic Niño Index (ONI), local krill biomass (LKB) and local harvest rate (LHR) relative to the “best case”. The best case is ONI ≤ −0.5 °C; LKB ≤ 1 Mt; and LHR ≤ 0.01. The “worst case” is −0.5 °C < ONI < 0.5 °C; LKB > 1 Mt; and LHR ≥ 0.1. The median, interquartile range, and range of the posterior expectations are indicated by each boxplot. Reference lines respectively indicate the median expected performance in the best case (dashed line) and the long-term mean performance. A) Watters et al. 2020 model. B) Summer and Winter distributions modified according to penguin's use of SSMUs (see text). C) Same as B) but March catches allocated to winter. 
 
 
 Figure 8. 

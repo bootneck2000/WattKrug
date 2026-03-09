@@ -1,5 +1,5 @@
 ---
-title: "Supplemtary material:
+title: "Supplementary material:
 A Rebuttal to Watters et al. (2020): Misinterpretation of Predator-Prey Dynamics leading to erroneous Precautionary Management in Antarctic Krill Fisheries"
 author:
   - name: "Andrew Lowther"

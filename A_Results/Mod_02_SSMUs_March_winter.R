@@ -4,7 +4,7 @@
 ## Conditions: 
 # A. Survey data filtered by transect (nm) coverage 
 # B. Not imputed summer LKB
-# C. Penguin distribution adjusted to specific SSMUs (Andy)
+# C. Penguin distribution adjusted to specific SSMUs
 # D. March catches allocated to Winter
 
 library(tidyverse)
@@ -238,7 +238,7 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
   ### Introduced Change: 
   # Filter low transect coverage (<10th percentil)
   survey_filtered <- survey %>%
-    filter(gSSMU %in% c(1, 2,3,4))
+    filter(gSSMU %in% c(1, 2))
   percentiles <- survey_filtered %>%
     group_by(gSSMU) %>%
     summarise(p10 = quantile(nmi.count, probs = 0.10, na.rm = TRUE))
@@ -250,29 +250,29 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
   rm(percentiles, survey_filtered, survey_low_nmi)
   ### END changes
   
-  ### New change: Estimate split gSSMU LKB
-  survey.mod = as_tibble(survey) %>%
-    group_split(gSSMU)
-  # 28.7/(28.7+22) #fraction of nmi area # change here
-  survey.mod[[1]]$biomass = survey.mod[[1]]$biomass * 0.566075 
-  # 15.8/(15.8+16.4+36.2)fraction of nmi area # change here 
-  survey.mod[[2]]$biomass = survey.mod[[2]]$biomass * 0.230994 
-  # 22.0/(28.7+22.0) change here
-  survey.mod[[3]]$biomass = survey.mod[[3]]$biomass * 0.433925 
-  # change here
-  survey.mod[[4]]$biomass = survey.mod[[4]]$biomass * 1 
-  # change here
-  survey = data.frame(bind_rows(survey.mod[[1]],survey.mod[[2]],survey.mod[[3]],survey.mod[[4]]))  
-  ### END changes
-
-  survey<-tapply(survey$biomass,list(survey$Year,survey$gSSMU),mean,na.rm=TRUE)
+  ### New change: Estimate SSMU-LKB
+  
+  # Read SSMU table
+  SSMUs<-read.csv(file.path(read_dir,"SSMU48_area.csv"),header=TRUE,stringsAsFactors = FALSE)
+  
+  survey.mod <- survey %>%
+    left_join(SSMUs %>% select(gSSMU, SSMU, Area.fraction), by = "gSSMU",
+              relationship = "many-to-many") %>%
+    mutate(biomass2 = biomass * Area.fraction)
+  
+  survey <- survey.mod %>%
+    select(-biomass) %>%
+    rename(biomass = biomass2)
+    ### END changes
+  
+  survey<-tapply(survey$biomass,list(survey$Year,survey$SSMU),mean,na.rm=TRUE) # change gSSMU by SSMU
   survey<-data.frame(cal.yr=rep(dimnames(survey)[[1]],dim(survey)[2]),
-                     gSSMU=rep(dimnames(survey)[[2]],each=dim(survey)[1]),
+                     SSMU=rep(dimnames(survey)[[2]],each=dim(survey)[1]),
                      survey=c(survey),stringsAsFactors = FALSE)
   survey$season<-ifelse(survey$cal.yr<2012,"S","W")
   # use next line if want to remove winter survey data altogether (comment out if not desired)
   #survey<-survey[survey$season=="S",]
-  survey$matchme<-paste(survey$cal.yr,survey$season,survey$gSSMU,sep="|")
+  survey$matchme<-paste(survey$cal.yr,survey$season,survey$SSMU,sep="|")
   #print(str(survey))
   rm(survey.mod)
   #
@@ -280,30 +280,28 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
   #
   # krill fishery catches
   fishery<-read.csv(file.path(read_dir,"c1.csv"),header=TRUE,stringsAsFactors = FALSE)
-  fishery$season<-ifelse(is.element(fishery$Month,c(10:12,1:2)),"S","W")  # March: Winter
-  
-  # Change definitions of gSSMUs
-  gSSMU1<-c("APBSE") # change here
-  gSSMU2<-c("APDPW") # change here
-  gSSMU3<-"APBSW" # change here
-  gSSMU4<-c("APW","APE") # change here
-  
+  fishery$season<-ifelse(is.element(fishery$Month,c(10:12,1:2)),"S","W")
+  gSSMU1<-c("APBSE","APBSW")
+  gSSMU2<-c("APDPE","APDPW","APEI")
+  gSSMU3<-"APPA"
+  gSSMU4<-c("APW","APE")
   fishery$gSSMU<-rep(NA,dim(fishery)[1])
   fishery$gSSMU<-ifelse(is.element(fishery$AssignedSSMU,gSSMU1),1,fishery$gSSMU)
   fishery$gSSMU<-ifelse(is.element(fishery$AssignedSSMU,gSSMU2),2,fishery$gSSMU)
   fishery$gSSMU<-ifelse(is.element(fishery$AssignedSSMU,gSSMU3),3,fishery$gSSMU)
   fishery$gSSMU<-ifelse(is.element(fishery$AssignedSSMU,gSSMU4),4,fishery$gSSMU)
   fishery<-fishery[!is.na(fishery$gSSMU),]
-  fishery<-tapply(fishery$TotalCatch,list(fishery$CalendarYear,fishery$gSSMU,fishery$season),sum)
+
+  fishery<- fishery %>% rename(SSMU = AssignedSSMU) # change column name to SSMU
+  
+  fishery<-tapply(fishery$TotalCatch,list(fishery$CalendarYear,fishery$SSMU,fishery$season),sum)
   fishery<-data.frame(cal.yr=rep(dimnames(fishery)[[1]],dim(fishery)[2]*dim(fishery)[3]),
-                      gSSMU=rep(rep(dimnames(fishery)[[2]],each=dim(fishery)[1]),dim(fishery)[3]),
+                      SSMU=rep(rep(dimnames(fishery)[[2]],each=dim(fishery)[1]),dim(fishery)[3]),
                       season=rep(dimnames(fishery)[[3]],each=dim(fishery)[1]*dim(fishery)[2]),
                       catch=c(fishery),stringsAsFactors = FALSE)
   fishery$cal.yr<-as.numeric(as.character(fishery$cal.yr))
-  fishery$gSSMU<-as.numeric(as.character(fishery$gSSMU))
-  fishery$matchme<-paste(fishery$cal.yr,fishery$season,fishery$gSSMU,sep="|")
-
-  # Add the following  
+  fishery$matchme<-paste(fishery$cal.yr,fishery$season,fishery$SSMU,sep="|")
+  
   fishery$catch[is.na(fishery$catch)] <- 0 # Added Change
   fishery$cal.yr <- as.character(fishery$cal.yr)
   
@@ -320,30 +318,58 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
   #                         ifelse(out$SPECIES=="GEPE"&out$PROJECT=="CS"&out$season=="S",2,1)))
   
   ### Changes in Spatial Distribution
+  # Summer: COPA penguins only feed in APBSE
+  # Summer: SHIRREFF penguins only feed in APDPW
+  # Winter: COPA: Chinstraps feed in APDPW, APDPE, APEI
+  # Winter: COPA: Adelies feed in APBSE, APDPE, APEI
+  # Winter: COPA: Gentoos feed in APBSE
+  # Winter: SHIRREFF: Chinstraps feed in APDPW, APDPE, APEI
+  # Winter: SHIRREFF: Gentoos feed in APBSW
+  
+  out<-out[!is.na(out$index),] # remove empty index data
+  
+  out$SSMU<-rep(NA,dim(out)[1])
+  out$SSMU<-ifelse(out$SPECIES=="ADPE"&out$PROJECT=="COPA"&out$season=="S","APBSE",out$SSMU)
+  out$SSMU<-ifelse(out$SPECIES=="ADPE"&out$PROJECT=="COPA"&out$season=="W","APBSE|APDPE|APEI",out$SSMU)
+  out$SSMU<-ifelse(out$SPECIES=="CHPE"&out$PROJECT=="COPA"&out$season=="S","APBSE",out$SSMU)
+  out$SSMU<-ifelse(out$SPECIES=="CHPE"&out$PROJECT=="COPA"&out$season=="W","APDPW|APDPE|APEI",out$SSMU)
+  out$SSMU<-ifelse(out$SPECIES=="GEPE"&out$PROJECT=="COPA"&out$season=="S","APBSE",out$SSMU)
+  out$SSMU<-ifelse(out$SPECIES=="GEPE"&out$PROJECT=="COPA"&out$season=="W","APBSE",out$SSMU)
+  out$SSMU<-ifelse(out$SPECIES=="CHPE"&out$PROJECT=="CS"&out$season=="S","APDPW",out$SSMU)
+  out$SSMU<-ifelse(out$SPECIES=="CHPE"&out$PROJECT=="CS"&out$season=="W","APDPW|APDPE|APEI",out$SSMU)
+  out$SSMU<-ifelse(out$SPECIES=="GEPE"&out$PROJECT=="CS"&out$season=="S","APDPW",out$SSMU)
+  out$SSMU<-ifelse(out$SPECIES=="GEPE"&out$PROJECT=="CS"&out$season=="W","APBSW",out$SSMU)
+  #
+  out$matchme<-paste(out$cal.yr,out$season,out$SSMU,sep="|")
+  # out$survey<-survey$survey[match(out$matchme,survey$matchme)]
+  # out$catch<-fishery$catch[match(out$matchme,fishery$matchme)]
+  
+  ### Change code to handle multiple SSMU
+  # First, split the SSMU column in 'out' to handle multiple SSMUs
+  out$cal.yr <- as.character(out$cal.yr)
+  
+  out_expanded <- out %>%
+    mutate(SSMU_list = strsplit(as.character(SSMU), "\\|")) %>%
+    unnest(SSMU_list) %>%
+    # Join with survey data
+    left_join(survey %>% select(SSMU, cal.yr, season, survey), 
+              by = c("SSMU_list" = "SSMU", "cal.yr", "season")) %>%
+    # Join with fishery data
+    left_join(fishery %>% select(SSMU, cal.yr, season, catch), 
+              by = c("SSMU_list" = "SSMU", "cal.yr", "season")) %>%
+    # Sum survey and catch values for each original row
+    group_by(across(-c(SSMU_list, survey, catch))) %>%
+    summarise(
+      survey = sum(survey, na.rm = TRUE),
+      catch = sum(catch, na.rm = TRUE),
+      .groups = "drop"
+    )
+  
+  # Replace 'out' with the result
+  out <- out_expanded  
 
-#  out<-out[!is.na(out$index),] # remove empty index data
-  
-  out$gSSMU<-rep(NA,dim(out)[1])
-  out$gSSMU<-ifelse(out$SPECIES=="ADPE"&out$PROJECT=="COPA"&out$season=="S",1,out$gSSMU)
-  out$gSSMU<-ifelse(out$SPECIES=="ADPE"&out$PROJECT=="COPA"&out$season=="W",NA,out$gSSMU)
-  out$gSSMU<-ifelse(out$SPECIES=="CHPE"&out$PROJECT=="COPA"&out$season=="S",1,out$gSSMU)
-  out$gSSMU<-ifelse(out$SPECIES=="CHPE"&out$PROJECT=="COPA"&out$season=="W",NA,out$gSSMU)
-  out$gSSMU<-ifelse(out$SPECIES=="GEPE"&out$PROJECT=="COPA"&out$season=="S",1,out$gSSMU)
-  out$gSSMU<-ifelse(out$SPECIES=="GEPE"&out$PROJECT=="COPA"&out$season=="W",1,out$gSSMU)
-  out$gSSMU<-ifelse(out$SPECIES=="CHPE"&out$PROJECT=="CS"&out$season=="S",2,out$gSSMU)
-  out$gSSMU<-ifelse(out$SPECIES=="CHPE"&out$PROJECT=="CS"&out$season=="W",NA,out$gSSMU)
-  out$gSSMU<-ifelse(out$SPECIES=="GEPE"&out$PROJECT=="CS"&out$season=="S",2,out$gSSMU)
-  # use following line if GEPE at CS forage in gSSMU 2 during winter
-  #out$gSSMU<-ifelse(out$SPECIES=="GEPE"&out$PROJECT=="CS"&out$season=="W",2,out$gSSMU)
-  # use following line if GEPE at CS forage in gSSMU 1 during winter
-  out$gSSMU<-ifelse(out$SPECIES=="GEPE"&out$PROJECT=="CS"&out$season=="W",3,out$gSSMU)
   #
-  out$matchme<-paste(out$cal.yr,out$season,out$gSSMU,sep="|")
-  out$survey<-survey$survey[match(out$matchme,survey$matchme)]
-  out$catch<-fishery$catch[match(out$matchme,fishery$matchme)]
-  #
-  out<-out[!is.na(out$gSSMU),]
-  
+  # out<-out[!is.na(out$SSMU),]
   #
   ###########################################################################################################
   # pull in the environmental indices
@@ -398,6 +424,7 @@ junk<-filter(junk,survey>0)
 junk$bclass<-ifelse(junk$survey<=1000000,1,2)
 junk$hrclass<-ifelse(junk$catch/junk$survey<=0.01,1,ifelse(junk$catch/junk$survey>=0.1,3,2))
 junk$oniclass<-ifelse(junk$oni.class=="Cool",1,ifelse(junk$oni.class=="Warm",3,2))
+
 
 
 #### Second - Run Model ####
@@ -615,14 +642,14 @@ hr.params.summ<-summary(hr.params.post)
 hr.derived.summ<-summary(hr.derived.post)
 
 # write input/output
-out.dir <- "./A_Results/Model02_Andy/"
+out.dir <- "./A_Results/Model02_SSMU_MarchWinter/"
 dir.create(out.dir, showWarnings = FALSE, recursive = TRUE)
 
-# saveRDS(hr.params.post, file.path(out.dir, file = "hr.params.post.rds"))
-# saveRDS(hr.derived.post, file.path(out.dir, file = "hr.derived.post.rds"))
-# 
-# saveRDS(hr.params.summ, file.path(out.dir, file = "hr.params.summ.rds"))
-# saveRDS(hr.derived.summ, file.path(out.dir, file = "hr.derived.summ.rds"))
+saveRDS(hr.params.post, file.path(out.dir, file = "hr.params.post.rds"))
+saveRDS(hr.derived.post, file.path(out.dir, file = "hr.derived.post.rds"))
+
+saveRDS(hr.params.summ, file.path(out.dir, file = "hr.params.summ.rds"))
+saveRDS(hr.derived.summ, file.path(out.dir, file = "hr.derived.summ.rds"))
 
 
 ### Step 3: PLOTTING  ###
@@ -676,7 +703,7 @@ abline(h=-mean(hr.derived.s$value[as.numeric(hr.derived.s$Parameter)==19]),col="
 
 dev.copy(
   png,
-  filename = file.path(out.dir, file = "Penguin_performance_mod02_Andy_MWinter.png"),
+  filename = file.path(out.dir, file = "Penguin_performance_mod02_SSMU_W.png"),
   width    = 12,
   height   = 7,
   units    = "in",
@@ -684,7 +711,7 @@ dev.copy(
 )
 dev.off()
 
-# write.csv(hr.derived.s, file = file.path(out.dir, file ="hr_derived_s.csv"))
+write.csv(hr.derived.s, file = file.path(out.dir, file ="hr_derived_s.csv"))
 
 # # ***********************************************************************************************
 # # *************************************** ADDED FIGURE - plot all cases***************************
@@ -738,7 +765,7 @@ legend("topright",
 
 dev.copy(
   png,
-  filename = file.path(out.dir, file = "Penguin_performance_ALL_mod02_Andy_MWinter.png"),
+  filename = file.path(out.dir, file = "Penguin_performance_ALL_mod02_SSMU_W.png"),
   width    = 8,
   height   = 6,
   units    = "in",
@@ -795,7 +822,7 @@ xx$case<-ifelse(xx$oniclass==1 & xx$bclass==1 & xx$hrclass==1,1,
                                     ifelse(xx$oniclass==3 & xx$bclass==1 & xx$hrclass==3,17,18)))))))))))))))))
 
 #### Save 'xx'
-saveRDS(xx, file.path(out.dir, "Data_Fig_S7_MarchWinter.rds"))  # save the data
+saveRDS(xx, file.path(out.dir, "Data_Fig_S7_W.rds"))  # save the data
 ####
 
 # Create mapping for colors and hatching based on case number
@@ -851,7 +878,7 @@ legend("topright",
 
 dev.copy(
   png,
-  filename = file.path(out.dir, file = "Posterior_predictive_dist_mod02_Andy_MWinter.png"),
+  filename = file.path(out.dir, file = "Posterior_predictive_dist_mod02_SSMU_W.png"),
   width    = 8,
   height   = 6,
   units    = "in",
