@@ -10,7 +10,8 @@ library(ggplot2)
 library(scales)
 library(stringr)
 library(patchwork)
-
+library(knitr)
+library(kableExtra)
 #### 1. Import data from the model ####
 
 # krill survey biomass
@@ -186,6 +187,30 @@ Table.01$`p-value_2`[4] <- pvalue(gPos.stat)
 
 
 knitr::kable(Table.01, digits = 3)
+
+script_path <- "/Users/god/Documents/R workspace/WattKrug/A_Results/Table_1_Figure_2_3.R"
+
+# Output directory = folder containing that script
+out_dir <- dirname(script_path)
+
+tab <- knitr::kable(Table.01, digits = 3, format = "html") |>
+  kableExtra::kable_styling(
+    bootstrap_options = c("striped", "condensed"),
+    full_width = FALSE,
+    font_size = 14
+  )
+
+# Best: save to PDF (vector, publication-grade)
+kableExtra::save_kable(
+  tab,
+  file = file.path(out_dir, "Table_1.pdf")
+)
+# Or save to PNG (raster)
+kableExtra::save_kable(
+  tab,
+  file = file.path(out_dir, "Table_1.png"),
+  density = 300
+)
 
 ### 4. Plots to see relation between SAM and Survey data ####
 
