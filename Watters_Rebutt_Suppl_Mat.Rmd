@@ -104,7 +104,7 @@ criterion.
 Rather than applying a fixed threshold, we examined the frequency
 distribution of surveyed transect lengths for gSSMUs 1 and 2 separately
 and excluded surveys falling below the lower 10th percentile. This
-approach resulted in the exclusion of three survey legs in gSSMU 1 (≤10
+approach resulted in the exclusion of four survey legs in gSSMU 1 (≤10
 nm; 1996, 1999, 2010, and 2012) and three survey legs in gSSMU 2 (≤200
 nm; 2010, 2011 and 2012) (Figure S1).
 

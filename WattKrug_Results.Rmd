@@ -95,7 +95,7 @@ library(scales)
 
 Table 1. Estimates of the mean (mu) and standard deviation (sd) of
 summer Ln(LKB) by gSSMU and SAM sign, derived from Equation (2) of Watters et
-al. (2020). Statistical results from the nonparametric one-way ANOVA are
+al. (2020). Statistical results from the nonparametric one-way Kruskal-Wallis test are
 reported as follows: p-value_1 compares SAM sign within each gSSMU, and
 p-value_2 compares gSSMUs within each SAM sign. The corresponding LKB
 estimates appear in the column labelled median-LKB.

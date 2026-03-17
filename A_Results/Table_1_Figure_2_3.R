@@ -152,24 +152,24 @@ library(coin)
 g1 <- data %>% filter(!is.na(survey)) %>% 
   filter(gSSMU == 1) %>% filter(cal.yr<2012)
 g1 <- g1 %>% mutate(sam.sign = as.factor(sam.sign))
-g1.stat <- coin::oneway_test(LnSurvey ~ sam.sign, data = g1, distribution = "approximate")
+g1.stat <- coin::oneway_test(LnSurvey ~ sam.sign, data = g1, distribution = "exact")
 
 # Difference LKB between -/+SAM for gSSMU 2
 g2 <- data %>% filter(!is.na(survey)) %>% 
   filter(gSSMU == 2) %>% filter(cal.yr<2012)
 g2 <- g2 %>% mutate(sam.sign = as.factor(sam.sign))
-g2.stat <- coin::oneway_test(LnSurvey ~ sam.sign, data = g2, distribution = "approximate")
+g2.stat <- coin::oneway_test(LnSurvey ~ sam.sign, data = g2, distribution = "exact")
 
 # Difference LKB between -/+SAM between gSSMUs
 gNeg <- data %>% filter(!is.na(survey)) %>% 
   filter(sam.sign == "Neg") %>% filter(cal.yr<2012)
 gNeg <- gNeg %>% mutate(gSSMU = as.factor(gSSMU))
-gNeg.stat <- coin::oneway_test(LnSurvey ~ gSSMU, data = gNeg, distribution = "approximate")
+gNeg.stat <- coin::oneway_test(LnSurvey ~ gSSMU, data = gNeg, distribution = "exact")
 
 gPos <- data %>% filter(!is.na(survey)) %>% 
   filter(sam.sign == "Pos") %>% filter(cal.yr<2012)
 gPos <- gPos %>% mutate(gSSMU = as.factor(gSSMU))
-gPos.stat <- coin::oneway_test(LnSurvey ~ gSSMU, data = gPos, distribution = "approximate")
+gPos.stat <- coin::oneway_test(LnSurvey ~ gSSMU, data = gPos, distribution = "exact")
 
 
 #### Table 1 
