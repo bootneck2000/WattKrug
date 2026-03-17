@@ -108,8 +108,27 @@ Table.01 <- data %>%
     sd  = sd(LnSurvey),
     .groups = "drop"
   )
-knitr::kable(Table.01, digits = 3)
 
+script_path <- "/Users/god/Documents/R workspace/WattKrug/A_Results_Suppl"
+
+tab <- knitr::kable(Table.01, digits = 3, format = "html") |>
+  kableExtra::kable_styling(
+    bootstrap_options = c("striped", "condensed"),
+    full_width = FALSE,
+    font_size = 14
+  )
+
+# Best: save to PDF (vector, publication-grade)
+kableExtra::save_kable(
+  tab,
+  file = file.path(script_path, "Table_S1.pdf")
+)
+# Or save to PNG (raster)
+kableExtra::save_kable(
+  tab,
+  file = file.path(script_path, "Table_S1.png"),
+  density = 300
+)
 
 # Imputing missing data
 data <- data %>%
@@ -344,7 +363,24 @@ Table.02 <- sim_long %>%
     sd  = sd(LnSurvey),
     .groups = "drop"
   )
-knitr::kable(Table.02, digits = 3)
+tab <- knitr::kable(Table.02, digits = 3, format = "html") |>
+  kableExtra::kable_styling(
+    bootstrap_options = c("striped", "condensed"),
+    full_width = FALSE,
+    font_size = 14
+  )
+
+# Best: save to PDF (vector, publication-grade)
+kableExtra::save_kable(
+  tab,
+  file = file.path(script_path, "Table_S2.pdf")
+)
+# Or save to PNG (raster)
+kableExtra::save_kable(
+  tab,
+  file = file.path(script_path, "Table_S2.png"),
+  density = 300
+)
 
 curve_data_imp <- Table.02 %>%
   mutate(

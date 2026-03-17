@@ -14,8 +14,8 @@ record <- zenodo$getRecordById(record_id)
 # Create download directory if it doesn't exist
 dir.create("zenodo_Watters", showWarnings = FALSE)
 
-for (i in 1: record$files) {
-  file_name <- record$files[[1]]$filename[1]
+for (i in 1: length(record$files)) {
+  file_name <- record$files[[i]]$filename
   file_url <-  paste0("https://zenodo.org/api/records/", record_id, "/files/", file_name, "/content")
   
   # URLencode only the file name part, not the whole URL

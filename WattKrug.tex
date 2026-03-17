@@ -1,0 +1,653 @@
+\documentclass[]{elsarticle} %review=doublespace preprint=single 5p=2 column
+%%% Begin My package additions %%%%%%%%%%%%%%%%%%%
+
+\usepackage[hyphens]{url}
+
+  \journal{Scientific Reports} % Sets Journal name
+
+\usepackage{graphicx}
+%%%%%%%%%%%%%%%% end my additions to header
+
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+% TODO: Currently lineno needs to be loaded after amsmath because of conflict
+% https://github.com/latex-lineno/lineno/issues/5
+\usepackage{lineno} % add
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \usepackage{fontspec}
+  \ifxetex
+    \usepackage{xltxtra,xunicode}
+  \fi
+  \defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase}
+  \newcommand{\euro}{€}
+\fi
+% use microtype if available
+\IfFileExists{microtype.sty}{\usepackage{microtype}}{}
+\usepackage[margin=3cm]{geometry}
+\usepackage[]{natbib}
+\bibliographystyle{plainnat}
+
+\ifxetex
+  \usepackage[setpagesize=false, % page size defined by xetex
+              unicode=false, % unicode breaks when used with xetex
+              xetex]{hyperref}
+\else
+  \usepackage[unicode=true]{hyperref}
+\fi
+\hypersetup{breaklinks=true,
+            bookmarks=true,
+            pdfauthor={},
+            pdftitle={Misinterpretation of Predator-Prey Dynamics leading to erroneous Precautionary Management in Antarctic Krill Fisheries: A Rebuttal to Watters et al.~(2020)},
+            colorlinks=false,
+            urlcolor=blue,
+            linkcolor=magenta,
+            pdfborder={0 0 0}}
+
+\setcounter{secnumdepth}{0}
+% Pandoc toggle for numbering sections (defaults to be off)
+\setcounter{secnumdepth}{0}
+
+
+% tightlist command for lists without linebreak
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+
+
+
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\floatplacement{figure}{H}
+\newcommand{\pandocbounded}[1]{#1}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\newcommand{\blandscape}{\begin{landscape}}
+\newcommand{\elandscape}{\end{landscape}}
+\usepackage{float} \floatplacement{figure}{H}
+\newcommand{\beginsupplement}{\setcounter{table}{0}  \renewcommand{\thetable}{S\arabic{table}}     -   - \setcounter{figure}{0} \renewcommand{\thefigure}{S\arabic{figure}}}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
+
+
+
+\begin{document}
+
+
+\begin{frontmatter}
+
+  \title{Misinterpretation of Predator-Prey Dynamics leading to
+erroneous Precautionary Management in Antarctic Krill Fisheries: A
+Rebuttal to Watters et al.~(2020)}
+    \author[1]{Andrew Lowther%
+  %
+  }
+  
+    \author[2]{Ulf Lindstrøm%
+  %
+  }
+  
+    \author[3]{Bjørn Krafft%
+  %
+  }
+  
+      \cortext[cor1]{Corresponding author}
+  
+  \begin{abstract}
+  Assessing the impacts of human activities on wildlife is a critical
+  function of applied ecology. In the Antarctic Peninsula, the krill
+  fishery fhas been operated for over half a century, raising concerns
+  about localised depletion of krill around pygoscelid penguin colonies
+  and its potential impacts on penguin populations. Watters et
+  al.~(2020) concluded that krill harvesting adversely affects penguin
+  performance, comparable to the impacts of poor environmental
+  conditions, based on 30 years data from two South Shetland Islands,
+  Antartic Peninsula. However, their study relies on appropriate spatial
+  and temporal scales, unvalidated ecological assumptions, and
+  methodological biases. Herein, we reassess the original model by
+  rescaling spatial units from group Small-Scale Management Units
+  (gSSMUs) to ecologically relevant small-scale management units,
+  excluding non-breeding penguins from winter analyses to reflect their
+  known migration patterns, and correcting a coding error that
+  misclassified the ``Worst Case'' climate scenario. Our analysis
+  reveals that the probability of negative impacts from high Local
+  Harves Rates (LHR) drops from 93\% to 27\% after these adjustments.
+  Instead, climate variability, as represented by the Oceanic Niño Index
+  (ONI), emerges as the dominant driver of penguin performance. These
+  findings challange the conclusions of Watters et al.~(2020) and
+  emphasise the need for more rigorous, ecologically realistic models to
+  inform krill fisheries management in the Antarctic Peninsula.
+  \end{abstract}
+  
+ \end{frontmatter}
+
+\section{Introduction}\label{introduction}
+
+Concerns about the potential impact of localised depletion of Antarctic
+krill (Euphausia superba; hereafter, krill) due to concentrated fishing
+effort, particularly on krill-dependent predators such as penguins
+during breeding, have long been debated within the Antarctic science
+community. Recently, Watters et al.~(2020) suggested that local
+harvesting rates may impact penguin performance to a degree comparable
+to that of adverse environmental conditions. Their analyses matched
+various performance indices of krill-dependent penguins with estimates
+of krill biomass, local fishing pressure and broad scale climate
+variability.
+
+The penguin breeding parameters were collected at two sites (Cape
+Shirreff on Livingstone Island and Copacabana on King George Island,
+South Shetland Islands; Figure 1) over the period 1982 to 2016. Krill
+abundance data, overlapping the at-sea distributions of Chinstrap
+(Pygoscelis antarcticus), Gentoo (P. papua) and Adélie penguins (P.
+adeliae), were collected during summer seasons (1996 - 2011) and winter
+seasons (2012, 2014 and 2015). Catch data from the krill fishery were
+obtained from the Commission for the Conservation of Antarctic Marine
+Living Resources (CCAMLR, www.ccamlr.org) for the entire period. Climate
+variability was represented by the Oceanic Niño Index (ONI). Using a
+hierarchical analysis of variance approach, the authors estimated the
+variance in penguin performance indices as a function of Local Krill
+Biomass (LKB), Local Harvesting Rate (LHR; the ratio of krill catch to
+LKB) and the ONI. Missing summer LKB data was imputed using a presumed
+correlation with the Southern Annular Mode (SAM).
+
+Watters et al.(2020), concluded that local harvesting levels of krill
+adversely impact penguin performance, with effects comparable in
+magnitude to those of poor environmental conditions. Moreover, they
+found that these effects may act synergistically when high local
+harvesting rates coincide with unfavorable climate conditions. The
+paper, which has received significant attention and citations, has
+influenced CCAMLR's work on Marine Protected Area proposals and krill
+fisheries management strategies.
+
+Given the influence of this study on policy and certification
+frameworks, it is essential to critically assess its scientific
+foundations. In this paper, we identify three critical issues that
+undermine the validity of the conclusions presented by~Watters et
+al.~(2020). For each issue, we provide a summary of the associated
+issues, while detailed contextual information on each issue is presented
+in Supplementary Materials \#1. Issue \#1: Missing data and Unsupported
+Ecological Assumptions
+
+Despite issues on survey coverage, data used in the analysis was
+unfiltered, potentially yielding unreliable or inaccurate estimates of
+LKB. Likewise, the lack of tested correlation between krill biomass and
+SAM could also result in unreliable or inaccurate estimates of LKB.
+Finally, the assignment of `best' and `worst' case scenarios based on a
+given level of krill biomass (in this case using 1Mt as the threshold),
+was not tested throughout the paper. These factors introduced
+significant inaccuracies in the estimation of LHR, making the
+interpretation of local harvesting impacts on penguin performance
+unreliable.
+
+Issue \#2: Continuing spatial and temporal mismatches between predators
+and fishing activity
+
+The model used by Watters et al.~(2020) assumes that penguins occupy the
+entirety of their assigned gSSMU throughout the year. This assumption
+introduces a spatial and temporal mismatch between predator presence and
+fishing activity, potentially confounding the interpretation of local
+harvesting impacts on penguin performance. Issue \#3: Omission of
+Competing Species
+
+The model used by Watters et al.~(2020) neglects the impact of
+recovering populations of large krill eating predators that overlap in
+time and space with penguins, beyond a cursory discussion.
+
+In the following, we present quantitative analyses addressing Issues \#1
+to \#3, demonstrating the limitations and inaccuracies in the study`s
+conclusions and highlighting their implications for understanding the
+drivers of penguin performance and the robustness of the findings
+presented by Watters et al.~(2020).
+
+\section{Materials and Methods}\label{materials-and-methods}
+
+\subsubsection{Issue \#1: Missing data and Unvalidated Ecological
+Assumptions}\label{issue-1-missing-data-and-unvalidated-ecological-assumptions}
+
+We filtered local krill biomass (LKB) estimates to remove surveys with
+low spatial coverage. Watters et al.~(2020) proposed excluding surveys
+with transect coverage of 80 nm or less, but did not apply this
+criterion (Supplementary Material S1, lines 224--226). Rather than
+applying a fixed threshold, we examined the frequency distribution of
+acoustic transect coverage separately for gSSMUs \#1 and \#2 and
+excluded surveys falling at or below the lower 10th percentile.
+
+We evaluated the assumptions used by Watters et al.~(2020) to impute
+summer LKB in years without acoustic surveys. We further examined the
+relationship used to impute missing LKB values and whether the
+partitioning of LKB relative to SAM phase and a 1 Mt threshold was
+consistent with observed patterns. Their approach classified LKB into
+two categories, ≤1 Mt and \textgreater1 Mt, and assigned missing values
+based solely on the sign of the SAM index. Under this framework, LKB ≤1
+Mt defined the ``best case,'' while LKB \textgreater1 Mt defined the
+``worst case.'' however the rationale for both the SAM-based assignment
+and the 1 Mt threshold was not provided. We tested these assumptions
+empirically for each gSSMU by comparing the median observed LKB between
+negative and positive SAM years using a Kruskal-Wallis H test. We then
+evaluated whether 1 Mt represented an appropriate threshold separating
+SAM phases. Following equation (2) in Watters et al.~(2020), we
+estimated the mean and standard deviation of ln(LKB) separately for
+negative and positive SAM years within each gSSMU. Differences between
+SAM phases were tested using a one-way permutation test implemented in
+the R package coin.
+
+We also evaluated the statistical properties of the LKB imputation
+procedure itself. We first assessed whether ln(LKB) derived from survey
+observations followed a suitable parametric distribution. We then
+generated imputed ln(LKB) values using equations (1) and (2) of Watters
+et al.~(2020) and compared the resulting distributions with the
+empirical distribution of observed data. A log-normal distribution was
+fitted to survey-based LKB estimates, and normality of ln(LKB) was
+assessed using the Shapiro--Wilk test. Using the same parameterization,
+we generated 100,000 imputed ln(LKB) values, constrained by lower and
+upper bounds of 10,000 t and 1 × 10⁹ t, respectively, as defined in
+Supplementary Material S1. Normality of the imputed ln(LKB) distribution
+was then assessed using the same approach.
+
+Finally, local harvest rate (LHR) was calculated using observed catch
+data provided by CCAMLR and observed LKB for each year and gSSMU.
+Imputed LHR values were calculated using observed catch data and the
+median imputed LKB for negative and positive SAM years.
+
+\subsubsection{Issue \#2: Continuing spatial and temporal
+mismatches}\label{issue-2-continuing-spatial-and-temporal-mismatches}
+
+To assess the spatial overlap between krill-dependant predators and
+fishing activity, we utilized Argos-CLS PTT telemetry data used by
+Watters et al.~(2020) from the supporting studies referenced therein.
+These data were used to characterise the actual at-sea habitat use of
+breeding adult pygoscelid penguins, contextualized by species-specific
+breeding stages, relative to the gSSMU structure used.
+
+For each species, we refrain from undertaking extensive state-space
+modelling of location errors and merely exclude locations with a ``Z''
+error class, accepting the remaining locations had varying degrees of
+uncertainty around them. We then calculated the 90\% kernel Utilisation
+Distribution (UD) to represent home range using the R package
+adehabitatHR and calculated their associated areas, with the resulting
+UD likely being larger than the area actually exploited given the
+remaining inaccuracy in the underlying locations used. We then scale the
+gSSMU LKB to the SSMU that the summer tracking data indicated penguins
+occupied. To do this, we calculate the area of the SSMU exploited by the
+predator and the gSSMU to which it is assigned, then created a scaling
+ratio. For example, we scaled LKB for Cape Shirreff Chinstrap penguins
+solely to APDPW (Figure 1) by multiplying the gSSMU \#2 LKB by the areal
+ratio of APDPW / gSSMU \#2. We then select the corresponding SSMU catch
+values provided in Watters et al.~(2020) (Supplementary Info) to
+estimate SSMU-scale LHR. We also caution that while considering the
+gSSMU scale of harvesting as inappropriate for ``local'' effects, even
+the SSMU-scale catch levels likely do not accurately reflect pressures
+at the fine spatial scales relevant to breeding penguins.
+
+Watters et al.~(2020) assigned LKB/LHR values in March into the
+``summer'' period. Given that contemporary fishing patterns, this
+effectively incorporates fishing pressure into the summer breeding
+season in the context of penguin performance metrics. Yet the `summer'
+predator indices used were estimated during field work that was
+finalized before March each season, thus not incorporating fishing
+effect during March. Importantly, the breeding phenology of pygoscelid
+penguins in this area over the period of this study strongly suggests
+that breeding is finished in February1--4. In addition, fishing effort
+over the 30-year study period was not temporally uniform with catch
+rates over the last decade showing a nonlinear increase beginning in mid
+March5. Given this variability, we conducted models runs that classified
+March as either part of the summer or winter season.
+
+We therefore reformulated the model construct by incorporating
+performance indices for gentoo, chinstrap, and Adélie penguins during
+the summer, while treating Adélie and chinstrap penguins as non-resident
+species post-breeding --- ceasing central-place foraging activity and
+migrating out of the study area. Following exclusion of surveys with low
+spatial coverage, we run models in which (i) penguin distributions in
+summer and winter are constrained to SSMUs supported by telemetry data
+provided in the original study, and (ii) catch data are allocated from
+March onward through the winter period.
+
+We present the outputs both in the same boxplot format as Figure 2 in
+the original manuscript, and as individual cases grouped and
+colour-coded as ONI ``warm'' (0.5; red), ONI ``neutral'' (-0.5
+\textless{} ONI \textgreater{} +0.5; white) and ONI ``cold''
+(\textless{} -0.5; blue). We also recreate the original marginal
+probabilities in Table 1 of Watters et al.~(2020), and two additional
+tables in the same format with the probabilities extracted from our
+reformulated model, the difference between the latter two tables
+reflecting whether March is in summer or winter.
+
+\subsubsection{Issue \#3: Omission of competing
+species}\label{issue-3-omission-of-competing-species}
+
+In order to provide numerical context on the potential role baleen
+whales may play in regulating penguin performance, we conduct two
+analyses. Firstly, we use published data on the time-evolving abundance
+and distribution of humpback whales (Megaptera novaeangliae) throughout
+the Bransfield Strait6 to estimate the mean number of whales present in
+gSSMU \#1 (occupied by penguins from Copacabana). We then use
+conservative per-capita consumption estimates (632kg/day) 7 to derive a
+90-day summer season krill consumption estimate at the gSSMU scale.
+Finally we compare humpback whale consumption estimates to the 32-years
+of krill catches provided in Watters et al.~(2020) at the same spatial
+scale, cropped to the summer season (November through February
+inclusive).
+
+All analyses were conducted in the R statistical software environment (R
+4.5.1), using the original data provided in Watters et al.~(2020) or in
+the published articles cited as supporting evidence. To facilitate
+reproducibility, the Supplementary Material from the original Watters et
+al.~(2020) article and the Supplementary Material from all necessary
+supporting articles are hosted in Zenodo repositories (record ID 5040114
+and record ID 17347172). A dedicated R script allowing for these data
+and scripts to be downloaded directly from the repositories is provided
+in Appendix I. Fully annotated R code, highlighting the modifications
+and justifications, as well as the code needed to fully reproduce the
+figures and tables presented here, are also included in the Zenodo
+repositories.
+
+\section{Results}\label{results}
+
+\subsubsection{\texorpdfstring{\emph{Issue \#1: Missing data and
+Unvalidated Ecological
+Assumptions}}{Issue \#1: Missing data and Unvalidated Ecological Assumptions}}\label{issue-1-missing-data-and-unvalidated-ecological-assumptions-1}
+
+Survey coverage varied across years and survey legs, resulting in the
+exclusion of surveys with transect coverage at or below the 10th
+percentile removing four survey legs in gSSMU 1 (≤10 nm; 1996, 1999,
+2010, 2012) and three survey legs in gSSMU 2 (≤200 nm; 2010, 2011, 2012)
+(Supplementary Material, Figure S1). All subsequent analyses were based
+on the filtered survey dataset.
+
+No significant differences in ln(LKB) were detected between negative and
+positive SAM years for either gSSMU (Table 1, Figure 2). Median LKB
+differed between gSSMUs, with consistently higher values in gSSMU \#2
+than in gSSMU \#1 across both SAM phases. Mean ln(LKB) differed between
+SAM phases only for gSSMU \#2 (p-value\_2 = 0.008), with higher values
+observed during positive SAM years. Median LKB values for gSSMU 2
+exceeded 1 Mt in all years with survey data, regardless of SAM phase
+(Figure 2). Consequently, by applying an arbitrary 1 Mt threshold to
+gSSMU \#2 LKB data would wrongly classify all imputed-LKB years as
+``worst case'' scenario.
+
+Observed survey-based LKB distributions for all gSSMU--SAM combinations
+were well described by a log-normal distribution (Supplementary
+Material, Table S1; Figure S2). In contrast, ln(LKB) values generated
+through the imputation procedure of Watters et al.~(2020) were
+concentrated toward the upper bound of the imposed limits, with mean
+ln(LKB) values of 17.5--17.7 (approximately 44 Mt), and did not conform
+to a log-normal distribution (Supplementary Material, Table S2; Figure
+S3). As above, this bias would wrongly classify all LKB-imputed years,
+for both gSSMUs, as ``worst case'' scenario.
+
+Local harvest rate (LHR) estimates were recalculated using observed LKB
+values and imputed LKB values (median LKB, as presented in Table 1)
+(Figure 3). In gSSMU \#1, LHR was \textless0.01 in most years with
+survey data, with intermediate values observed during summer 2010 (LHR =
+0.0165) and winter 2014 (LHR = 0.012); LHR exceeded 0.10 only in winter
+2015. When imputed summer values were included, LHR ranged from 0.034 to
+0.067 during summers 2013--2015. In gSSMU \#2, all years with
+survey-based LKB had LHR \textless0.01, while intermediate LHR values
+occurred only in years with imputed LKB (1987, 1988, 1989, 1992) (Figure
+3).
+
+Penguin performance was reanalysed to assess the effects of excluding
+low-coverage surveys and revising imputed summer LKB values using
+estimates in Table 1 (Supplementary Material, Section C). Penguin
+performance was most strongly associated with intermediate ONI and
+intermediate LHR conditions. The nominal ``worst case'' scenario no
+longer produced the lowest expected performance and instead lay close to
+the long-term mean. Notably, scenarios with high harvest rates (LHR ≥
+0.10) exhibited median performance comparable to the ``best case''
+scenario (Figures S5 and S7).
+
+Because imputing missing LKB values produced no substantive change in
+posterior predictive distributions of penguin performance, and analyses
+based solely on observed data yielded slightly lower (more conservative)
+estimates, all subsequent results are reported without imputing missing
+LKB values.
+
+\subsubsection{Issue \#2: Continuing spatial and temporal
+mismatches}\label{issue-2-continuing-spatial-and-temporal-mismatches-1}
+
+Foraging distribution of adult Gentoo, Chinstrap and Adélie penguins
+during breeding are more restricted than Watters et al.~(2020) assumed.
+Breeding penguins at Copacabana utilize mainly SSMU APBSE (south of King
+George Island), occupying approximately 15\% of gSSMU \#1 while
+conspecificis from Cape Shirreff exploited less than 20\% of gSSMU \#2,
+primarily in SSMUs BSW and APDPW, respectively (north of Livingstone
+Island) (Figure 4, Supplementary Table SX).
+
+Adult foraging distribution before the breeding season, which presumably
+determines ``winter'' performance, is broader than during summer (Figure
+5). Chinstrap Penguins disperse along the southern Antarctic circumpolar
+current front\textsuperscript{2,3} (Figure 5A). Adélie penguins disperse
+east towards the Weddell Sea but by contrast, Gentoo penguins from Cape
+Shirreff used mainly APBSW during winter\textsuperscript{8} (Figure 4C).
+
+Re-estimating expected performance using corrected LKB and LHR values
+demonstrated that penguin performance is insensitive to both metrics.
+Differences in ONI conditions remain the primary driver of performance
+(Figure 6B). These results contradict the findings of Watters et al.
+(2020). High LHR (≥ 0.10) cases showed better performance than the
+``best case'' scenario. Data scarcity in high LHR cases, except for
+specific winter points, limits these results (Supplementary Material,
+Fig. S8). Allocating March data to winter season reveals that
+intermediate harvest cases (0.01 \textless{} LHR 0.10) show poorer
+performance than originally reported (Fig. 7A-C). Restricting foraging
+to specific SSMUs produces expected performance levels for the ``worst
+case'' scenario at or above the long-term mean. Specifically, case 5
+(ONI 78 ≤ -0.5°C; LKB ≤ 1 Mt; and LHR ≥ 0.1) is actually better than the
+`best case' identified by Watters et al.~(2020), while the `worst case'
+is at or above the average penguin performance (Fig. 7).
+
+Incorporating known ecological migration patterns reduces the
+probability of negative impacts from high LHR, dropping from 93\% to
+21\%-37\% (POINT TO RESULTS), or from a near-certainty to approximately
+1-in-3 or 1-in-5 (Tables 2-3; Fig. 7). At this point, we clarify that
+the probability of negative impact measures the likelihood of an
+occurrence rather than the scale of population decline. Given the
+temporal separation between fishing and penguin breeding over the
+preceding decades, our results are unsurprising.
+
+\subsubsection{Issue \#3: Omission of competing
+species}\label{issue-3-omission-of-competing-species-1}
+
+A mean 9,653 (+/- 6346, range 2,429 -- 14,333) humpback whales were
+estimated to be present in gSSMU \#1, resulting in a consumption
+estimate of 549,088 tonnes across a 90 day period. Summer fishery
+removals for the period 1982-2016 summed to 435,493 tonnes for gSSMU
+\#1.
+
+\section{Discussion}\label{discussion}
+
+Our reanalysis of~Watters et al.~(2020)~reveals that the study's
+conclusions are based on~assumptions that lack support. By
+addressing~spatial and temporal mismatches,~unvalidated ecological
+assumptions, and~methodological biases, we demonstrate that
+the~perceived impacts of krill fishing on penguin performance are
+significantly overestimated, reducing the estimated probability of
+negative impacts from high LHR~(≥ 0.1) from 93\% to 37\%.
+
+\subsubsection{Issue \#1: Unvalidated ecological
+assumptions}\label{issue-1-unvalidated-ecological-assumptions}
+
+A key component of Watters et al.~(2020) analysis is the imputation of
+missing summer survey data (LKB), which in turns affect the presumptive
+fishing impact (LHR). In addition, they imputed specific range values
+for LKB and LHR as `best' and `worst' case scenarios, without testing
+their assumptions. Our results indicated that the assumed relationship
+of LKB with SAM index sign, and the use of LKB = 1 Mt for assigning good
+and bad years are incorrect (Table 1, Figure 2). Furthermore, the
+process to estimate imputed-LKB values largely overestimate the
+imputed-LKB. When considered altogether, these errors introduce strong
+biases in the analysis.
+
+Conclusions on fishing impact on penguins performance were driven by
+winter LKB estimates (Figure S7 taken from 9), evident in Figure 3 where
+only the winter LHR for 2015 is \textgreater0.10. However in Watters et
+al.~2020 winter data were not imputed due to the low number of samples.
+After filtering for poor coverage, only 2 winter LKB were retained at
+each gSSMU for the entire study (Figure 3) which is in agreement with
+dataset descriptions10. The large LHR value for 2015 comes from a low
+LKB estimate of 176,394 tonnes, coupled with an increase in winter
+catches (Figure 3).
+
+Watters et al.~(2020) assumes a direct relationship between~krill
+biomass and the phase of the Southern Annular Mode (SAM), yet our
+statistical analyses reveal~no significant correlation~between SAM
+phases and Local Krill Biomass (LKB). Similarly, the assumption that~low
+LKB (\textless1 Mt) corresponds to smaller krill~is not supported by
+empirical evidence. This raises concerns over the extrapolation of the
+ecological significance of small versus large krill in the context of
+penguin performance used in Watters et al.~2020.
+
+\subsubsection{Issue \#2: Spatial and temporal mismatches undermine
+study
+conclusions}\label{issue-2-spatial-and-temporal-mismatches-undermine-study-conclusions}
+
+The~spatial scales~used in Watters et al.~(2020) exceed the actual
+foraging ranges of penguins by a factor of~4 to 15. For example, Adélie
+penguins forage within~1,139 nm², yet the study used~gSSMUs of
+15,500--20,600 nm²~to define ``local'' krill biomass and harvest rates.
+This mismatch leads to~overestimated localized depletion effects, as the
+broad spatial units fail to capture the fine-scale interactions between
+penguins and their prey.
+
+Similarly, the study's~temporal assumptions~incorrectly associate winter
+fishing pressure with penguin performance, despite Adélie and chinstrap
+penguins~migrating away from breeding colonies by late February. By
+excluding these species from winter analyses, we show that the~original
+model's conclusions about seasonal fishing impacts are misassigned.
+
+\subsubsection{Issue \#3: Omission of competing krill
+predators}\label{issue-3-omission-of-competing-krill-predators}
+
+A major limitation of Watters et al.~(2020) is the omission of
+krill-dependent predators that compete with penguins for prey resources.
+Recovering baleen whale populations exert substantial predation pressure
+on krill, particularly in regions that overlap with penguin breeding and
+foraging activity. Using available abundance, distribution and
+consumption estimates for competing species, we show that humpback
+whales in one summer season consumed as much krill in gSSMU \#1 as taken
+by the fishery during the entire 32-year period of the Watters et al.
+(2020) study. The consumption by whales also overlaps temporally with
+penguin breeding, unlike the fishery which since 2010 has shifted to a
+winter fishery along the Peninsula5. Intuitively then, ignoring the vast
+amount more krill removed by whales at the same time as breeding
+penguins are foraging is likely to be greatly overestimating the
+relative impact of fisheries removal on penguin performance. Future
+assessments of krill fishery must incorporate~multi-species
+interactions~to accurately evaluate the cumulative pressures on
+krill-dependent predators. It is worth noting that our evaluation of
+competing predators is limited to whales; scientific evidence suggests
+that seal and fish predation on krill is also nontrivial11,12.
+
+\subsubsection{Broader considerations}\label{broader-considerations}
+
+While Watters et al.~(2020) raises important questions regarding the
+ecological impacts of krill fishery, an analytical framework~focussing
+solely on fishing pressure and climate indices is~insufficient~for
+disentangling the~relative contributions of multiple stressors affecting
+krill-dependent predators. Over~20 years ago, CCAMLR acknowledged that
+its~CEMP monitoring program~was unable to distinguish between the
+effects of fishing and climate variability13, yet no substantive
+modifications have been implemented to address this limitation. In this
+context, a further limitation of Watters et al.~(2020) is its reliance
+on macroscale climate indices, such as the Oceanic Niño Index (ONI) and
+the Southern Annular Mode (SAM), to explain variability in krill
+availability and penguin performance. While these indices are useful for
+characterizing large-scale atmospheric and oceanographic patterns, their
+application to ecological processes at fine spatial and temporal scales
+relevant to penguin foraging is problematic. The Amundsen Sea Low (ASL)
+is the dominant climate feature for the western Antarctic
+Peninsula14--16. The El Niño-Southern Oscillation (captured in the ONI
+predictor) modulates the ASL, with El Niño (La Niña) shallowing
+(deepening) its pressure, causing more northwesterly (southeasterly)
+winds and upwelling (restricted influx) of Circumpolar Deep Water onto
+the shelf. The SAM also influences the pressure of the ASL, with the
+current trend of negative SAM constructively (destructively) interfering
+with ASL when in phase with El Niño (La Niña) events17. The result is a
+set of above-surface climate conditions that drive changes in water mass
+intrusion that is in turn dependent on interactions between two climate
+processes as well as the geographical orientation of the coastline
+involved, all of which have been shown to dramatically impact the
+foraging trajectories and trip durations of Chinstrap penguins18. The
+bathymetry of the Antarctic Peninsula, which also influences the
+hydrographic conditions, is complex particularly at scales that are
+important to centrally-foraging predators such as penguins. The
+structuring of krill aggregations in time and space in the WAP have also
+been linked to mesoscale circulation processes19, which are unlikely to
+be uniformly affected by broad-scale climate indices due to local
+variation in bathymetry and coastal orientation.
+
+The~real-world implications~of Watters et al.~(2020) are substantial, as
+its conclusions have influenced~CCAMLR's Marine Protected Area
+proposals~and~the Marine Stewardship Council fisheries certification
+processes. Our reanalyses suggest that key~methodological limitations,
+including spatial and temporal mismatches, unvalidated and often
+scientifically unjustified ecological assumptions, and the omission of
+competing predators compromise the study`s validity. We recommend future
+assessments: 1. Use~spatial scales aligned with penguin foraging
+ranges~such as SSMUs rather than gSSMUs to better reflect ecological
+interaction, though we caution that even the SSMU scale is likely
+insufficient to capture these ecological interactions in a meaningful
+way. 2. Account for~species-specific migration and seasonal variability
+in fishing effort, particularly in relation to breeding phenology. 3.
+Incorporate~competing predators~and~local environmental drivers,
+including mesoscale oceanographic processes and krill life-stage
+dynamics. By addressing these issues, managers can develop~more accurate
+and evidence-based strategies~for balancing krill harvesting with the
+conservation of dependent predator populations.
+
+\subsubsection{Conclusion}\label{conclusion}
+
+Our reanalysis of Watters et al.~(2020) demonstrates that the study's
+conclusions are substantially influenced by methodological limitations,
+including spatial and spatial/temporal mismatches, unsupported
+ecological assumptions, the omission of a key competing krill predator
+and structural biases in model design. While~climate variability
+(ONI)~remains a dominant driver of penguin performance, the~impacts of
+krill fishing are considerably less severe~when evaluated at~more
+ecologically relevant spatial and temporal scales.
+
+To ensure that scientific advice provided to CCAMLR and other management
+and certification agencies is both objective and robust, future
+assessments must adopt~finer resolution spatial frameworks aligned with
+predator foraging ranges, account for species-specific seasonal
+dynamics, and incorporate~multi-species interactions and local
+environmental drivers. Only through such integrative approaches can we
+accurately assess the cumulative impacts of fishing and environmental
+change~on Antarctic krill-dependent predators in the Southern ocean
+ecosystem.
+
+\renewcommand\refname{Citations}
+\bibliography{mylib.bib}
+
+
+\end{document}
