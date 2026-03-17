@@ -109,7 +109,7 @@ Table.01 <- data %>%
     .groups = "drop"
   )
 
-script_path <- "/Users/god/Documents/R workspace/WattKrug/A_Results_Suppl"
+script_path <- "./A_Results_Suppl"
 
 tab <- knitr::kable(Table.01, digits = 3, format = "html") |>
   kableExtra::kable_styling(

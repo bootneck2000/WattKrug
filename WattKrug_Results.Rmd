@@ -88,17 +88,11 @@ library(tabulapdf)
 library(formatR)
 library(ggplot2)
 library(patchwork)
+library(webshot2)
 library(scales)
 ```
 
 # Tables:
-
-Table 1. Estimates of the mean (mu) and standard deviation (sd) of
-summer Ln(LKB) by gSSMU and SAM sign, derived from Equation (2) of Watters et
-al. (2020). Statistical results from the nonparametric one-way Kruskal-Wallis test are
-reported as follows: p-value_1 compares SAM sign within each gSSMU, and
-p-value_2 compares gSSMUs within each SAM sign. The corresponding LKB
-estimates appear in the column labelled median-LKB.
 
 ```{r Table.01, results='asis', warning=FALSE, echo=FALSE, message=FALSE, comment=NA}
 
@@ -110,7 +104,17 @@ invisible(
   )
 )
 
-kable(Table.01, digits = 3)
+kable(Table.01, digits = 3, booktabs=TRUE,  
+      col.names = c("gSSMU", 
+             "SAM sign", 
+              "n",
+              "mean", 
+             "sd", 
+              "p1",
+             "median LKB",
+             "p2"),
+      longtable=TRUE, align="lccccc", caption = "Table 1. Estimates of the mean and standard deviation (sd) of
+summer Ln(LKB) by gSSMU and SAM sign, derived from Equation (2) of Watters et al. (2020). Median LKB shows Local Krill Biomass in tonnes. Statistical results from the nonparametric one-way Kruskal-Wallis test are reported as follows: p-1 compares SAM sign within each gSSMU, and p-2 compares gSSMUs within each SAM sign. ", escape=FALSE)
 
 ```
 
@@ -127,7 +131,7 @@ d.SSMUs = read_csv("./A_Results/Model02_SSMU/hr_derived_s.csv",col_types="dddfd"
 
 
 
-
+\newpage
 ```{r Table 2 Posterior and posterior predictive probabilities, warning=FALSE, echo=FALSE}
 ### Replica of Summary Table 1, Watters et al. ----
 keepers = c(37:74)
@@ -137,7 +141,7 @@ pt = d.org %>%
   dplyr::rename(.,c(mean = `mean(value)`)) %>%
   dplyr::slice(37:74)
 
-best.case.names = c("Best case", "ONI Neutral", "ONI warm", "LKB High", "LHR medium", "LHR high", "Worst case")
+best.case.names = c("Best case", "−0.5°C < ONI < 0.5°C", "ONI ≥ 0.5°C", "LKB > 1Mt", "0.01 < LHR < 0.10", "LHR ≥ 0.10", "Worst case")
 best.case = c(NA,pt$mean[4], pt$mean[5], pt$mean[1], pt$mean[2], pt$mean[3], pt$mean[6])
 oni.range = c(NA,NA,NA, pt$mean[9], pt$mean[7], pt$mean[8], NA)
 oni.warm = c(NA, NA, NA, pt$mean[12], pt$mean[10], pt$mean[11], NA)
@@ -153,9 +157,9 @@ knitr::kable(table.original.scenario, booktabs=TRUE,  col.names = c("Effects",
              "Best Case", 
               "-0.5°C < ONI < +0.5°C",
               "ONI > +0.5°C", 
-             "Long-term µ", 
-              "Long-term predicted µ"),
-             longtable=TRUE, align="lccccc", caption = "Table 2. Original table in Watters et al. 2020.  In this and all subsequent tables below, posterior and posterior predictive probabilities that expected performance given the effects indicated in the left-most column are less than the expected performance given effects or conditions indicated in the column headings. Posterior predictive probabilities are indicated in parentheses. ONI is the Oceanic Niño Index, LKB is local krill biomass, and LHR is local harvest rate. Worst Case is represented by neutral ONI; LHR  $\\geqslant$ 0.1; and LKB $\\geqslant$ 1Mt.  The Best Case is represented by La Niña conditions, low LKB and low LHR.", escape=FALSE)
+             "Long-term mean", 
+              "Predicted long-term mean"),
+             longtable=TRUE, align="lccccc", caption = "Table 2. Original table in Watters et al. 2020.  In this and all subsequent tables below, posterior (Long-term mean) and posterior predictive probabilities (Predicted long-term mean) that expected performance given the effects indicated in the left-most column are less than the expected performance given effects or conditions indicated in the column headings. ONI is the Oceanic Niño Index, LKB is local krill biomass, and LHR is local harvest rate. Worst Case is represented by neutral ONI; LHR  $\\geqslant$ 0.1; and LKB $\\geqslant$ 1Mt.  The Best Case is represented by La Niña conditions, low LKB and low LHR.", escape=FALSE)
 
 ```
 
@@ -165,47 +169,13 @@ knitr::kable(table.original.scenario, booktabs=TRUE,  col.names = c("Effects",
 ```{r Table 3 Posterior and posterior predictive probabilities, warning=FALSE, echo=FALSE}
 ### Replica of Summary Table 1, Watters et al. ----
 keepers = c(37:74)
-pt = d.andy1 %>%
-  dplyr::group_by(Parameter) %>%
-  dplyr::summarize(mean(value)) %>%
-  dplyr::rename(.,c(mean = `mean(value)`)) %>%
-  dplyr::slice(37:74)
-
-best.case.names = c("Best case", "ONI Neutral", "ONI warm", "LKB High", "LHR medium", "LHR high", "Worst case")
-best.case = c(NA,pt$mean[4], pt$mean[5], pt$mean[1], pt$mean[2], pt$mean[3], pt$mean[6])
-oni.range = c(NA,NA,NA, pt$mean[9], pt$mean[7], pt$mean[8], NA)
-oni.warm = c(NA, NA, NA, pt$mean[12], pt$mean[10], pt$mean[11], NA)
-long.term.posterior = c(pt$mean[13], pt$mean[17], pt$mean[18], pt$mean[14], pt$mean[15], pt$mean[16], pt$mean[19])
-long.term.predicted = c(pt$mean[32], pt$mean[36], pt$mean[37], pt$mean[33], pt$mean[34], pt$mean[35], pt$mean[38])
-
-table.original.scenario = round(tibble(best.case, oni.range, 
-                                oni.warm, long.term.posterior,long.term.predicted),2) %>%
-  dplyr::mutate(Effects = best.case.names) %>%
-  dplyr::select(6,1,2,3,4,5)
-
-knitr::kable(table.original.scenario, booktabs=TRUE,  col.names = c("Effects", 
-             "Best Case", 
-              "-0.5°C < ONI < +0.5°C",
-              "ONI > +0.5°C", 
-             "Long-term µ", 
-              "Long-term predicted µ"),
-             longtable=TRUE, align="lccccc", caption = "Table 3. Posterior and posterior predictive probabilities for Spatial Model (Andy 1).", escape=FALSE)
-
-```
-
-
-
-
-```{r Table 4 Posterior and posterior predictive probabilities, warning=FALSE, echo=FALSE}
-### Replica of Summary Table 1, Watters et al. ----
-keepers = c(37:74)
 pt = d.SSMUs %>%
   dplyr::group_by(Parameter) %>%
   dplyr::summarize(mean(value)) %>%
   dplyr::rename(.,c(mean = `mean(value)`)) %>%
   dplyr::slice(37:74)
 
-best.case.names = c("Best case", "ONI Neutral", "ONI warm", "LKB High", "LHR medium", "LHR high", "Worst case")
+best.case.names = c("Best case", "−0.5°C < ONI < 0.5°C", "ONI ≥ 0.5°C", "LKB > 1Mt", "0.01 < LHR < 0.10", "LHR ≥ 0.10", "Worst case")
 best.case = c(NA,pt$mean[4], pt$mean[5], pt$mean[1], pt$mean[2], pt$mean[3], pt$mean[6])
 oni.range = c(NA,NA,NA, pt$mean[9], pt$mean[7], pt$mean[8], NA)
 oni.warm = c(NA, NA, NA, pt$mean[12], pt$mean[10], pt$mean[11], NA)
@@ -221,11 +191,13 @@ knitr::kable(table.original.scenario, booktabs=TRUE,  col.names = c("Effects",
              "Best Case", 
               "-0.5°C < ONI < +0.5°C",
               "ONI > +0.5°C", 
-             "Long-term µ", 
-              "Long-term predicted µ"),
-             longtable=TRUE, align="lccccc", caption = "Table 4. Posterior and posterior predictive probabilities for Spatial Model by SSMUs.", escape=FALSE) 
+             "Long-term mean", 
+              "Predicted long-term mean"),
+             longtable=TRUE, align="lccccc", caption = "Table 3. Posterior (long-term mean) and posterior predictive (predicted long-term mean) probabilities for spatial model by SSMUs.", escape=FALSE)
 
 ```
+
+
 
 \newpage
 

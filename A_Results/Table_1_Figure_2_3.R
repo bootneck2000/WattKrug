@@ -191,7 +191,7 @@ knitr::kable(Table.01, digits = 3)
 script_path <- "/Users/god/Documents/R workspace/WattKrug/A_Results/Table_1_Figure_2_3.R"
 
 # Output directory = folder containing that script
-out_dir <- dirname(script_path)
+out_dir <- "./A_Results/"
 
 tab <- knitr::kable(Table.01, digits = 3, format = "html") |>
   kableExtra::kable_styling(
