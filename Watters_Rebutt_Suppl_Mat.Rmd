@@ -28,14 +28,17 @@ date: "`r Sys.Date()`"
 # numbersections: true
 # csl: elsarticle.cls
 
-output: word_document
-always_allow_html: true
-
+output: 
+  word_document:
+    toc: false
+  pdf_document:
+    toc: false
   # rticles::elsevier_article:
   #   latex_engine: xelatex  # Optional: Use xelatex for better font handling if needed
   #   keep_tex: true  # Optional: Keep the .tex file for debugging
   #   fig_caption: FALSE
-    
+
+# always_allow_html: true    
 header-includes:
   - \usepackage{booktabs}
   - \usepackage{longtable}
@@ -57,13 +60,14 @@ header-includes:
   - \newcommand{\blandscape}{\begin{landscape}}
   - \newcommand{\elandscape}{\end{landscape}}
   - \usepackage{float} \floatplacement{figure}{H} 
-  - \newcommand{\beginsupplement}{\setcounter{table}{0}  \renewcommand{\thetable}{S\arabic{table}}     -   - \setcounter{figure}{0} \renewcommand{\thefigure}{S\arabic{figure}}}
+  - \newcommand{\beginsupplement}{\setcounter{table}{0}  
+  - \renewcommand{\thetable}{S\arabic{table}}     -   - \setcounter{figure}{0}
+  - \renewcommand{\thefigure}{S\arabic{figure}}}
 #output: html_document
 editor_options: 
   markdown: 
     wrap: 72
 ---
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, comment=NA)
 #options(knitr.kable.NA = '\\-')
@@ -90,6 +94,7 @@ library(tibble)
 library(ggplot2)
 library(scales)
 library(stringr)
+library(webshot2)
 library(flextable)
 ```
 
@@ -156,9 +161,6 @@ ln(LKB) values of 17.5--17.7 (approximately 44 Mt), and did not conform
 to a log-normal distribution (Supplementary Material, Table S2; Figure
 S3).
 
-Table S1. Shapiro--Wilk test results for normality of observed
-log-transformed LKB values, reported by gSSMU and SAM sign. Columns show
-sample size (n), p-value, and W-statistic.
 
 ```{r Table S1, results='asis', warning=FALSE, echo=FALSE, message=FALSE, comment=NA}
 
@@ -169,19 +171,34 @@ suppressMessages(
   )
 )
 
-kable(shapiro_results1, digits = 3)
+kable(shapiro_results1, digits = 3, booktabs=TRUE,  
+      col.names = c("gSSMU", 
+             "SAM sign", 
+              "n",
+              "p", 
+             "W"),
+      longtable=TRUE, align="lcccc", caption = "Table S1. Shapiro--Wilk test results for normality of observed
+log-transformed LKB values, reported by gSSMU and SAM sign. Columns show
+sample size (n), p-value, and W-statistic.", escape=FALSE)
 
 ```
 
-Table S2. Shapiro--Wilk test results for normality of imputed
-log-transformed LKB values. The table reports the total number of
-imputations generated (n_total), the subsample used for the test
-(n_used), and the corresponding W and p values for each gSSMU and SAM
-sign.
+
 
 ```{r Table S2, results='asis', warning=FALSE, echo=FALSE, message=FALSE, comment=NA}
 
-kable(shapiro_imp, digits = 3)
+kable(shapiro_imp, digits = 3, booktabs=TRUE,  
+      col.names = c("gSSMU", 
+             "SAM sign", 
+              "N total",
+              "n sampled", 
+             "W",
+             "p"),
+      longtable=TRUE, align="lccccc", caption = "Table S2. Shapiro--Wilk test results for normality of imputed
+log-transformed LKB values. The table reports the total number of
+imputations generated (N total), the subsample used for the test
+(n sampled), and the corresponding W and p values for each gSSMU and SAM
+sign.", escape=FALSE)
 
 ```
 
@@ -372,23 +389,21 @@ Reference lines respectively indicate the median expected performance in
 the best case (dashed line) and the long-term mean performance (solid
 line). As per Supplementary Fig. S8, Watters et al. (2020).
 
-```{=tex}
 \newpage
-\blandscape
-```
 # D. Continuing spatial and temporal mismatches
-
-
-Table S4. Size of SSMUs for Subarea 48.1. 
-CCAMLR Small-Scale Management Units (SSMUs) were download from CCAMLR Public repository (https://github.com/ccamlr/data).
-CCAMLR. 2022. Geographical data layer: CCAMLR Fishery Small-Scale Management Units. Version 0.9, URL: <https://github.com/ccamlr/data/tree/main/geographical_data/ssmu/versions/v0.9>.
 
 ```{r Table S4, results='asis', warning=FALSE, echo=FALSE, message=FALSE, comment=NA}
 
 # load csv table
 ssmu_table <- read.csv("./Supplementary files/SSMU48_area.csv")
 
-knitr::kable(ssmu_table)
+knitr::kable(ssmu_table, digits = 3, booktabs=TRUE,  
+      col.names = c("SSMU", 
+             "Area (km2)", 
+              "gSSMU",
+              "Area fraction"),
+      longtable=TRUE, align="lccc", caption = "Table S4. Size of SSMUs for Subarea 48.1 and its relative size to the gSSMU where they are located. CCAMLR Small-Scale Management Units (SSMUs) were download from CCAMLR Public repository (https://github.com/ccamlr/data).
+CCAMLR. 2022. Geographical data layer: CCAMLR Fishery Small-Scale Management Units. Version 0.9, URL: <https://github.com/ccamlr/data/tree/main/geographical_data/ssmu/versions/v0.9>.", escape=FALSE)
 
 ```
 
@@ -410,8 +425,11 @@ knitr::include_graphics("./A_Results/Model02_SSMU/Posterior_predictive_dist_mod0
 Figure S8. Posterior predictive distributions (boxplots) and jittered observations (colored circles) of penguin  76 performance. A) Watters model. B) Andy spatial. C) Andy SApatial, MArch = winter. D) Spatial and temporal SSMUs.
 
 
-
+\newpage
 # E. Krill consumption by main predator taxa
+
+
+
 
 Estimates of krill consumption by major predator groups during the study
 period have been previously summarized by Hill et al. (2007). During
@@ -447,38 +465,53 @@ should be considered as gross subestimations of krill availability.
 
 Winter consumption estimates were lower but more uncertain. Hill et al.
 (2007) estimated fish consumption of
-`r scales::comma(round(sum(Table.04$Fish_Krill_ton[3:4]), 0))` in the
+`r scales::comma(round(sum(Table.06$Fish_Krill_ton[3:4]), 0))` in the
 Bransfield Strait and
-`r scales::comma(round(sum(Table.04$Fish_Krill_ton[1:2]), 0))` in the
+`r scales::comma(round(sum(Table.06$Fish_Krill_ton[1:2]), 0))` in the
 Drake Passage. Penguin consumption during winter was estimated at
-`r scales::comma(round(sum(Table.04$Penguin_Krill_ton[3:4]), 0))` in the
+`r scales::comma(round(sum(Table.07$Penguin_Krill_ton[3:4]), 0))` in the
 Bransfield Strait and
-`r scales::comma(round(sum(Table.04$Penguin_Krill_ton[1:2]), 0))` in the
+`r scales::comma(round(sum(Table.07$Penguin_Krill_ton[1:2]), 0))` in the
 Drake Passage. Combined winter consumption by fish and penguins
 therefore exceeded 500,000 t and 350,000 for gSSMU #1 and #2.
 respectively.
 
-Table S3. Estimated krill consumption by major predator taxa during the
-austral summer. Values from Hill et al. (2007), Table 15.
 
 ```{r Table S5, results='asis', warning=FALSE, echo=FALSE, message=FALSE, comment=NA}
 
-flextable(Table.03) |>
+flextable(Table.05) |>
   fontsize(size = 8, part = "all") |>
   padding(padding = 1, part = "all") |>
-  autofit()
+  autofit() |>
+  set_caption("Table S5. Estimated whale abundance for gSSMU #1 and #2 during the study period.")
 
 ```
 
-Table S4. Estimated krill consumption by major predator taxa during the
-austral winter. Values from Hill et al. (2007), Table 15.
+
+
 
 ```{r Table S6, results='asis', warning=FALSE, echo=FALSE, message=FALSE, comment=NA}
 
-flextable(Table.04) |>
+flextable(Table.06) |>
   fontsize(size = 8, part = "all") |>
   padding(padding = 1, part = "all") |>
-  autofit()
+  autofit() |>
+  set_caption("Table S6. Estimated krill consumption by major predator taxa during the
+austral summer. Values from Hill et al. (2007), Table 15.")
+
+```
+
+
+
+
+```{r Table S7, results='asis', warning=FALSE, echo=FALSE, message=FALSE, comment=NA}
+
+flextable(Table.07) |>
+  fontsize(size = 8, part = "all") |>
+  padding(padding = 1, part = "all") |>
+  autofit() |>
+  set_caption("Table S7. Estimated krill consumption by major predator taxa during the
+austral winter. Values from Hill et al. (2007), Table 15.")
 
 
 ```
@@ -489,17 +522,22 @@ flextable(Table.04) |>
 ```
 # Citations
 
-Hill, S., K. Reid, S. E. Thorpe, J. T. Hinke, and G. M. Watters. 2007.
-"A Compilation of Parameters for Ecosystem Dynamics Models of the Scotia
-Sea--Antarctic Peninsula Region." CCAMLR Science 14: 1-25.
+Biuw, M., Lindstrøm, U., Jackson, J.A., Baines, M., Kelly, N., McCallum, G., Skaret, G., Krafft, B.A. Estimated summer abundance and krill consumption of fin whales throughout the Scotia Sea during the 2018/2019 summer season. Sci Rep 14, 7493 (2024).
 
-Vianna J.A. , M. Cortez, B. Ramos, N. Sallaberry-Pincheira, D.
-González-Acuña, G. P. M. Dantas, J. Morgante, A. Simeone, and G.
-Luna-Jorquera. 2014. Changes in abundance and distribution of Humboldt
-penguin Spheniscus humboldti. Marine Ornithology 42:153-159.
+Herr, H., Viquerat, S., Devas, F., Lees, A., Wells, L., Gregory, B., Giffords, T., Beecham, D., Meyer, B. Return of large fin whale feeding aggregations to historical whaling grounds in the Southern Ocean. Sci Rep 12, 9458 (2022).
 
-Watters, George M., Jefferson T. Hinke, and Christian S. Reiss. 2020.
-"Long-Term Observations from Antarctica Demonstrate That Mismatched
-Scales of Fisheries Management and Predator-Prey Interaction Lead to
-Erroneous Conclusions about Precaution." Scientific Reports 10 (1).
-<https://doi.org/10.1038/s41598-020-59223-9>.
+Herr, H., Viquerat, S., Siegel, V., Kock, K.-H., Dorschel, B., Huneke, W.G.C., Bracher, A., Schröder, M., Gutt, J. Horizontal niche partitioning of humpback and fin whales around the West Antarctic Peninsula: evidence from a concurrent whale and krill survey. Polar Biol 39, 799–818 (2016).
+
+Hill, S.L., Reid, K., Thorpe, S.E., Cb, C., Hinke, J., Watters, G.M., Grove, P. A compilation of parameters for ecosystem dynamics models of the Scotia Sea – Antarctic Peninsula region. CCAMLR Science 14, 1–25 (2007).
+
+Johannessen, J.E.D., Biuw, M., Lindstrøm, U., Ollus, V.M.S., Martín López, L.M., Gkikopoulou, K.C., Oosthuizen, W.C., Lowther, A. Intra‐season variations in distribution and abundance of humpback whales in the West Antarctic Peninsula using cruise vessels as opportunistic platforms. Ecology and Evolution 12, e8571 (2022).
+
+Reilly, S., Hedley, S., Borberg, J., Hewitt, R., Thiele, D., Watkins, J., Naganobu, M. Biomass and energy transfer to baleen whales in the South Atlantic sector of the Southern Ocean. Deep Sea Research Part II: Topical Studies in Oceanography 51, 1397–1409 (2004).
+
+Seyboth, E., Meynecke, J.-O., De Bie, J., Roychoudhury, A., Findlay, K. A review of post-whaling abundance, trends, changes in distribution and migration patterns, and supplementary feeding of Southern Hemisphere humpback whales. Front. Mar. Sci. 10, 997491 (2023).
+
+Vianna, J.A., Cortes, M., Ramos, B., Sallaberry-Pincheira, N., González, D., Dantas, G.P.M., Morgante, J., Simeone, A., Luna-Jorquera, G., 2014. Changes in abundance and distribution of Humboldt penguin Spheniscus humboldti. Marine Ornithology 42, 153–159 (2014).
+
+Watters, G.M., Hinke, J.T., Reiss, C.S. Long-term observations from Antarctica demonstrate that mismatched scales of fisheries management and predator-prey interaction lead to erroneous conclusions about precaution. Sci Rep 10, 2314 (2020).
+
+

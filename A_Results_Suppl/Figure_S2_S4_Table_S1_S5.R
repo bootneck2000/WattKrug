@@ -581,13 +581,17 @@ imputed_survey_hist.mean
 
 ### 9. Predator's krill consumption ####
 
+Table.05 <- read.csv("./A_Results_Suppl/Baleen Whale Abundance.csv",
+                     header=TRUE, fileEncoding = "Windows-1252")
+
+
 Predators_summer <- read.csv("./A_Results_Suppl/Summer_Krill_req.csv",header=TRUE)
 Predators_winter <- read.csv("./A_Results_Suppl/Winter_Krill_req.csv",header=TRUE)
 
-Table.03 <- Predators_summer %>% select(-Reference)
-knitr::kable(Table.03, digits = 0)
+Table.06 <- Predators_summer %>% select(-Fish_Qsummer_g, -Whale_Qsummer_g, -Penguin_Qsummer_g, -Reference)
+# knitr::kable(Table.03, digits = 0)
 
-Table.04 <- Predators_winter %>% select(-Reference)
-knitr::kable(Table.04, digits = 0)
+Table.07 <- Predators_winter %>% select(-Fish_Qwinter_g, -Whale_Qwinter_g, -Penguin_Qwinter_g, -Reference)
+# knitr::kable(Table.04, digits = 0)
 
 

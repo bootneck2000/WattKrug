@@ -1,0 +1,17 @@
+Species,Geographic location,Year,Abundance,Range,Source
+Humpback whale,"South of 60°S, 110°W–50°W",1983,683,CV = 0.63,Seiboth et al. 2023
+,"South of 60°S, 110°W–50°W",1990,"1,505",CV = 0.34,Seiboth et al. 2023
+,Antarctic Peninsula,1997,"3,851",CV = 0.05; 3666-4036,Seiboth et al. 2023
+,"South of 60°S, 110°W–50°W",1997,"3,337",CV = 0.21,Seiboth et al. 2023
+,CCAMLR Subarea 48.1,2000,"6,991",CV = 32.41%,Seiboth et al. 2023
+,Bransfield Strait,2006,865,"CV = 14.13%; 95% CI = 656–1,141",Seiboth et al. 2023
+,Bransfield and Gerlache Straits,2006,865,"CV = 14.13%; 95% CI = 656–1,141",Seiboth et al. 2023
+,Drake Passage + Bransfield Strait,2013,"3,958","95% CI = 1,207-6,710 ",Herr et al. 2016
+,Whole G stock,2015,"9,687",8520-10202,Seiboth et al. 2023
+,Whole G stock,2018,"11,784",SE=266,Seiboth et al. 2023
+,Western Antarctic Peninsula,2020,"12,724","CV= 0.06; 95% CI = 10,944–14,791",Seiboth et al. 2023
+,Western Antarctic Peninsula,2020,"19,107",,Johannessen et al. 2020
+Fin whales,Antarctic Peninsula stratum,2000,"1,492",CV = 57.08%,"Reilly et al., 2004"
+,Antarctic Peninsula stratum,2013,"4,992","95% CI = 2,221-7785","Herr et al., 2016"
+,South Shetlands North + Elephant Island,2019,"7,909","95% CI = 1,047-15,743","Herr et al., 2022"
+,Antarctic Peninsula stratum,2019,"13,486","95% CI = 7,454-24,400","Biuw et al., 2024"

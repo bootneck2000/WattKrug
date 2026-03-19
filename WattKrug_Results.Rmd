@@ -113,8 +113,7 @@ kable(Table.01, digits = 3, booktabs=TRUE,
               "p1",
              "median LKB",
              "p2"),
-      longtable=TRUE, align="lccccc", caption = "Table 1. Estimates of the mean and standard deviation (sd) of
-summer Ln(LKB) by gSSMU and SAM sign, derived from Equation (2) of Watters et al. (2020). Median LKB shows Local Krill Biomass in tonnes. Statistical results from the nonparametric one-way Kruskal-Wallis test are reported as follows: p-1 compares SAM sign within each gSSMU, and p-2 compares gSSMUs within each SAM sign. ", escape=FALSE)
+      longtable=TRUE, align="lcccccc", caption = "Table 1. Estimates of the mean and standard deviation (sd) of summer Ln(LKB) by gSSMU and SAM sign, derived from Equation (2) of Watters et al. (2020). Median LKB shows Local Krill Biomass in tonnes. Statistical results from the nonparametric one-way Kruskal-Wallis test are reported as follows: p-1 compares SAM sign within each gSSMU, and p-2 compares gSSMUs within each SAM sign. ", escape=FALSE)
 
 ```
 

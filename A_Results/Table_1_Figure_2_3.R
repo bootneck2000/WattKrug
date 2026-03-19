@@ -93,6 +93,12 @@ fishery$matchme<-paste(fishery$cal.yr,fishery$season,fishery$gSSMU,sep="|")
 fishery <- fishery %>% mutate(cal.yr = as.integer(cal.yr)) 
 fishery$catch[is.na(fishery$catch)] <- 0
 
+catches <- fishery %>%
+  filter(gSSMU <3) %>%
+  group_by(cal.yr) %>%
+  summarise(Tot.catch = sum(catch))
+
+
 # junk <- readRDS("./javier_analysis/Watters_model_output1/junk.rds")
 # data <- junk %>% filter(season == "S") %>% filter(!is.na(survey)) %>% distinct(survey)
 
