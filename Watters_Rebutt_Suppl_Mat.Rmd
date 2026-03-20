@@ -161,6 +161,40 @@ ln(LKB) values of 17.5--17.7 (approximately 44 Mt), and did not conform
 to a log-normal distribution (Supplementary Material, Table S2; Figure
 S3).
 
+\newpage
+```{r fig-s2, fig.show="hold", out.width="55%", echo=FALSE}
+
+knitr::include_graphics(c(
+  "./A_Results/Watters_model/Imputed/freq_dist_summer_biomass.png",
+  "./A_Results/Watters_model/Imputed/freq_dist_summer_hr.png"))
+knitr::include_graphics(c(
+  "./A_Results/Watters_model/Imputed/obs_freq_dist_summer_biomass.png",
+  "./A_Results/Watters_model/Imputed/obs_freq_dist_summer_hr.png"))
+knitr::include_graphics(c(
+  "./A_Results/Model02_SSMU/obs_freq_dist_summer_biomass.png",
+  "./A_Results/Model02_SSMU/obs_freq_dist_summer_hr.png"))
+```
+
+Figure S2. Frequency distribution of summer krill biomass, LKB (left), and summer harvest rate, LHR (right). Watter's model imputed (top; blue) and observed (middle; red) data, and Model SSMU (this paper; bottom; green), separated by SAM phase and gSSMU.
+
+\newpage
+```{r fig-s3, fig.show="hold", out.width="55%", echo=FALSE}
+
+knitr::include_graphics(c(
+  "./A_Results/Watters_model/Imputed/freq_dist_bclass.png",
+  "./A_Results/Watters_model/Imputed/freq_dist_hrclass.png"))
+knitr::include_graphics(c(
+  "./A_Results/Watters_model/Imputed/obs_freq_dist_bclass.png",
+  "./A_Results/Watters_model/Imputed/obs_freq_dist_hrclass.png"))
+knitr::include_graphics(c(
+  "./A_Results/Model02_SSMU/obs_freq_dist_bclass.png",
+  "./A_Results/Model02_SSMU/obs_freq_dist_hrclass.png"))
+```
+
+Figure S3. Frequency distribution of LKB categories (left) and LHR categories (right). Watter's model imputed (top; blue) and observed (middle; red) data, and model SSMU (this paper; bottom; green), separated by SAM phase and gSSMU.
+
+\newpage
+
 
 ```{r Table S1, results='asis', warning=FALSE, echo=FALSE, message=FALSE, comment=NA}
 
@@ -220,22 +254,7 @@ shown as histograms stratified by gSSMU (1, 2) and SAM sign (Neg, Pos).
 The solid curve in each panel shows the log-normal density fitted to the
 observed survey values.
 
-```{r Imputed Survey, fig.width=6.5, fig.asp=0.65, out.width="80%",fig.align="centre", warning=FALSE, echo=FALSE}
-
-print(imputed_survey_hist)
-
-
-```
-
-Figure S3. Distribution of ln-transformed imputed biomass (LnSurvey)
-shown as histograms stratified by gSSMU (1, 2) and SAM sign (Neg, Pos).
-The solid curve in each panel shows the log-normal density fitted to the
-observed survey values.
-
-```{=tex}
 \newpage
-\blandscape
-```
 # C. Effect of Survey filtering and imputed LKB values on penguin performance
 
 Penguin performance and posterior predictive distributions were

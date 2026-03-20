@@ -208,6 +208,13 @@ survey_hist <- ggplot(hist_data, aes(x = LnSurvey)) +
   theme_minimal()
 survey_hist  # Figure S2
 
+
+
+
+
+
+
+
 ### 7. Estimating Frequency distributions for original IMPUTED LKB ####
 
 ### We estimate LKB imputed data using Equation (1) and (2) (Waters et al. 2020)

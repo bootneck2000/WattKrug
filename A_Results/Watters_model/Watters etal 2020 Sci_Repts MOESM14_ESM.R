@@ -621,7 +621,7 @@ library(coda)
 library(rjags)
 
 hr.jags<-jags.model(textConnection(modelstring),hr.data,hr.inits,n.chains=3,n.adapt=50000)
-# burn in for 150000 iterations
+# burn in for 100000 iterations
 update(hr.jags, n.iter=100000)
 hr.params.post<-coda.samples(hr.jags,hr.params,n.iter=50000,thin=25)
 hr.derived.post<-coda.samples(hr.jags,hr.derived,n.iter=50000,thin=25)
@@ -629,6 +629,35 @@ hr.imputed.post<-coda.samples(hr.jags,hr.imputed,n.iter=50000,thin=25)
 hr.params.summ<-summary(hr.params.post)
 hr.derived.summ<-summary(hr.derived.post)
 hr.imputed.summ<-summary(hr.imputed.post)
+
+# write input/output
+out.dir <- "./A_Results/Watters_model/Imputed/"
+dir.create(out.dir, showWarnings = FALSE, recursive = TRUE)
+
+# --- NEW: monitor and save summer biomass, summer harvest rates, and classification variables ---
+hr.biomass.vars <- c("summer", "hr.summer", "bclass", "hrclass")
+hr.biomass.post <- coda.samples(hr.jags, hr.biomass.vars, n.iter=50000, thin=25)
+# coda's summary() fails on zero-variance nodes (deterministic constants like bclass, hrclass)
+# so compute summary stats manually from the raw chain matrices instead
+hr.biomass.mat <- do.call(rbind, lapply(hr.biomass.post, as.matrix))
+
+hr.biomass.summ <- list(
+  statistics = t(apply(hr.biomass.mat, 2, function(x) c(
+    Mean     = mean(x),
+    SD       = sd(x),
+    Naive.SE = sd(x) / sqrt(length(x))
+  ))),
+  quantiles = t(apply(hr.biomass.mat, 2, quantile,
+                      probs = c(0.025, 0.25, 0.5, 0.75, 0.975),
+                      na.rm = TRUE))
+)
+
+saveRDS(hr.biomass.post, file.path(out.dir, "hr_biomass_post.rds"))
+saveRDS(hr.biomass.mat,  file.path(out.dir, "hr_biomass_mat.rds"))
+saveRDS(hr.biomass.summ, file.path(out.dir, "hr_biomass_summ.rds"))
+saveRDS(summer_meta,     file.path(out.dir, "summer_meta.rds"))  # also save this for plotting
+
+# End changes
 
 require(ggmcmc)
 hr.params.s<-ggs(hr.params.post)
@@ -645,9 +674,6 @@ hr.params2.s<-hr.params2.s[hr.params2.s$ParameterOriginal!="t.sd.index",]
 #ggmcmc(hr.params.s,file="diagnostics_hr_params_final.pdf")
 #ggmcmc(hr.derived.s,file="diagnostics_hr_derived_final.pdf")
 
-# write input/output
-out.dir <- "./A_Results/Watters_model/Imputed/"
-dir.create(out.dir, showWarnings = FALSE, recursive = TRUE)
 
 saveRDS(hr.params.post, file.path(out.dir, file = "hr.params.post.rds"))
 saveRDS(hr.derived.post, file.path(out.dir, file = "hr.derived.post.rds"))
@@ -909,6 +935,327 @@ table.original.scenario = round(tibble(best.case, oni.range,
                                        oni.warm, long.term.posterior,long.term.predicted),2) %>%
   dplyr::mutate(Effects = best.case.names) %>%
   dplyr::select(6,1,2,3,4,5)
+
+##################################################################################################
+
+# ANALYSIS OF IMPUTED DATA (LKB & LHR)
+
+# ============================================================
+# Libraries
+# ============================================================
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(stringr)
+select <- dplyr::select
+filter <- dplyr::filter
+
+out.dir <- "./A_Results/Watters_model/Imputed/"
+
+hr.biomass.post <- readRDS(file.path(out.dir, "hr_biomass_post.rds"))
+hr.biomass.mat <- readRDS(file.path(out.dir, "hr_biomass_mat.rds"))
+hr.biomass.summ <- readRDS(file.path(out.dir, "hr_biomass_summ.rds"))
+
+# ============================================================
+# Metadata tables (link MCMC node indices back to gSSMU & SAM)
+# ============================================================
+
+# Summer subset: indices 1:nsummerobs → rows of junk where season == "S"
+summer_meta <- junk %>%
+  filter(season == "S") %>%
+  mutate(
+    idx       = row_number(),
+    impute.me = as.integer(is.na(survey)),
+    gSSMU_lab = ifelse(gSSMU == 1, "gSSMU 1 (Bransfield)", "gSSMU 2 (Drake Passage)"),
+    sam_lab   = ifelse(sam.sign == "Neg", "SAM Negative", "SAM Positive")
+  )
+
+# Full dataset: indices 1:nobs → all rows of junk (for bclass / hrclass)
+all_meta <- junk %>%
+  mutate(
+    idx       = row_number(),
+    impute.me = as.integer(is.na(survey) & season == "S"),
+    gSSMU_lab = ifelse(gSSMU == 1, "gSSMU 1 (Bransfield)", "gSSMU 2 (Drake Passage)"),
+    sam_lab   = ifelse(sam.sign == "Neg", "SAM Negative", "SAM Positive")
+  )
+
+# Imputed observation indices (summer only)
+imputed_idx <- summer_meta %>% filter(impute.me == 1) %>% pull(idx)
+
+# ============================================================
+# Helper: extract node type and reshape to long format
+# ============================================================
+extract_long <- function(mat, node_type, meta, imputed_only = TRUE) {
+  cols <- grep(paste0("^", node_type, "\\["), colnames(mat), value = TRUE)
+  df <- mat[, cols, drop = FALSE] %>%
+    as.data.frame() %>%
+    mutate(sample = row_number()) %>%
+    pivot_longer(cols = -sample, names_to = "node", values_to = "value") %>%
+    mutate(idx = as.integer(str_extract(node, "\\d+"))) %>%
+    left_join(meta %>% select(idx, gSSMU_lab, sam_lab, impute.me), by = "idx")
+  if (imputed_only) df <- filter(df, impute.me == 1)
+  df
+}
+
+n_iter    <- nrow(hr.biomass.mat)   # 6,000 (2,000/chain × 3 chains)
+n_imputed <- length(imputed_idx)
+
+# ============================================================
+# Plot 1: Imputed summer krill biomass
+# ============================================================
+p1_data <- extract_long(hr.biomass.mat, "summer", summer_meta, imputed_only = TRUE)
+
+p1 <- ggplot(p1_data, aes(x = value / 1e6, y = after_stat(count / sum(count)))) +
+  geom_histogram(binwidth = 1, boundary = 0, fill = "steelblue", color = "white", alpha = 0.85) +
+  geom_vline(xintercept = 1, linetype = "dashed", color = "black", linewidth = 0.7) +
+  facet_grid(sam_lab ~ gSSMU_lab) +
+  coord_cartesian(xlim = c(0, 25), ylim = c(0, 0.15)) +
+  scale_x_continuous(breaks = seq(0, 25, by = 1)) +
+  labs(
+    title    = "Imputed summer krill biomass — Watters et al. (2020) model",
+    x        = "Biomass (million tonnes)",
+    y        = "Relative frequency"
+  ) +
+  theme_bw(base_size = 11) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)); p1
+
+ggsave(file.path(out.dir, "freq_dist_summer_biomass.png"),
+       p1, width = 8, height = 6, dpi = 300)
+
+# log(biomass)
+p1b <- ggplot(p1_data, aes(x = log(value), y = after_stat(count / sum(count)))) +
+  geom_histogram(binwidth = 0.5, fill = "steelblue", color = "white", alpha = 0.85) +
+  geom_vline(xintercept = log(1e6), linetype = "dashed", color = "black", linewidth = 0.7) +
+  facet_grid(sam_lab ~ gSSMU_lab) +
+  coord_cartesian(ylim = c(0, 0.15)) +
+  labs(
+    title    = "Imputed summer krill biomass (log scale) — Watters et al. (2020) model",
+    x        = "ln(Biomass in tonnes)",
+    y        = "Relative frequency"
+  ) +
+  theme_bw(base_size = 11) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)); p1b
+
+ggsave(file.path(out.dir, "freq_dist_summer_biomass_log.png"),
+       p1b, width = 8, height = 6, dpi = 300)
+
+# ============================================================
+# Plot 2: Imputed summer harvest rate
+# ============================================================
+p2_data <- extract_long(hr.biomass.mat, "hr.summer", summer_meta, imputed_only = TRUE)
+
+p2 <- ggplot(p2_data, aes(x = value, y = after_stat(count / sum(count)))) +
+  geom_histogram(binwidth = 0.005, boundary = 0, fill = "blue", color = "white", alpha = 0.85) +
+  geom_vline(xintercept = 0.01, linetype = "dashed", color = "black", linewidth = 0.7) +
+  geom_vline(xintercept = 0.10, linetype = "solid",  color = "black", linewidth = 0.7) +
+  facet_grid(sam_lab ~ gSSMU_lab) +
+  coord_cartesian(xlim = c(0, 0.15), ylim = c(0, 0.30)) +
+  scale_x_continuous(breaks = seq(0, 0.25, by = 0.01)) +
+  labs(
+    title    = "Imputed summer harvest rate — Watters et al. (2020) model",
+    x        = "Harvest Rate",
+    y        = "Relative frequency"
+  ) +
+  theme_bw(base_size = 11) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)); p2
+
+ggsave(file.path(out.dir, "freq_dist_summer_hr.png"),
+       p2, width = 8, height = 6, dpi = 300)
+
+# ============================================================
+# Plot 3a: Biomass class distribution (all observations)
+# ============================================================
+stats_df <- as.data.frame(hr.biomass.summ$statistics) %>%
+  mutate(node = rownames(.),
+         type = str_extract(node, "^[^\\[]+"),
+         idx  = as.integer(str_extract(node, "\\d+")))
+
+p3a_data <- stats_df %>%
+  filter(type == "bclass") %>%
+  left_join(all_meta %>% select(idx, gSSMU_lab, sam_lab), by = "idx") %>%
+  mutate(bclass_lab = factor(
+    ifelse(round(Mean) == 1, "≤ 1 Mt", "> 1 Mt"),
+    levels = c("≤ 1 Mt", "> 1 Mt")
+  ))
+
+p3a <- p3a_data %>%
+  count(gSSMU_lab, sam_lab, bclass_lab) %>%
+  ggplot(aes(x = bclass_lab, y = n / sum(n), fill = bclass_lab)) +
+  geom_col(width = 0.55, color = "white") +
+  facet_grid(sam_lab ~ gSSMU_lab) +
+  coord_cartesian(ylim = c(0, 0.30)) +
+  scale_fill_manual(values = c("≤ 1 Mt" = "steelblue3", "> 1 Mt" = "navy")) +
+  labs(
+    title = "Biomass class distribution - Watters et al. (2020) model",
+    x     = "Biomass class",
+    y     = "Relative frequency"
+  ) +
+  theme_bw(base_size = 11) +
+  theme(legend.position = "none"); p3a
+
+ggsave(file.path(out.dir, "freq_dist_bclass.png"),
+       p3a, width = 8, height = 6, dpi = 300)
+
+# ============================================================
+# Plot 3b: Harvest rate class distribution (all observations)
+# ============================================================
+p3b_data <- stats_df %>%
+  filter(type == "hrclass") %>%
+  left_join(all_meta %>% select(idx, gSSMU_lab, sam_lab), by = "idx") %>%
+  mutate(hrclass_lab = factor(
+    case_when(
+      round(Mean) == 1 ~ "≤ 0.01",
+      round(Mean) == 2 ~ "0.01 – <0.10",
+      round(Mean) == 3 ~ "≥ 0.10"
+    ),
+    levels = c("≤ 0.01", "0.01 – <0.10", "≥ 0.10")
+  ))
+
+p3b <- p3b_data %>%
+  count(gSSMU_lab, sam_lab, hrclass_lab) %>%
+  ggplot(aes(x = hrclass_lab, y = n / sum(n), fill = hrclass_lab)) +
+  geom_col(width = 0.55, color = "white") +
+  facet_grid(sam_lab ~ gSSMU_lab) +
+  coord_cartesian(ylim = c(0, 0.30)) +
+  scale_fill_manual(values = c(
+    "≤ 0.01"       = "steelblue3",
+    "0.01 – <0.10" = "blue",
+    "≥ 0.10"       = "navy"
+  )) +
+  labs(
+    title = "Harvest rate class distribution - Watters et al. (2020) model",
+    x     = "Harvest rate class",
+    y     = "Relative frequency"
+  ) +
+  theme_bw(base_size = 11) +
+  theme(legend.position = "none"); p3b
+
+ggsave(file.path(out.dir, "freq_dist_hrclass.png"),
+       p3b, width = 8, height = 6, dpi = 300)
+
+##################################################################################################
+
+# ANALYSIS OF NON-IMPUTED DATA (LKB & LHR)
+
+# ============================================================
+# Observed (non-imputed) versions of p1, p1b, p2, p3a, p3b
+# ============================================================
+
+# Summer non-imputed observations
+summer_obs <- junk %>%
+  filter(season == "S", !is.na(survey)) %>%
+  mutate(
+    gSSMU_lab   = ifelse(gSSMU == 1, "gSSMU 1 (Bransfield)", "gSSMU 2 (Drake Passage)"),
+    sam_lab     = ifelse(sam.sign == "Neg", "SAM Negative", "SAM Positive"),
+    hr          = catch / survey
+  )
+
+# All non-imputed observations (all seasons, for p3a / p3b)
+all_obs <- junk %>%
+  filter(!is.na(survey)) %>%
+  mutate(
+    gSSMU_lab   = ifelse(gSSMU == 1, "gSSMU 1 (Bransfield)", "gSSMU 2 (Drake Passage)"),
+    sam_lab     = ifelse(sam.sign == "Neg", "SAM Negative", "SAM Positive"),
+    hr          = catch / survey,
+    bclass_lab  = factor(ifelse(survey <= 1e6, "≤ 1 Mt", "> 1 Mt"),
+                         levels = c("≤ 1 Mt", "> 1 Mt")),
+    hrclass_lab = factor(case_when(
+      hr <= 0.01 ~ "≤ 0.01",
+      hr >= 0.10 ~ "≥ 0.10",
+      TRUE       ~ "0.01 – <0.10"),
+      levels = c("≤ 0.01", "0.01 – <0.10", "≥ 0.10"))
+  )
+
+n_summer_obs <- nrow(summer_obs)
+n_all_obs    <- nrow(all_obs)
+
+# ---- p1 observed: summer biomass ----
+p1_obs <- ggplot(summer_obs, aes(x = survey / 1e6, y = after_stat(count / sum(count)))) +
+  geom_histogram(binwidth = 1, boundary = 0, fill = "coral3", color = "white", alpha = 0.85) +
+  geom_vline(xintercept = 1, linetype = "dashed", color = "black", linewidth = 0.7) +
+  facet_grid(sam_lab ~ gSSMU_lab) +
+  coord_cartesian(xlim = c(0, 25), ylim = c(0, 0.15)) +
+  scale_x_continuous(breaks = seq(0, 25, by = 1)) +
+  labs(
+    title    = "Observed summer krill biomass - Watters et al. (2020) model",
+    x        = "Biomass (million tonnes)",
+    y        = "Relative frequency"
+  ) +
+  theme_bw(base_size = 11) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)); p1_obs
+
+# ---- p1b observed: log biomass ----
+p1b_obs <- ggplot(summer_obs, aes(x = log(survey), y = after_stat(count / sum(count)))) +
+  geom_histogram(binwidth = 0.5, fill = "#b2182b", color = "white", alpha = 0.85) +
+  geom_vline(xintercept = log(1e6), linetype = "dashed", color = "black", linewidth = 0.7) +
+  facet_grid(sam_lab ~ gSSMU_lab) +
+  labs(
+    title    = "Observed summer krill biomass (log scale) - Watters et al. (2020) model",
+    x        = "ln(Biomass in tonnes)",
+    y        = "Relative frequency"
+  ) +
+  theme_bw(base_size = 11) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)); p1b_obs
+
+# ---- p2 observed: summer harvest rate ----
+p2_obs <- ggplot(summer_obs, aes(x = hr, y = after_stat(count / sum(count)))) +
+  geom_histogram(binwidth = 0.005, boundary = 0, fill = "coral3", color = "white", alpha = 0.85) +
+  geom_vline(xintercept = 0.01, linetype = "dashed", color = "black", linewidth = 0.7) +
+  geom_vline(xintercept = 0.10, linetype = "solid",  color = "black", linewidth = 0.7) +
+  facet_grid(sam_lab ~ gSSMU_lab) +
+  coord_cartesian(xlim = c(0, 0.25), ylim = c(0, 0.30)) +
+  scale_x_continuous(breaks = seq(0, 0.25, by = 0.05)) +
+  labs(
+    title    = "Observed summer harvest rate - Watters et al. (2020) model",
+    x        = "Harvest Rate",
+    y        = "Relative frequency"
+  ) +
+  theme_bw(base_size = 11) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)); p2_obs
+
+# ---- p3a observed: biomass class ----
+p3a_obs <- all_obs %>%
+  count(gSSMU_lab, sam_lab, bclass_lab) %>%
+  ggplot(aes(x = bclass_lab, y = n / sum(n), fill = bclass_lab)) +
+  geom_col(width = 0.55, color = "white") +
+  facet_grid(sam_lab ~ gSSMU_lab) +
+  coord_cartesian(ylim = c(0, 0.30)) +
+  scale_fill_manual(values = c("≤ 1 Mt" = "coral3", "> 1 Mt" = "#b2182b")) +
+  labs(
+    title    = "Biomass class distribution — observed data - Watters et al. (2020) model",
+    x        = "Biomass class",
+    y        = "Relative frequency"
+  ) +
+  theme_bw(base_size = 11) +
+  theme(legend.position = "none"); p3a_obs
+
+# ---- p3b observed: harvest rate class ----
+p3b_obs <- all_obs %>%
+  count(gSSMU_lab, sam_lab, hrclass_lab) %>%
+  ggplot(aes(x = hrclass_lab, y = n / sum(n), fill = hrclass_lab)) +
+  geom_col(width = 0.55, color = "white") +
+  facet_grid(sam_lab ~ gSSMU_lab) +
+  coord_cartesian(ylim = c(0, 0.30)) +
+    scale_fill_manual(values = c(
+    "≤ 0.01"       = "#f4a582",
+    "0.01 – <0.10" = "#d6604d",
+    "≥ 0.10"       = "#b2182b"
+  )) +
+  labs(
+    title    = "Harvest rate class distribution — observed data - Watters et al. (2020) model",
+    x        = "Harvest rate class",
+    y        = "Relative frequency"
+  ) +
+  theme_bw(base_size = 11) +
+  theme(legend.position = "none"); p3b_obs
+
+# ---- save ----
+ggsave(file.path(out.dir, "obs_freq_dist_summer_biomass.png"),     p1_obs,  width=8, height=6, dpi=300)
+ggsave(file.path(out.dir, "obs_freq_dist_summer_biomass_log.png"), p1b_obs, width=8, height=6, dpi=300)
+ggsave(file.path(out.dir, "obs_freq_dist_summer_hr.png"),          p2_obs,  width=8, height=6, dpi=300)
+ggsave(file.path(out.dir, "obs_freq_dist_bclass.png"),             p3a_obs, width=8, height=6, dpi=300)
+ggsave(file.path(out.dir, "obs_freq_dist_hrclass.png"),            p3b_obs, width=8, height=6, dpi=300)
+
 
 
 

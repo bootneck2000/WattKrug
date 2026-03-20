@@ -8,6 +8,9 @@
 
 library(tidyverse)
 library(lattice)
+library(dplyr)
+select <- dplyr::select
+filter <- dplyr::filter
 
 # Jump to Step 3 if already ran steps 1 & 2
 
@@ -885,5 +888,153 @@ dev.copy(
 )
 dev.off()
 
+##########################################################################
+
+# ============================================================
+# Observed data plots — Mod_02_SSMUs
+# ============================================================
+
+# Map individual SSMUs back to gSSMU for faceting (consistent with previous plots)
+# gSSMU 1 (Bransfield): APBSE, APBSW
+# gSSMU 2 (Drake Passage): APDPE, APDPW, APEI
+
+out.dir.mod02 <- "./A_Results/Model02_SSMU/"
+
+junk_plot <- junk %>%
+  mutate(
+    gSSMU_lab = case_when(
+      SSMU %in% c("APBSE", "APBSW")       ~ "gSSMU 1 (Bransfield)",
+      SSMU %in% c("APDPE", "APDPW", "APEI") ~ "gSSMU 2 (Drake Passage)",
+      TRUE ~ "Other"
+    ),
+    sam_lab     = ifelse(sam.sign == "Neg", "SAM Negative", "SAM Positive"),
+    hr          = catch / survey,
+    bclass_lab  = factor(ifelse(bclass == 1, "≤ 1 Mt", "> 1 Mt"),
+                         levels = c("≤ 1 Mt", "> 1 Mt")),
+    hrclass_lab = factor(case_when(
+      hrclass == 1 ~ "≤ 0.01",
+      hrclass == 2 ~ "0.01 – <0.10",
+      hrclass == 3 ~ "≥ 0.10"),
+      levels = c("≤ 0.01", "0.01 – <0.10", "≥ 0.10"))
+  )
+
+# Summer-only subset (for p1, p1b, p2)
+summer_obs02  <- junk_plot %>% filter(season == "S")
+n_summer_obs02 <- nrow(summer_obs02)
+n_all_obs02    <- nrow(junk_plot)
+
+# ---- p1: summer biomass ----
+p1_obs02 <- ggplot(summer_obs02, aes(x = survey / 1e6,
+                                     y = after_stat(count / sum(count)))) +
+  geom_histogram(binwidth = 1, boundary = 0, fill = "#66bb6a", color = "white", alpha = 0.85) +
+  geom_vline(xintercept = 1, linetype = "dashed", color = "black", linewidth = 0.7) +
+  facet_grid(sam_lab ~ gSSMU_lab) +
+  coord_cartesian(xlim = c(0, 25), ylim = c(0, 0.15)) +
+  scale_x_continuous(breaks = seq(0, 25, by = 1)) +
+  labs(
+    title    = "Observed summer krill biomass — Model SSMUs",
+    x        = "Biomass (million tonnes)",
+    y        = "Relative frequency"
+  ) +
+  theme_bw(base_size = 11) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)); p1_obs02
+
+# ---- p1b: log biomass ----
+p1b_obs02 <- ggplot(summer_obs02, aes(x = log(survey),
+                                      y = after_stat(count / sum(count)))) +
+  geom_histogram(binwidth = 0.5, boundary = 0, fill = "#2d7a3d", color = "white", alpha = 0.85) +
+  geom_vline(xintercept = log(1e6), linetype = "dashed", color = "black", linewidth = 0.7) +
+  facet_grid(sam_lab ~ gSSMU_lab) +
+  coord_cartesian(ylim = c(0, 0.15)) +
+  labs(
+    title    = "Observed summer krill biomass (log scale) — Model SSMUs",
+    x        = "ln(Biomass in tonnes)",
+    y        = "Relative frequency"
+  ) +
+  theme_bw(base_size = 11) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)); p1b_obs02
+
+# ---- p2: summer harvest rate ----
+p2_obs02 <- ggplot(summer_obs02, aes(x = hr,
+                                     y = after_stat(count / sum(count)))) +
+  geom_histogram(binwidth = 0.005, boundary = 0, fill = "#66bb6a", color = "white", alpha = 0.85) +
+  geom_vline(xintercept = 0.01, linetype = "dashed", color = "black", linewidth = 0.7) +
+  geom_vline(xintercept = 0.10, linetype = "solid",  color = "black", linewidth = 0.7) +
+  facet_grid(sam_lab ~ gSSMU_lab) +
+  coord_cartesian(xlim = c(0, 0.15), ylim = c(0, 0.30)) +
+  scale_x_continuous(breaks = seq(0, 0.25, by = 0.01)) +
+  labs(
+    title    = "Observed summer harvest rate — Model SSMUs",
+    x        = "Harvest Rate",
+    y        = "Relative frequency"
+  ) +
+  theme_bw(base_size = 11) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)); p2_obs02
+
+# ---- p3a: biomass class (all observations) ----
+p3a_obs02 <- summer_obs02 %>%
+  count(gSSMU_lab, sam_lab, bclass_lab) %>%
+  ggplot(aes(x = bclass_lab, y = n/sum(n), fill = bclass_lab)) +
+  geom_col(width = 0.55, color = "white") +
+  facet_grid(sam_lab ~ gSSMU_lab) +
+  coord_cartesian(ylim = c(0, 0.30)) +
+  scale_fill_manual(values = c("≤ 1 Mt" = "#a8d5ba", "> 1 Mt" = "#2d7a3d")) +
+  labs(
+    title    = "Biomass class distribution — Model SSMUs",
+    x        = "Biomass class",
+    y        = "Relative frequency"
+  ) +
+  theme_bw(base_size = 11) +
+  theme(legend.position = "none"); p3a_obs02
+
+# ---- p3b: harvest rate class (all observations) ----
+p3b_obs02 <- summer_obs02 %>%
+  count(gSSMU_lab, sam_lab, hrclass_lab) %>%
+  ggplot(aes(x = hrclass_lab, y = n/sum(n), fill = hrclass_lab)) +
+  geom_col(width = 0.55, color = "white") +
+  facet_grid(sam_lab ~ gSSMU_lab) +
+  coord_cartesian(ylim = c(0, 0.30)) +
+  scale_fill_manual(values = c(
+    "≤ 0.01"       = "#a8d5ba",
+    "0.01 – <0.10" = "#66bb6a",
+    "≥ 0.10"       = "#2d7a3d"
+  )) +
+  labs(
+    title    = "Harvest rate class distribution — Model SSMUs",
+    x        = "Harvest rate class",
+    y        = "Relative frequency"
+  ) +
+  theme_bw(base_size = 11) +
+  theme(legend.position = "none"); p3b_obs02
+
+
+p3b_obs02 <- summer_obs02 %>%
+  mutate(hrclass_lab = factor(hrclass_lab, 
+                              levels = c("≤ 0.01", "0.01 – <0.10", "≥ 0.10"))) %>%
+  count(gSSMU_lab, sam_lab, hrclass_lab, .drop = FALSE) %>%
+  ggplot(aes(x = hrclass_lab, y = n / sum(n), fill = hrclass_lab)) +
+  geom_col(width = 0.55, color = "white") +
+  facet_grid(sam_lab ~ gSSMU_lab) +
+  coord_cartesian(ylim = c(0, 0.30)) +
+  scale_fill_manual(values = c(
+    "≤ 0.01"       = "#a8d5ba",
+    "0.01 – <0.10" = "#66bb6a",
+    "≥ 0.10"       = "#2d7a3d"
+  )) +
+  labs(
+    title    = "Harvest rate class distribution — Model SSMUs",
+    x        = "Harvest rate class",
+    y        = "Relative frequency"
+  ) +
+  theme_bw(base_size = 11) +
+  theme(legend.position = "none"); p3b_obs02
+
+
+# ---- save ----
+ggsave(file.path(out.dir.mod02, "obs_freq_dist_summer_biomass.png"),     p1_obs02,  width=8, height=6, dpi=300)
+ggsave(file.path(out.dir.mod02, "obs_freq_dist_summer_biomass_log.png"), p1b_obs02, width=8, height=6, dpi=300)
+ggsave(file.path(out.dir.mod02, "obs_freq_dist_summer_hr.png"),          p2_obs02,  width=8, height=6, dpi=300)
+ggsave(file.path(out.dir.mod02, "obs_freq_dist_bclass.png"),             p3a_obs02, width=8, height=6, dpi=300)
+ggsave(file.path(out.dir.mod02, "obs_freq_dist_hrclass.png"),            p3b_obs02, width=8, height=6, dpi=300)
 
 
