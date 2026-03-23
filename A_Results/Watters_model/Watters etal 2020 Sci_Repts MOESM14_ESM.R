@@ -656,6 +656,7 @@ saveRDS(hr.biomass.post, file.path(out.dir, "hr_biomass_post.rds"))
 saveRDS(hr.biomass.mat,  file.path(out.dir, "hr_biomass_mat.rds"))
 saveRDS(hr.biomass.summ, file.path(out.dir, "hr_biomass_summ.rds"))
 saveRDS(summer_meta,     file.path(out.dir, "summer_meta.rds"))  # also save this for plotting
+saveRDS(junk, file.path(out.dir, file = "junk.rds"))
 
 # End changes
 

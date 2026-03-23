@@ -137,29 +137,35 @@ the dashed line [bottom panel].
 
 # B. Distribution of observed vs imputed summer ln*LKB* values
 
-We evaluated the procedure used to impute LKB values in years without
-survey data. First, we assessed whether ln*LKB* from survey observations
-followed an appropriate parametric distribution. We then generated
-imputed ln*LKB* values following equations (1) and (2) of Watters et al.
-(2020) and compared the resulting distributions with the empirical
-distribution of observed data.
+```{r data reading, results='asis', warning=FALSE, echo=FALSE, message=FALSE, comment=NA}
 
-We fitted a log-normal distribution to the survey-based LKB data and
-assessed normality of ln*LKB* using the Shapiro--Wilk test. Using the
-same parameterization, we generated 100,000 imputed ln*LKB* values from
-equations (1) and (2), applying lower and upper bounds of 10,000 t and 1
-× 10⁹ t, respectively, as defined in Supplementary Material S1.
-Normality of the imputed ln*LKB* distribution was then re-evaluated
-using the Shapiro--Wilk test.
+# load script that produces results
+suppressMessages(
+  suppressWarnings(
+    source("./A_Results_Suppl/Figure_S2_S4_Table_S1_S5.R")
+  )
+)
+```
 
-Observed survey-based LKB distributions for all gSSMU--SAM combinations
-were well described by a log-normal distribution (Supplementary
-Material, Table S1; Figure S2). In contrast, ln(LKB) values generated
-through the imputation procedure of Watters et al. (2020) were
-concentrated toward the upper bound of the imposed limits, with mean
-ln(LKB) values of 17.5--17.7 (approximately 44 Mt), and did not conform
-to a log-normal distribution (Supplementary Material, Table S2; Figure
-S3).
+We evaluated the procedure used to impute LKB values in years without survey data. First, we assessed whether lnLKB from survey observations followed a normal distribution, as assumed during the imputation process. We fitted a log-normal distribution to the survey-based LKB data and assessed normality of lnLKB using the Shapiro–Wilk test. Survey data stratified by gSSMU and SAM sign all fitted a log-normal distribution (Table S1). 
+We then compared three sets of LKB and LHR distributions: (i) imputed values from Watters et al. (2020); (ii) observed survey data filtered by survey coverage, with LHR estimated from the filtered data; and (iii) LKB and LHR assigned to SSMUs (Model SSMU; this paper) (Fig. S2).
+The distribution of LKB and LHR categories across gSSMUs and SAM sign categories was similar across the three estimation methods. However, the use of smaller management units (SSMU) resulted in a higher frequency of seasons with LKB ≤ 1 Mt, particularly in gSSMU #2. However, because fishing catches are aggregated at the same SSMU scale, LHR values remained predominantly ≤ 0.01. The main difference was the increased frequency of seasons with intermediate LHR (0.01 – 0.10) in gSSM#2 (Fig. S3).
+
+
+
+
+```{r Table S1, results='asis', warning=FALSE, echo=FALSE, message=FALSE, comment=NA}
+
+kable(shapiro_results1, digits = 3, booktabs=TRUE,  
+      col.names = c("gSSMU", 
+             "SAM sign", 
+              "n",
+              "W", 
+             "p"),
+      longtable=TRUE, align="lcccc", caption = "Table S1. Shapiro–Wilk test results for normality of log-transformed observed LKB values (lnLKB), stratified by gSSMU and SAM sign. Columns report sample size (n), the Shapiro-Wilk W statistic, and the associated p-value.", escape=FALSE)
+
+```
+
 
 \newpage
 ```{r fig-s2, fig.show="hold", out.width="55%", echo=FALSE}
@@ -168,14 +174,14 @@ knitr::include_graphics(c(
   "./A_Results/Watters_model/Imputed/freq_dist_summer_biomass.png",
   "./A_Results/Watters_model/Imputed/freq_dist_summer_hr.png"))
 knitr::include_graphics(c(
-  "./A_Results/Watters_model/Imputed/obs_freq_dist_summer_biomass.png",
-  "./A_Results/Watters_model/Imputed/obs_freq_dist_summer_hr.png"))
+  "./A_Results_Suppl/Model01_filtered/obs_freq_dist_summer_biomass.png",
+  "./A_Results_Suppl/Model01_filtered/obs_freq_dist_summer_hr.png"))
 knitr::include_graphics(c(
   "./A_Results/Model02_SSMU/obs_freq_dist_summer_biomass.png",
   "./A_Results/Model02_SSMU/obs_freq_dist_summer_hr.png"))
 ```
 
-Figure S2. Frequency distribution of summer krill biomass, LKB (left), and summer harvest rate, LHR (right). Watter's model imputed (top; blue) and observed (middle; red) data, and Model SSMU (this paper; bottom; green), separated by SAM phase and gSSMU.
+Figure S2. Frequency distribution of summer krill biomass (LKB; left panels) and summer harvest rate (LHR; right panels). Rows show imputed values from Watters et al. (2020) (top; blue), observed survey data filtered by survey coverage (middle; red), and Model SSMU estimates (this study; bottom; green). Results are shown separately for each SAM sign and gSSMU combination. 
 
 \newpage
 ```{r fig-s3, fig.show="hold", out.width="55%", echo=FALSE}
@@ -184,75 +190,15 @@ knitr::include_graphics(c(
   "./A_Results/Watters_model/Imputed/freq_dist_bclass.png",
   "./A_Results/Watters_model/Imputed/freq_dist_hrclass.png"))
 knitr::include_graphics(c(
-  "./A_Results/Watters_model/Imputed/obs_freq_dist_bclass.png",
-  "./A_Results/Watters_model/Imputed/obs_freq_dist_hrclass.png"))
+  "./A_Results_Suppl/Model01_filtered/obs_freq_dist_bclass.png",
+  "./A_Results_Suppl/Model01_filtered/obs_freq_dist_hrclass.png"))
 knitr::include_graphics(c(
   "./A_Results/Model02_SSMU/obs_freq_dist_bclass.png",
   "./A_Results/Model02_SSMU/obs_freq_dist_hrclass.png"))
 ```
 
-Figure S3. Frequency distribution of LKB categories (left) and LHR categories (right). Watter's model imputed (top; blue) and observed (middle; red) data, and model SSMU (this paper; bottom; green), separated by SAM phase and gSSMU.
+Figure S3. Frequency distribution of LKB categories (left panels) and LHR categories (right panels). Rows show imputed values from Watters et al. (2020) (top; blue), observed survey data filtered by survey coverage (middle; red), and Model SSMU estimates (this study; bottom; green). Results are shown separately for each SAM sign and gSSMU combination.
 
-\newpage
-
-
-```{r Table S1, results='asis', warning=FALSE, echo=FALSE, message=FALSE, comment=NA}
-
-# load script that produces fig_g1 and fig_g2
-suppressMessages(
-  suppressWarnings(
-    source("./A_Results_Suppl/Figure_S2_S4_Table_S1_S5.R")
-  )
-)
-
-kable(shapiro_results1, digits = 3, booktabs=TRUE,  
-      col.names = c("gSSMU", 
-             "SAM sign", 
-              "n",
-              "p", 
-             "W"),
-      longtable=TRUE, align="lcccc", caption = "Table S1. Shapiro--Wilk test results for normality of observed
-log-transformed LKB values, reported by gSSMU and SAM sign. Columns show
-sample size (n), p-value, and W-statistic.", escape=FALSE)
-
-```
-
-
-
-```{r Table S2, results='asis', warning=FALSE, echo=FALSE, message=FALSE, comment=NA}
-
-kable(shapiro_imp, digits = 3, booktabs=TRUE,  
-      col.names = c("gSSMU", 
-             "SAM sign", 
-              "N total",
-              "n sampled", 
-             "W",
-             "p"),
-      longtable=TRUE, align="lccccc", caption = "Table S2. Shapiro--Wilk test results for normality of imputed
-log-transformed LKB values. The table reports the total number of
-imputations generated (N total), the subsample used for the test
-(n sampled), and the corresponding W and p values for each gSSMU and SAM
-sign.", escape=FALSE)
-
-```
-
-```{r Survey histogram, fig.width=8.0, fig.asp=0.7, out.width="80%",fig.align="centre", warning=FALSE, echo=FALSE}
-
-# load script that produces fig_g1 and fig_g2
-suppressMessages(
-  suppressWarnings(
-    source("./A_Results_Suppl/Figure_S2_S4_Table_S1_S5.R")
-  )
-)
-print(survey_hist)
-
-
-```
-
-Figure S2. Distribution of ln-transformed acoustic biomass (LnSurvey)
-shown as histograms stratified by gSSMU (1, 2) and SAM sign (Neg, Pos).
-The solid curve in each panel shows the log-normal density fitted to the
-observed survey values.
 
 \newpage
 # C. Effect of Survey filtering and imputed LKB values on penguin performance
@@ -454,14 +400,14 @@ Estimates of krill consumption by major predator groups during the study
 period have been previously summarized by Hill et al. (2007). During
 summer, fish accounted for the largest proportion of krill consumption,
 with estimated removals of
-`r scales::comma(round(sum(Table.03$Fish_Krill_ton[3:4]), 0))` in the
+`r scales::comma(round(sum(Table.07$Fish_Krill_ton[3:4]), 0))` in the
 Bransfield Strait (gSMSMU #1: APBSW + APBSE) and
-`r scales::comma(round(sum(Table.03$Fish_Krill_ton[1:2]), 0))` in the
+`r scales::comma(round(sum(Table.07$Fish_Krill_ton[1:2]), 0))` in the
 Drake Passage (gSSMU #2: APDPW + APDPE). Combined summer consumption by
 penguins and whales was estimated at
-`r scales::comma(round(sum(Table.03$Whale_Krill_ton[3:4])+sum(Table.03$Penguin_Krill_ton[3:4]), 0))`
+`r scales::comma(round(sum(Table.06$Whale_Krill_ton[3:4])+sum(Table.06$Penguin_Krill_ton[3:4]), 0))`
 in the Bransfield Strait and
-`r scales::comma(round(sum(Table.03$Whale_Krill_ton[1:2])+sum(Table.03$Penguin_Krill_ton[1:2]), 0))`
+`r scales::comma(round(sum(Table.06$Whale_Krill_ton[1:2])+sum(Table.06$Penguin_Krill_ton[1:2]), 0))`
 in the Drake Passage. Total summer krill consumption therefore exceeded
 1 Mt in both gSSMU 1 and gSSMU 2.
 
@@ -484,9 +430,9 @@ should be considered as gross subestimations of krill availability.
 
 Winter consumption estimates were lower but more uncertain. Hill et al.
 (2007) estimated fish consumption of
-`r scales::comma(round(sum(Table.06$Fish_Krill_ton[3:4]), 0))` in the
+`r scales::comma(round(sum(Table.07$Fish_Krill_ton[3:4]), 0))` in the
 Bransfield Strait and
-`r scales::comma(round(sum(Table.06$Fish_Krill_ton[1:2]), 0))` in the
+`r scales::comma(round(sum(Table.07$Fish_Krill_ton[1:2]), 0))` in the
 Drake Passage. Penguin consumption during winter was estimated at
 `r scales::comma(round(sum(Table.07$Penguin_Krill_ton[3:4]), 0))` in the
 Bransfield Strait and
