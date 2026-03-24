@@ -161,7 +161,7 @@ hist_data <- data %>%
     sam.sign = factor(sam.sign, levels = c("Neg", "Pos")),
     gSSMU    = factor(gSSMU)
   )
-hist_data2 <- hist_data %>% select(gSSMU, sam.sign, LnSurvey)
+hist_data2 <- hist_data %>% dplyr::select(gSSMU, sam.sign, LnSurvey)
 
 # Testing for (log) normal distribution
 shapiro_results1 <- hist_data2 %>%
@@ -175,7 +175,7 @@ shapiro_results1 <- hist_data2 %>%
 # Plot LKB frequecny, by gSSMU and SAM sign
 # ---- p1: summer biomass ----
 summer_obs <- hist_data %>%
-    select(-LogSurvey_imputed, -survey_imputed)
+    dplyr::select(-LogSurvey_imputed, -survey_imputed)
 
 summer_obs$catch[is.na(summer_obs$catch)] <- 0
 summer_obs$hr = summer_obs$catch/summer_obs$survey
@@ -368,7 +368,7 @@ extract_long <- function(mat, node_type, meta, imputed_only = TRUE) {
     mutate(sample = row_number()) %>%
     pivot_longer(cols = -sample, names_to = "node", values_to = "value") %>%
     mutate(idx = as.integer(str_extract(node, "\\d+"))) %>%
-    left_join(meta %>% select(idx, gSSMU_lab, sam_lab, impute.me), by = "idx")
+    left_join(meta %>% dplyr::select(idx, gSSMU_lab, sam_lab, impute.me), by = "idx")
   if (imputed_only) df <- filter(df, impute.me == 1)
   df
 }
@@ -427,6 +427,134 @@ p1b <- ggplot(p1_data, aes(x = log(value), y = after_stat(count / sum(count)))) 
 
 ggsave(file.path(out.dir, "freq_dist_summer_biomass_log.png"),
        p1b, width = 8, height = 6, dpi = 300)
+
+
+## 8. Conmparison LogLKB from observed and imputed data
+library(MASS)
+
+# Observed data
+LKB.obs <- summer_obs %>% dplyr::select(gSSMU, sam.sign, survey) 
+LKB.imp <- p1_data %>% dplyr::select(gSSMU_lab, sam_lab, value)
+colnames(LKB.obs) <- c("gSSMU", "sam.sign", "biomass")
+colnames(LKB.imp) <- c("gSSMU", "sam.sign", "biomass")
+
+# --- Harmonize factor levels before combining ---
+LKB.obs <- LKB.obs %>%
+  mutate(
+    gSSMU    = case_when(
+      gSSMU %in% c("1", 1) ~ "gSSMU 1",
+      gSSMU %in% c("2", 2) ~ "gSSMU 2"
+    ),
+    sam.sign = case_when(
+      sam.sign %in% c("Neg", "SAM Negative", "negative") ~ "Negative",
+      sam.sign %in% c("Pos", "SAM Positive", "positive") ~ "Positive"
+    )
+  )
+
+LKB.imp <- LKB.imp %>%
+  mutate(
+    gSSMU    = case_when(
+      str_detect(gSSMU, "1") ~ "gSSMU 1",
+      str_detect(gSSMU, "2") ~ "gSSMU 2"
+    ),
+    sam.sign = case_when(
+      str_detect(sam.sign, regex("neg", ignore_case = TRUE)) ~ "Negative",
+      str_detect(sam.sign, regex("pos", ignore_case = TRUE)) ~ "Positive"
+    )
+  )
+
+
+# --- Combine datasets ---
+raw_all <- bind_rows(
+  LKB.obs %>% mutate(dataset = "LKB.obs"),
+  LKB.imp    %>% mutate(dataset = "LKB.imp")
+) %>%
+  filter(biomass > 0 & !is.na(biomass))
+
+# --- Fit log-normal per dataset × gSSMU × sam.sign ---
+fit_lnorm <- function(x) {
+  x <- x[x > 0 & !is.na(x)]
+  n <- length(x)
+  if (n < 3) return(tibble(meanlog = NA_real_, sdlog = NA_real_, n = n))
+  fit <- fitdistr(x, "lognormal")
+  tibble(meanlog = fit$estimate["meanlog"], sdlog = fit$estimate["sdlog"], n = n)
+}
+
+params_all <- raw_all %>%
+  group_by(dataset, gSSMU, sam.sign) %>%
+  group_modify(~ fit_lnorm(.x$biomass)) %>%
+  ungroup()
+
+# --- Generate fitted curves (normal density on log scale, per facet group) ---
+curve_data <- params_all %>%
+  filter(!is.na(meanlog),
+         gSSMU %in% c("gSSMU 1", "gSSMU 2")) %>%
+  rowwise() %>%
+  mutate(
+    x = list(seq(meanlog - 3.5 * sdlog,
+                 meanlog + 3.5 * sdlog,
+                 length.out = 300)),
+    y = list(dnorm(x, mean = meanlog, sd = sdlog))
+  ) %>%
+  unnest(c(x, y))
+
+# --- Precompute per-panel per-dataset proportions ---
+hist_data <- raw_all %>%
+  filter(gSSMU %in% c("gSSMU 1", "gSSMU 2")) %>%
+  mutate(bin = floor(log(biomass) / 0.5) * 0.5) %>%
+  group_by(gSSMU, sam.sign, dataset, bin) %>%
+  summarise(count = n(), .groups = "drop") %>%
+  group_by(gSSMU, sam.sign, dataset) %>%
+  mutate(prop = count / sum(count)) %>%
+  ungroup()
+
+# --- Precompute means per panel × dataset ---
+mean_lines <- raw_all %>%
+  filter(gSSMU %in% c("gSSMU 1", "gSSMU 2")) %>%
+  group_by(gSSMU, sam.sign, dataset) %>%
+  summarise(mean_log = mean(log(biomass), na.rm = TRUE), .groups = "drop")
+
+# --- Plot ---
+hist.LKB <- ggplot() +
+  geom_col(
+    data = hist_data,
+    aes(x = bin + 0.25, y = prop, fill = dataset),
+    width = 0.5, alpha = 0.5, position = "identity"
+  ) +
+  geom_line(
+    data = curve_data %>% filter(gSSMU %in% c("gSSMU 1", "gSSMU 2")),
+    aes(x = x, y = y * 0.5, color = dataset),
+    linewidth = 0.9) +
+  geom_vline(xintercept = log(1e6),
+             linetype = "dashed", color = "black", linewidth = 0.7) +
+  geom_vline(
+    data = mean_lines,
+    aes(xintercept = mean_log, color = dataset),
+    linetype = "solid", linewidth = 1) +
+  facet_grid(sam.sign ~ gSSMU,
+             labeller = labeller(
+               gSSMU    = c("gSSMU 1" = "gSSMU 1", "gSSMU 2" = "gSSMU 2"),
+               sam.sign = c("Negative" = "SAM Negative", "Positive" = "SAM Positive")
+             )) +
+  scale_x_continuous(limits = c(x_min, x_max), breaks = x_ll, labels = x_ll) +
+  coord_cartesian(ylim = c(0, 0.6)) +
+  scale_fill_manual(values  = c("LKB.obs" = "#b2182b", "LKB.imp" = "#2166ac")) +
+  scale_color_manual(values = c("LKB.obs" = "#b2182b", "LKB.imp" = "#2166ac")) +
+  labs(
+    title = "Krill biomass distribution — observed vs imputed (log scale)",
+    x     = "ln(Biomass in tonnes)",
+    y     = "Relative frequency",
+    fill  = "Dataset", color = "Dataset") +
+  theme_bw(base_size = 11) +
+  theme(
+    axis.text.x      = element_text(angle = 45, hjust = 1),
+    legend.position  = "bottom"
+  ); hist.LKB
+
+out.dir <- "./A_Results_Suppl/Model01_filtered/"
+ggsave(file.path(out.dir, "hist_LKB_obs_imp.png"),
+       hist.LKB,  width=8, height=6, dpi=300)
+
 
 
 
