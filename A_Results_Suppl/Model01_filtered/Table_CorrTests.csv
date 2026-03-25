@@ -1,0 +1,9 @@
+Season,Param,Predictor,Test,Comparison,N,Groups_N,Statistic,p-value,Sig
+Summer,FWT,LHR (catch/LKB),Spearman rho,NA,56,56,0.238,0.0775,.
+Summer,PHS,LHR (catch/LKB),Spearman rho,NA,59,59,-0.159,0.2303,ns
+Summer,REVTD,LHR (catch/LKB),Spearman rho,NA,21,21,-0.386,0.0835,.
+Summer,FWT,LKB (survey biomass),Spearman rho,NA,56,56,0.16,0.239,ns
+Summer,PHS,LKB (survey biomass),Spearman rho,NA,59,59,-0.109,0.4107,ns
+Summer,REVTD,LKB (survey biomass),Spearman rho,NA,21,21,0.157,0.498,ns
+Winter,REVCID,LHR (catch/LKB),Spearman rho,NA,8,8,0.849,0.0076,**
+Winter,REVCID,LKB (survey biomass),Spearman rho,NA,8,8,-0.302,0.467,ns

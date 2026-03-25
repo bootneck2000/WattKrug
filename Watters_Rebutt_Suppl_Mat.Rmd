@@ -96,6 +96,8 @@ library(scales)
 library(stringr)
 library(webshot2)
 library(flextable)
+library(dplyr)
+
 ```
 
 # A. Analysis of Survey Coverage
@@ -156,19 +158,34 @@ The distribution of LKB and LHR categories across gSSMUs and SAM sign categories
 
 ```{r Table S1, results='asis', warning=FALSE, echo=FALSE, message=FALSE, comment=NA}
 
-kable(shapiro_results1, digits = 3, booktabs=TRUE,  
-      col.names = c("gSSMU", 
-             "SAM sign", 
-              "n",
-              "W", 
-             "p"),
-      longtable=TRUE, align="lcccc", caption = "Table S1. Shapiro–Wilk test results for normality of log-transformed observed LKB values (lnLKB), stratified by gSSMU and SAM sign. Columns report sample size (n), the Shapiro-Wilk W statistic, and the associated p-value.", escape=FALSE)
-
+shapiro_results1 |>
+  flextable() |>
+  set_header_labels(
+    gSSMU = "gSSMU",
+    sam.sign = "SAM sign",
+    n = "n",
+    W = "W",
+    p_value = "p"
+  ) |>
+  colformat_num(j = 3) |>
+  fontsize(size = 8, part = "all") |>
+  padding(padding = 1, part = "all") |>
+  autofit() |>
+  set_caption("Table S1. Shapiro–Wilk test results for normality of log-transformed observed LKB values (lnLKB), stratified by gSSMU and SAM sign. Columns report sample size (n), the Shapiro-Wilk W statistic, and the associated p-value.")
 ```
 
 
 \newpage
-```{r fig-s2, fig.show="hold", out.width="55%", echo=FALSE}
+```{r hist.LKBs, fig.show="hold", out.width="55%", echo=FALSE}
+
+knitr::include_graphics(c(
+  "./A_Results_Suppl/Model01_filtered/hist_LKB_obs_imp.png"))
+```
+
+Figure S2. Frequency distribution of summer ln(LKB) for observed (LKB.obs; red) and imputed (LKB.imp; blue) data. 
+
+\newpage
+```{r fig-s3, fig.show="hold", out.width="55%", echo=FALSE}
 
 knitr::include_graphics(c(
   "./A_Results/Watters_model/Imputed/freq_dist_summer_biomass.png",
@@ -181,10 +198,10 @@ knitr::include_graphics(c(
   "./A_Results/Model02_SSMU/obs_freq_dist_summer_hr.png"))
 ```
 
-Figure S2. Frequency distribution of summer krill biomass (LKB; left panels) and summer harvest rate (LHR; right panels). Rows show imputed values from Watters et al. (2020) (top; blue), observed survey data filtered by survey coverage (middle; red), and Model SSMU estimates (this study; bottom; green). Results are shown separately for each SAM sign and gSSMU combination. 
+Figure S3. Frequency distribution of summer krill biomass (LKB; left panels) and summer harvest rate (LHR; right panels). Rows show imputed values from Watters et al. (2020) (top; blue), observed survey data filtered by survey coverage (middle; red), and Model SSMU estimates (this study; bottom; green). Results are shown separately for each SAM sign and gSSMU combination. 
 
 \newpage
-```{r fig-s3, fig.show="hold", out.width="55%", echo=FALSE}
+```{r fig-s4, fig.show="hold", out.width="55%", echo=FALSE}
 
 knitr::include_graphics(c(
   "./A_Results/Watters_model/Imputed/freq_dist_bclass.png",
@@ -197,11 +214,123 @@ knitr::include_graphics(c(
   "./A_Results/Model02_SSMU/obs_freq_dist_hrclass.png"))
 ```
 
-Figure S3. Frequency distribution of LKB categories (left panels) and LHR categories (right panels). Rows show imputed values from Watters et al. (2020) (top; blue), observed survey data filtered by survey coverage (middle; red), and Model SSMU estimates (this study; bottom; green). Results are shown separately for each SAM sign and gSSMU combination.
+Figure S4. Frequency distribution of LKB categories (left panels) and LHR categories (right panels). Rows show imputed values from Watters et al. (2020) (top; blue), observed survey data filtered by survey coverage (middle; red), and Model SSMU estimates (this study; bottom; green). Results are shown separately for each SAM sign and gSSMU combination.
+
 
 
 \newpage
-# C. Effect of Survey filtering and imputed LKB values on penguin performance
+# C. Relationship between penguin performance indices and environmental and krill related categories
+
+We analysed the relationship between penguin indices and the variables used to assess its performance: SAM sign, ONI value (cold, neutral, warm), krill biomass (LKB) and harvest rate (LHR). 
+Our results indicate that there was no significant relationship between summer or winter indices with either SAM, ONI, LKB and LHR categories (Table S2; Figs. S5-S6). When LKB and LHR actual values were used, fledgling weight (FWT) and trip duration (REVTD) were positivey corrated with summer LHR, although non significant. The only significant relationship was clutching initiation date (REVCID) and winter LHR (p = 0.0076), with clutching date being earlier as LHR increases, indictive of better performace (Table S3; Fig. S7-S8).  
+
+
+
+```{r Table Peng Indices Categorical, results='asis', warning=FALSE, echo=FALSE, message=FALSE, comment=NA}
+
+Table_Cat <- read.csv( "./A_Results_Suppl/Model01_filtered/Table_CatTests.csv")
+Table_Cat <- Table_Cat %>% dplyr::select(-N) 
+
+Table_Cat |>
+  flextable() |>
+            set_header_labels(
+              Season = "Season", 
+              Param = "Index", 
+              Predictor = "Predictor",
+              Test = "Test", 
+              Comparison = "Comparison",
+              Groups_N = "Groups (N)",
+              Statistic = "Statistic",
+              `p-value` = "p",
+              Sig = "Significance") |>
+            colformat_num(3) |>
+            fontsize(size = 8, part = "all") |>
+            padding(padding = 1, part = "all") |>
+            autofit() |>
+            set_caption("Table S2. Statistical analyses of penguin indices versus environmental and krill related categories. FWT: fledge weight; PHS: post-hatch success; REVTD: reverse trip duration; EGG: mean egg density; REVCID: reverse clutch initiation date.")
+
+```
+
+
+```{r Indices Correlations, results='asis', warning=FALSE, echo=FALSE, message=FALSE, comment=NA}
+
+Table_Corr <- read.csv( "./A_Results_Suppl/Model01_filtered/Table_CorrTests.csv")
+Table_Corr <- Table_Corr %>% dplyr::select(-Comparison, -Groups_N) 
+
+Table_Corr |>
+  flextable()|>
+            set_header_labels(
+              Season = "Season", 
+              Param = "Index", 
+              Predictor = "Predictor",
+              Test = "Test", 
+              N = "N",
+              Statistic = "Statistic",
+              `p-value` = "p",
+              Sig = "Significance") |>
+            colformat_num(3) |>
+            fontsize(size = 8, part = "all") |>
+            padding(padding = 1, part = "all") |>
+            autofit() |>
+            set_caption("Table S3. Statistical analyses of penguin indices versus environmental and krill related categories. FWT: fledge weight; PHS: post-hatch success; REVTD: reverse trip duration; EGG: mean egg density; REVCID: reverse clutch initiation date.")
+
+```
+
+
+
+```{r Peng summer indices categories, fig.show="hold", out.width="90%", echo=FALSE}
+
+knitr::include_graphics(c(
+  "./A_Results_Suppl/Model01_filtered/Fig_Boxplot_Summer.png"))
+```
+
+Figure S5. Boxplot of summer penguin indices in relationship to environmental variables (SAM, ONI) and krill biomass (LKB) and harvest rate (LHR). 
+
+
+```{r Peng winter indices categories, fig.show="hold", out.width="90%", echo=FALSE}
+
+knitr::include_graphics(c(
+  "./A_Results_Suppl/Model01_filtered/Fig_Boxplot_Winter.png"))
+```
+
+Figure S6. Boxplot of winter penguin indices in relationship to environmental variables (SAM, ONI) and krill biomass (LKB) and harvest rate (LHR).
+
+
+```{r summer Peng indices1 vs LKB LHR, fig.show="hold", out.width="90%", echo=FALSE}
+
+knitr::include_graphics(c(
+  "./A_Results_Suppl/Model01_filtered/Fig_Scatter_Summer_LKB.png"))
+```
+
+```{r summer Peng indices2 vs LKB LHR, fig.show="hold", out.width="90%", echo=FALSE}
+
+knitr::include_graphics(c(
+  "./A_Results_Suppl/Model01_filtered/Fig_Scatter_Summer_LHR.png"))
+```
+
+Figure S7. Scatter plot of summer penguin indices and krill biomass (LKB; top) and harvest rate (LHR; bottom).
+
+
+
+```{r winter Peng indices1 vs LKB LHR, fig.show="hold", out.width="55%", echo=FALSE}
+
+knitr::include_graphics(c(
+  "./A_Results_Suppl/Model01_filtered/Fig_Scatter_Winter_LKB.png"))
+```
+
+
+```{r winter Peng indices2 vs LKB LHR, fig.show="hold", out.width="55%", echo=FALSE}
+
+knitr::include_graphics(c(
+  "./A_Results_Suppl/Model01_filtered/Fig_Scatter_Winter_LHR.png"))
+```
+
+Figure S8. Scatter plot of winter penguin indices and krill biomass (LKB; top) and harvest rate (LHR; bottom).
+
+
+
+\newpage
+# D. Effect of Survey filtering and imputed LKB values on penguin performance
 
 Penguin performance and posterior predictive distributions were
 re-analysed after excluding surveys with low spatial coverage. In this
@@ -259,7 +388,7 @@ expected performance, and the nominal "worst case" scenario remains
 close to the long-term mean (Figures S5 & S7) and unsupported by
 empirical data (Figures S4 and S6).
 
-Table S3. The posterior predictive distributions shows that only some of
+Table S4. The posterior predictive distributions shows that only some of
 the potential combinations have actual data (Fig. S4). Specifically,
 most data comes from the following combinations:
 
@@ -274,6 +403,7 @@ most data comes from the following combinations:
 | Case 14         | ≥ 0.5             | \> 1 Mt | ≤ 0.01             | summer |
 | Case 17         | ≥ 0.5             | ≤ 1 Mt  | ≥ 0.1              | winter |
 
+\newpage
 ```{r Posterior preductive Model01, fig.width=8.0, fig.asp=1.00, out.width="100%",fig.align="centre", warning=FALSE, echo=FALSE}
 
 knitr::include_graphics("./A_Results_Suppl/Model01_filtered/Posterior_predictive_dist_mod01.png")
@@ -281,7 +411,7 @@ knitr::include_graphics("./A_Results_Suppl/Model01_filtered/Posterior_predictive
 
 ```
 
-Figure S4. Posterior predictive distributions (boxplots) and jittered
+Figure S9. Posterior predictive distributions (boxplots) and jittered
 observations (colored circles) of penguin performance, after removing
 low coverage survey data; missing summer LKB were not imputed. Case 1 is
 ONI ≤ -0.5°C; LKB ≤ 1 Mt; and LHR ≤ 0.01 (the "best case"). Case 2 is
@@ -296,6 +426,7 @@ circles represent winter observations. Boxes characterize interquartile
 ranges with medians indicated by bold horizontal lines and whiskers
 extending to 1.5 times these ranges.
 
+\newpage
 ```{r Peng Performance Model01, fig.width=8.0, fig.asp=0.5, out.width="100%",fig.align="centre", warning=FALSE, echo=FALSE}
 
 knitr::include_graphics("./A_Results_Suppl/Model01_filtered/Penguin_performance_mod01.png")
@@ -303,7 +434,7 @@ knitr::include_graphics("./A_Results_Suppl/Model01_filtered/Penguin_performance_
 
 ```
 
-Figure S5. Posterior expectations of penguin performance from the
+Figure S10. Posterior expectations of penguin performance from the
 sensitivity test in which: low coverage survey data was removed, and
 missing summer LKB were not imputed. The "best case" is ONI ≤ -0.5; LKB
 ≤ 1 Mt; and LHR ≤ 0.01. The "worst case" is -0.5 \< ONI \< 0.5; LKB \> 1
@@ -314,6 +445,7 @@ indicate the median expected performance in the best case (dashed line)
 and the long-term mean performance (solid line). As per Supplementary
 Fig. S8, Watters et al. (2020).
 
+\newpage
 ```{r Posterior preductive Model01 imputed, fig.width=8.0, fig.asp=1.00, out.width="100%",fig.align="centre", warning=FALSE, echo=FALSE}
 
 knitr::include_graphics("./A_Results_Suppl/Model01_imputed1/Posterior_predictive_dist_mod01imp.png")
@@ -321,7 +453,7 @@ knitr::include_graphics("./A_Results_Suppl/Model01_imputed1/Posterior_predictive
 
 ```
 
-Figure S6. Posterior predictive distributions (boxplots) and jittered
+Figure S11. Posterior predictive distributions (boxplots) and jittered
 observations (colored circles) of penguin performance, after removing
 low coverage survey data; missing summer LKB were imputed according to
 values in Table 1. Case 1 is ONI ≤ -0.5°C; LKB ≤ 1 Mt; and LHR ≤ 0.01
@@ -336,6 +468,7 @@ from krill surveys. Blue circles represent winter observations. Boxes
 characterize interquartile ranges with medians indicated by bold
 horizontal lines and whiskers extending to 1.5 times these ranges.
 
+\newpage
 ```{r Peng Performance Model01 imputed, fig.width=8.0, fig.asp=1.00, out.width="100%",fig.align="centre", warning=FALSE, echo=FALSE}
 
 knitr::include_graphics("./A_Results_Suppl/Model01_imputed1/Penguin_performance_mod01imp.png")
@@ -343,7 +476,7 @@ knitr::include_graphics("./A_Results_Suppl/Model01_imputed1/Penguin_performance_
 
 ```
 
-Figure S7. Posterior expectations of penguin performance from the
+Figure S12. Posterior expectations of penguin performance from the
 sensitivity test in which: low coverage survey data was removed; missing
 summer LKB were imputed according to values in Table 1. The "best case"
 is ONI ≤ -0.5; LKB ≤ 1 Mt; and LHR ≤ 0.01. The "worst case" is -0.5 \<
@@ -357,7 +490,7 @@ line). As per Supplementary Fig. S8, Watters et al. (2020).
 \newpage
 # D. Continuing spatial and temporal mismatches
 
-```{r Table S4, results='asis', warning=FALSE, echo=FALSE, message=FALSE, comment=NA}
+```{r Table S5, results='asis', warning=FALSE, echo=FALSE, message=FALSE, comment=NA}
 
 # load csv table
 ssmu_table <- read.csv("./Supplementary files/SSMU48_area.csv")
@@ -387,12 +520,11 @@ knitr::include_graphics("./A_Results/Model02_SSMU/Posterior_predictive_dist_mod0
 
 ```
 
-Figure S8. Posterior predictive distributions (boxplots) and jittered observations (colored circles) of penguin  76 performance. A) Watters model. B) Andy spatial. C) Andy SApatial, MArch = winter. D) Spatial and temporal SSMUs.
+Figure S13. Posterior predictive distributions (boxplots) and jittered observations (colored circles) of penguin  76 performance. A) Watters model. B) Andy spatial. C) Andy SApatial, MArch = winter. D) Spatial and temporal SSMUs.
 
 
 \newpage
 # E. Krill consumption by main predator taxa
-
 
 
 
@@ -442,27 +574,13 @@ therefore exceeded 500,000 t and 350,000 for gSSMU #1 and #2.
 respectively.
 
 
-```{r Table S5, results='asis', warning=FALSE, echo=FALSE, message=FALSE, comment=NA}
+```{r Table S6, results='asis', warning=FALSE, echo=FALSE, message=FALSE, comment=NA}
 
 flextable(Table.05) |>
   fontsize(size = 8, part = "all") |>
   padding(padding = 1, part = "all") |>
   autofit() |>
-  set_caption("Table S5. Estimated whale abundance for gSSMU #1 and #2 during the study period.")
-
-```
-
-
-
-
-```{r Table S6, results='asis', warning=FALSE, echo=FALSE, message=FALSE, comment=NA}
-
-flextable(Table.06) |>
-  fontsize(size = 8, part = "all") |>
-  padding(padding = 1, part = "all") |>
-  autofit() |>
-  set_caption("Table S6. Estimated krill consumption by major predator taxa during the
-austral summer. Values from Hill et al. (2007), Table 15.")
+  set_caption("Table S6. Estimated whale abundance for gSSMU #1 and #2 during the study period.")
 
 ```
 
@@ -471,11 +589,25 @@ austral summer. Values from Hill et al. (2007), Table 15.")
 
 ```{r Table S7, results='asis', warning=FALSE, echo=FALSE, message=FALSE, comment=NA}
 
-flextable(Table.07) |>
+flextable(Table.06) |>
   fontsize(size = 8, part = "all") |>
   padding(padding = 1, part = "all") |>
   autofit() |>
   set_caption("Table S7. Estimated krill consumption by major predator taxa during the
+austral summer. Values from Hill et al. (2007), Table 15.")
+
+```
+
+
+
+
+```{r Table S8, results='asis', warning=FALSE, echo=FALSE, message=FALSE, comment=NA}
+
+flextable(Table.07) |>
+  fontsize(size = 8, part = "all") |>
+  padding(padding = 1, part = "all") |>
+  autofit() |>
+  set_caption("Table S8. Estimated krill consumption by major predator taxa during the
 austral winter. Values from Hill et al. (2007), Table 15.")
 
 

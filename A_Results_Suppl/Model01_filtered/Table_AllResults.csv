@@ -1,0 +1,32 @@
+Season,Param,Predictor,Test,Comparison,N,Groups (N),Statistic,p-value,Sig
+Summer,FWT,bclass,Wilcoxon,Low vs High,56,Low (n=14); High (n=42),258,0.5018,ns
+Summer,PHS,bclass,Wilcoxon,Low vs High,59,Low (n=14); High (n=45),324,0.8796,ns
+Summer,REVTD,bclass,Wilcoxon,Low vs High,21,Low (n=3); High (n=18),25,0.8802,ns
+Summer,FWT,hrclass,Kruskal-Wallis,Overall,56,Low (n=54); Mid (n=2),0.563,0.4529,ns
+Summer,PHS,hrclass,Kruskal-Wallis,Overall,59,Low (n=57); Mid (n=2),0.702,0.4022,ns
+Summer,REVTD,hrclass,Kruskal-Wallis,Overall,21,Low (n=20); Mid (n=1),1.745,0.1864,ns
+Summer,FWT,oni.class,Kruskal-Wallis,Overall,56,Cool (n=27); Neutral (n=10); Warm (n=19),2.244,0.3256,ns
+Summer,PHS,oni.class,Kruskal-Wallis,Overall,59,Cool (n=30); Neutral (n=10); Warm (n=19),3.706,0.1567,ns
+Summer,REVTD,oni.class,Dunn (BH),Cool vs Neutral,21,Cool (n=11); Neutral (n=2); Warm (n=8),-1.982,0.1424,ns
+Summer,REVTD,oni.class,Dunn (BH),Cool vs Warm,21,Cool (n=11); Neutral (n=2); Warm (n=8),-1.415,0.2356,ns
+Summer,REVTD,oni.class,Dunn (BH),Neutral vs Warm,21,Cool (n=11); Neutral (n=2); Warm (n=8),1.096,0.2732,ns
+Summer,REVTD,oni.class,Kruskal-Wallis,Overall,21,Cool (n=11); Neutral (n=2); Warm (n=8),4.816,0.09,.
+Summer,FWT,sam.sign,Wilcoxon,Neg vs Pos,56,Neg (n=24); Pos (n=32),283,0.0961,.
+Summer,PHS,sam.sign,Wilcoxon,Neg vs Pos,59,Neg (n=23); Pos (n=36),452,0.56,ns
+Summer,REVTD,sam.sign,Wilcoxon,Neg vs Pos,21,Neg (n=8); Pos (n=13),31,0.1376,ns
+Winter,REVCID,bclass,Wilcoxon,Low vs High,8,Low (n=5); High (n=3),9.5,0.6528,ns
+Winter,EGG,hrclass,Kruskal-Wallis,Overall,4,Low (n=2); Mid (n=1); High (n=1),1.8,0.4066,ns
+Winter,REVCID,hrclass,Dunn (BH),Low vs Mid,8,Low (n=2); Mid (n=3); High (n=3),0.825,0.4095,ns
+Winter,REVCID,hrclass,Dunn (BH),Low vs High,8,Low (n=2); Mid (n=3); High (n=3),2.175,0.089,.
+Winter,REVCID,hrclass,Dunn (BH),Mid vs High,8,Low (n=2); Mid (n=3); High (n=3),1.509,0.1969,ns
+Winter,REVCID,hrclass,Kruskal-Wallis,Overall,8,Low (n=2); Mid (n=3); High (n=3),5.088,0.0785,.
+Winter,EGG,oni.class,Kruskal-Wallis,Overall,4,Neutral (n=2); Warm (n=2),2.4,0.1213,ns
+Winter,REVCID,oni.class,Kruskal-Wallis,Overall,8,Neutral (n=4); Warm (n=4),2.551,0.1102,ns
+Summer,FWT,LHR (catch/LKB),Spearman rho,NA,56,56,0.238,0.0775,.
+Summer,PHS,LHR (catch/LKB),Spearman rho,NA,59,59,-0.159,0.2303,ns
+Summer,REVTD,LHR (catch/LKB),Spearman rho,NA,21,21,-0.386,0.0835,.
+Summer,FWT,LKB (survey biomass),Spearman rho,NA,56,56,0.16,0.239,ns
+Summer,PHS,LKB (survey biomass),Spearman rho,NA,59,59,-0.109,0.4107,ns
+Summer,REVTD,LKB (survey biomass),Spearman rho,NA,21,21,0.157,0.498,ns
+Winter,REVCID,LHR (catch/LKB),Spearman rho,NA,8,8,0.849,0.0076,**
+Winter,REVCID,LKB (survey biomass),Spearman rho,NA,8,8,-0.302,0.467,ns

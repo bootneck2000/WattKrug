@@ -936,10 +936,10 @@ Table.05 <- read.csv("./A_Results_Suppl/Baleen Whale Abundance.csv",
 Predators_summer <- read.csv("./A_Results_Suppl/Summer_Krill_req.csv",header=TRUE)
 Predators_winter <- read.csv("./A_Results_Suppl/Winter_Krill_req.csv",header=TRUE)
 
-Table.06 <- Predators_summer %>% select(-Fish_Qsummer_g, -Whale_Qsummer_g, -Penguin_Qsummer_g, -Reference)
+Table.06 <- Predators_summer %>% dplyr::select(-Fish_Qsummer_g, -Whale_Qsummer_g, -Penguin_Qsummer_g, -Reference)
 # knitr::kable(Table.03, digits = 0)
 
-Table.07 <- Predators_winter %>% select(-Fish_Qwinter_g, -Whale_Qwinter_g, -Penguin_Qwinter_g, -Reference)
+Table.07 <- Predators_winter %>% dplyr::select(-Fish_Qwinter_g, -Whale_Qwinter_g, -Penguin_Qwinter_g, -Reference)
 # knitr::kable(Table.04, digits = 0)
 
 

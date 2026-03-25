@@ -594,6 +594,7 @@ saveRDS(hr.derived.post, file.path(out.dir, file = "hr.derived.post.rds"))
 
 saveRDS(hr.params.summ, file.path(out.dir, file = "hr.params.summ.rds"))
 saveRDS(hr.derived.summ, file.path(out.dir, file = "hr.derived.summ.rds"))
+saveRDS(junk, file.path(out.dir, file = "junk.rds"))
 
 
 ### Step 3: PLOTTING  ###
