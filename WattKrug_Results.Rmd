@@ -192,7 +192,7 @@ knitr::kable(table.original.scenario, booktabs=TRUE,  col.names = c("Effects",
               "ONI > +0.5°C", 
              "Long-term mean", 
               "Predicted long-term mean"),
-             longtable=TRUE, align="lccccc", caption = "Table 3. Posterior (long-term mean) and posterior predictive (predicted long-term mean) probabilities for spatial model by SSMUs.", escape=FALSE)
+             longtable=TRUE, align="lccccc", caption = "Table 3. Posterior (long-term mean) and posterior predictive (predicted long-term mean) probabilities for Model SSMU.", escape=FALSE)
 
 ```
 
@@ -308,84 +308,3 @@ knitr::include_graphics("./A_Results/Model02_SSMU_MarchWinter/Penguin_performanc
 
 Figure 7. Expected performance of penguins attributable to the marginal effects of the Oceanic Niño Index (ONI), local krill biomass (LKB) and local harvest rate (LHR) relative to the “best case”. The best case is ONI ≤ −0.5 °C; LKB ≤ 1 Mt; and LHR ≤ 0.01. The “worst case” is −0.5 °C < ONI < 0.5 °C; LKB > 1 Mt; and LHR ≥ 0.1. The median, interquartile range, and range of the posterior expectations are indicated by each boxplot. Reference lines respectively indicate the median expected performance in the best case (dashed line) and the long-term mean performance. A) Watters et al. 2020 model. B) Summer and Winter distributions modified according to penguin's use of SSMUs (see text). C) Same as B) but March catches allocated to winter. 
 
-
-Figure 8. 
-
-
-```{r Watters original and mistake, fig.align="centre", out.width="75%", echo=FALSE}
-
-knitr::include_graphics("./Watters EMM figures/Watters original and mistake.png")
-
-```
-
-Figure x. Original Figure 1 plot from Watters et al. 2020 with A)
-Neutral ONI and B) B) Warm ONI constituting the "Worst Case" selected.
-C) Displays the original case-by-case plots recreated from the paper,
-with Case 12 representing the intention while data from Case 18 was
-selected for rendering the boxplot. Note that the expected performance
-under neutral ONI "Worst Case" is poorer than under the warm ONI that
-was presented in the original paper. Henceforth, to facilitate
-comparison, we refer to the ONI Neutral plot however we consider this
-unrealistic if the intention is to portray a "Worst Case" of a
-continuing warming climate.
-
-```{r Scenario plot 1, out.width="100%", fig.align="left", echo=FALSE}
-
-knitr::include_graphics("./Watters EMM figures/All spp summer then winter 37.png")
-```
-
-Figure x2. Model output for the alternatve Watters et al. 2020 scenario
-outlined above (all species initially present, Adélie and Chinstrap
-penguins migrate out of the area after breeding, LKB and LHR rescaled to
-SSMU and March included in summer or winter). Selected cases as per
-Watters et al. 2020 for March in A) Summer and B) Winter are provided,
-with the corresponding case-by-case boxplots presented beneath. Boxplots
-are colour-coded by ONI state (red=warm, white=neutral, blue=cold). In
-all cases, the marginal effect of ONI dominated the expected performance
-of penguins against their long-term mean, irrespective of LKB or LHR.
-
-```{r Scenario plot 2, out.width="100%", fig.align="left", echo=FALSE, eval=FALSE}
-
-knitr::include_graphics("./Watters EMM figures/ADE and CHIN summer 40 41.png")
-```
-
-Figure x3. Model output for Watters et al. 2020 Scenario #2 outlined
-above (all species initially present, Adélie and Chinstrap penguins
-migrate out of the area after breeding, LKB and LHR rescaled to SSMU and
-March included in summer or winter). Selected cases as per Watters et
-al. 2020 for March in A) Summer and B) Winter are provided, with the
-corresponding case-by-case boxplots presented beneath. Boxplots are
-colour-coded by ONI state (red:warm; white:neutral; blue:cold). In all
-cases, the marginal effect of ONI dominated the expected performance of
-penguins against their long-term mean, irrespective of LKB or LHR.
-
-```{r Scenario plot 3, out.width="100%", fig.align="left", echo=FALSE, eval=FALSE}
-
-knitr::include_graphics("./Watters EMM figures/Gentoo only 38 39.png")
-```
-
-Figure 9. Model output for Scenario \\#3 outlined above (all species
-initially present,Adélie and chinstrap penguins migrate out of the area
-after breeding, LKB and LHR rescaled to SSMU and March included in
-summer or winter). Selected cases as per Watters et al. 2020 for March
-in A) Summer and B) Winter are provided, with the corresponding
-case-by-case boxplots presented beneath. Boxplots are colour-coded by
-ONI state (red;warm, white;neutral, blue;cold). In all cases, the
-marginal effect of ONI dominated the expected performance of penguins
-against their long-term mean, irrespective of LKB or LHR.
-
-```{r March Subarea 48.1 fishing plot, out.width="60%", fig.align="centre", echo=FALSE}
-
-#knitr::include_graphics("./Watters EMM figures/catch march 481.png")
-```
-
-Figure 10. Daily accumulated catch (and fitted LOESS smooth curves) in
-Subarea 48.1 between 20$^{th}$ February and March 31$^{st}$ between A)
-1990-2010 and B) 2010 to 2020. Catch in the Subarea was relatively
-consistent during the latter stages of penguin breeding at approximately
-250tonnes/d (NOTE: different scaling of catch on y-axis between plots).
-However, since 2010 there has been a tendency for the fishery to
-increase its effort in the Subarea, starting around the middle of March.
-C) During this latter period, the fishery increased effort earlier on
-three occasions (2013, 2015 and 2016), starting before the beginning of
-March.

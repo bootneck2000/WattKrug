@@ -312,14 +312,14 @@ Figure S7. Scatter plot of summer penguin indices and krill biomass (LKB; top) a
 
 
 
-```{r winter Peng indices1 vs LKB LHR, fig.show="hold", out.width="55%", echo=FALSE}
+```{r winter Peng indices1 vs LKB LHR, fig.show="hold", out.width="90%", echo=FALSE}
 
 knitr::include_graphics(c(
   "./A_Results_Suppl/Model01_filtered/Fig_Scatter_Winter_LKB.png"))
 ```
 
 
-```{r winter Peng indices2 vs LKB LHR, fig.show="hold", out.width="55%", echo=FALSE}
+```{r winter Peng indices2 vs LKB LHR, fig.show="hold", out.width="90%", echo=FALSE}
 
 knitr::include_graphics(c(
   "./A_Results_Suppl/Model01_filtered/Fig_Scatter_Winter_LHR.png"))
@@ -382,10 +382,10 @@ penguin performance.
 
 Taken together, these results indicate that, once surveys with low
 spatial coverage are excluded, penguin performance is most strongly
-associated with intermediate ONI and intermediate LHR conditions. High
+associated with intermediate ONI conditions, with intermediate (neutral) ONI linked to poorer performance across cases. Secondarily, intermediate LHR yielded lower performance within each ONI category. High
 LKB (\>1 Mt) and high LHR (≥0.10) scenarios show limited influence on
 expected performance, and the nominal "worst case" scenario remains
-close to the long-term mean (Figures S5 & S7) and unsupported by
+close to the long-term mean (Figures S5 and S7) and unsupported by
 empirical data (Figures S4 and S6).
 
 Table S4. The posterior predictive distributions shows that only some of
@@ -488,7 +488,7 @@ the best case (dashed line) and the long-term mean performance (solid
 line). As per Supplementary Fig. S8, Watters et al. (2020).
 
 \newpage
-# D. Continuing spatial and temporal mismatches
+# E. Continuing spatial and temporal mismatches
 
 ```{r Table S5, results='asis', warning=FALSE, echo=FALSE, message=FALSE, comment=NA}
 
@@ -500,7 +500,7 @@ knitr::kable(ssmu_table, digits = 3, booktabs=TRUE,
              "Area (km2)", 
               "gSSMU",
               "Area fraction"),
-      longtable=TRUE, align="lccc", caption = "Table S4. Size of SSMUs for Subarea 48.1 and its relative size to the gSSMU where they are located. CCAMLR Small-Scale Management Units (SSMUs) were download from CCAMLR Public repository (https://github.com/ccamlr/data).
+      longtable=TRUE, align="lccc", caption = "Table S5. Size of SSMUs for Subarea 48.1 and its relative size to the gSSMU where they are located. CCAMLR Small-Scale Management Units (SSMUs) were download from CCAMLR Public repository (https://github.com/ccamlr/data).
 CCAMLR. 2022. Geographical data layer: CCAMLR Fishery Small-Scale Management Units. Version 0.9, URL: <https://github.com/ccamlr/data/tree/main/geographical_data/ssmu/versions/v0.9>.", escape=FALSE)
 
 ```
@@ -512,56 +512,33 @@ Effect of Spatial and temporal mismatches in penguin performance.
 
 knitr::include_graphics("./A_Results/Watters_model/Imputed/Watters_Posterior_predictive_dist_imputed.png")
 
-knitr::include_graphics("./A_Results/Model02_Andy/Posterior_predictive_dist_mod02_Andy.png")
-
-knitr::include_graphics("./A_Results/Model02_Andy/Posterior_predictive_dist_mod02_Andy_MWinter.png")
-
 knitr::include_graphics("./A_Results/Model02_SSMU/Posterior_predictive_dist_mod02_SSMU.png")
+
+knitr::include_graphics("./A_Results/Model02_SSMU_MarchWinter/Posterior_predictive_dist_mod02_SSMU_W.png")
 
 ```
 
-Figure S13. Posterior predictive distributions (boxplots) and jittered observations (colored circles) of penguin  76 performance. A) Watters model. B) Andy spatial. C) Andy SApatial, MArch = winter. D) Spatial and temporal SSMUs.
+Figure S13. Posterior predictive distributions (boxplots) and jittered observations (colored circles) of penguin  performance. A) Watters model. B) Model SSMU. C) Model SSMU + 03W.
 
 
 \newpage
-# E. Krill consumption by main predator taxa
+# F. Krill consumption by main predator taxa
 
-
-
-Estimates of krill consumption by major predator groups during the study
-period have been previously summarized by Hill et al. (2007). During
-summer, fish accounted for the largest proportion of krill consumption,
-with estimated removals of
-`r scales::comma(round(sum(Table.07$Fish_Krill_ton[3:4]), 0))` in the
+Krill consumption by major predator groups during the study period was summarized by Hill et al. (2007). During summer, fish accounted for the largest proportion of krill consumption, with estimated removals of 
+`r scales::comma(round(sum(Table.06$Fish_Krill_ton[3:4]), 0))` in the
 Bransfield Strait (gSMSMU #1: APBSW + APBSE) and
-`r scales::comma(round(sum(Table.07$Fish_Krill_ton[1:2]), 0))` in the
+`r scales::comma(round(sum(Table.06$Fish_Krill_ton[1:2]), 0))` in the
 Drake Passage (gSSMU #2: APDPW + APDPE). Combined summer consumption by
 penguins and whales was estimated at
 `r scales::comma(round(sum(Table.06$Whale_Krill_ton[3:4])+sum(Table.06$Penguin_Krill_ton[3:4]), 0))`
 in the Bransfield Strait and
 `r scales::comma(round(sum(Table.06$Whale_Krill_ton[1:2])+sum(Table.06$Penguin_Krill_ton[1:2]), 0))`
-in the Drake Passage. Total summer krill consumption therefore exceeded
-1 Mt in both gSSMU 1 and gSSMU 2.
+in the Drake Passage (Table S6). Total summer krill consumption therefore exceeded 1 million t (Mt) in both gSSMU #1 and gSSMU #2.
 
-Watters et al. (2020) noted "krill biomass in the Antarctic Peninsula is
-generally sufficient to support penguin production." Consistent with
-this, no evidence of acute adult penguin mortality or complete lack of
-bird attending nesting grounds has been documented in the region, unlike
-patterns reported for other penguin species during severe starvation
-events (Vianna et al. 2014, Crawford et al. 2025). In this context,
-summer survey estimates below 1 million tonnes for each gSSMU are
-inconsistent with observed predator dynamics and likely underestimate
-krill availability.
+Watters et al. (2020) concluded that krill biomass at the Antarctic Peninsula is generally sufficient to support penguin production. Consistent with this, no evidence of acute adult penguin mortality or complete absence of birds at nesting grounds has been documented in the region, in contrast to patterns reported for other penguin species during severe starvation events (Vianna et al. 2014; Crawford et al. 2025). Summer survey estimates below 1 Mt for each gSSMU are therefore inconsistent with observed predator dynamics and likely underestimate krill availability.
 
-As Watters et al. (2020) indicates, "krill biomass in the AP is
-generally sufficient to support penguin production." As no evidene of
-accute adult penguin mortality has been recorded for the region (as is
-the case for other penguin species during accute starvation; Crawford et
-al. 2025), summer survey estimates below 1 Million tonnes for each gSSMU
-should be considered as gross subestimations of krill availability.
-
-Winter consumption estimates were lower but more uncertain. Hill et al.
-(2007) estimated fish consumption of
+Winter consumption estimates were lower and more uncertain. Hill et al.
+(2007) estimated fish consumption at
 `r scales::comma(round(sum(Table.07$Fish_Krill_ton[3:4]), 0))` in the
 Bransfield Strait and
 `r scales::comma(round(sum(Table.07$Fish_Krill_ton[1:2]), 0))` in the
@@ -570,48 +547,59 @@ Drake Passage. Penguin consumption during winter was estimated at
 Bransfield Strait and
 `r scales::comma(round(sum(Table.07$Penguin_Krill_ton[1:2]), 0))` in the
 Drake Passage. Combined winter consumption by fish and penguins
-therefore exceeded 500,000 t and 350,000 for gSSMU #1 and #2.
-respectively.
+thus exceeded 500,000 t and 350,000 for gSSMU #1 and #2.
+respectively (Table S7).
+
+Since the Hill et al. (2007) estimates, survey-based population assessments indicate that humpback whale abundance has increased approximately 13-fold since 1990, and fin whale abundance approximately 9-fold since 2000 (Table S8). These increases suggest that whale krill consumption at the Antarctic Peninsula is substantially higher today than reflected in the Hill et al. (2007) estimates.
 
 
+\newpage
 ```{r Table S6, results='asis', warning=FALSE, echo=FALSE, message=FALSE, comment=NA}
 
-flextable(Table.05) |>
+Predators_summer <- read.csv("./A_Results_Suppl/Summer_Krill_req.csv",header=TRUE)
+Predators_summer <- Predators_summer %>% dplyr::select(-Fish_Qsummer_g, -Whale_Qsummer_g, -Penguin_Qsummer_g, -Reference)
+
+flextable(Predators_summer) |>
   fontsize(size = 8, part = "all") |>
   padding(padding = 1, part = "all") |>
   autofit() |>
-  set_caption("Table S6. Estimated whale abundance for gSSMU #1 and #2 during the study period.")
-
-```
-
-
-
-
-```{r Table S7, results='asis', warning=FALSE, echo=FALSE, message=FALSE, comment=NA}
-
-flextable(Table.06) |>
-  fontsize(size = 8, part = "all") |>
-  padding(padding = 1, part = "all") |>
-  autofit() |>
-  set_caption("Table S7. Estimated krill consumption by major predator taxa during the
+  set_caption("Table S6. Estimated krill consumption by major predator taxa during the
 austral summer. Values from Hill et al. (2007), Table 15.")
 
 ```
 
 
 
+```{r Table S7, results='asis', warning=FALSE, echo=FALSE, message=FALSE, comment=NA}
 
-```{r Table S8, results='asis', warning=FALSE, echo=FALSE, message=FALSE, comment=NA}
+Predators_winter <- read.csv("./A_Results_Suppl/Winter_Krill_req.csv",header=TRUE)
+Predators_winter <- Predators_winter %>% dplyr::select(-Fish_Qwinter_g, -Whale_Qwinter_g, -Penguin_Qwinter_g, -Reference)
 
-flextable(Table.07) |>
+flextable(Predators_winter) |>
   fontsize(size = 8, part = "all") |>
   padding(padding = 1, part = "all") |>
   autofit() |>
-  set_caption("Table S8. Estimated krill consumption by major predator taxa during the
+  set_caption("Table S7. Estimated krill consumption by major predator taxa during the
 austral winter. Values from Hill et al. (2007), Table 15.")
 
 
 ```
+
+
+
+```{r Whale abundance, results='asis', warning=FALSE, echo=FALSE, message=FALSE, comment=NA}
+
+Whales <- read.csv("./A_Results_Suppl/Baleen Whale Abundance.csv",
+                     header=TRUE, fileEncoding = "Windows-1252")
+
+flextable(Whales) |>
+  fontsize(size = 8, part = "all") |>
+  padding(padding = 1, part = "all") |>
+  autofit() |>
+  set_caption("Table S8. Estimated whale abundance for gSSMU #1 and #2 during the study period.")
+
+```
+
 
 ```{=tex}
 \elandscape
