@@ -8,9 +8,6 @@
 
 library(tidyverse)
 library(lattice)
-library(dplyr)
-select <- dplyr::select
-filter <- dplyr::filter
 
 # Jump to Step 3 if already ran steps 1 & 2
 
@@ -252,7 +249,7 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
   rm(percentiles, survey_filtered, survey_low_nmi)
   ### END changes
   
-  ### New change: Estimate SSMU-LKB
+  ### New change: Estimate split SSMU-LKB
   
   # Read SSMU table
   SSMUs<-read.csv(file.path(read_dir,"SSMU48_area.csv"),header=TRUE,stringsAsFactors = FALSE)
@@ -282,11 +279,14 @@ make.localhr.data<-function(trim=1,plot.winter=FALSE){
   #
   # krill fishery catches
   fishery<-read.csv(file.path(read_dir,"c1.csv"),header=TRUE,stringsAsFactors = FALSE)
-  fishery$season<-ifelse(is.element(fishery$Month,c(10:12,1:3)),"S","W")
+  fishery$season<-ifelse(is.element(fishery$Month,c(10:12,1:3)),"S","W") # March: Summer
+  
+  # Change definitions of gSSMUs
   gSSMU1<-c("APBSE","APBSW")
   gSSMU2<-c("APDPE","APDPW","APEI")
   gSSMU3<-"APPA"
   gSSMU4<-c("APW","APE")
+  
   fishery$gSSMU<-rep(NA,dim(fishery)[1])
   fishery$gSSMU<-ifelse(is.element(fishery$AssignedSSMU,gSSMU1),1,fishery$gSSMU)
   fishery$gSSMU<-ifelse(is.element(fishery$AssignedSSMU,gSSMU2),2,fishery$gSSMU)
@@ -637,7 +637,7 @@ library(rjags)
 
 hr.jags<-jags.model(textConnection(modelstring),hr.data,hr.inits,n.chains=3,n.adapt=50000)
 # burn in for 150000 iterations
-update(hr.jags, n.iter=100000)
+update(hr.jags, n.iter=150000)
 hr.params.post<-coda.samples(hr.jags,hr.params,n.iter=50000,thin=25)
 hr.derived.post<-coda.samples(hr.jags,hr.derived,n.iter=50000,thin=25)
 hr.params.summ<-summary(hr.params.post)
@@ -652,6 +652,7 @@ saveRDS(hr.derived.post, file.path(out.dir, file = "hr.derived.post.rds"))
 
 saveRDS(hr.params.summ, file.path(out.dir, file = "hr.params.summ.rds"))
 saveRDS(hr.derived.summ, file.path(out.dir, file = "hr.derived.summ.rds"))
+saveRDS(junk, file.path(out.dir, file = "junk.rds"))
 
 
 ### Step 3: PLOTTING  ###
